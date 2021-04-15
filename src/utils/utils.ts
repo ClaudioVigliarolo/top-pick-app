@@ -106,18 +106,24 @@ export const isUsedLanguage = async (lang: string): Promise<boolean> => {
 
 export const setUsedLanguage = async (lang: string): Promise<void> => {
   try {
+    let usedLanguagesArr: string[] = [];
     const usedLanguages = await AsyncStorage.getItem(keys.USED_LANGUAGES);
+    console.log('UUUUUUUUUUUUUU', usedLanguages);
     if (usedLanguages !== null) {
-      const usedLanguagesArr: string[] = JSON.parse(usedLanguages);
+      usedLanguagesArr = JSON.parse(usedLanguages);
       if (!usedLanguagesArr.includes(lang)) {
         //the language hash already been used, return true, proceed
         usedLanguagesArr.push(lang);
-        await AsyncStorage.setItem(
-          keys.USED_LANGUAGES,
-          JSON.stringify(usedLanguagesArr),
-        );
       }
+    } else {
+      //create array with first element
+      usedLanguagesArr.push(lang);
     }
+
+    await AsyncStorage.setItem(
+      keys.USED_LANGUAGES,
+      JSON.stringify(usedLanguagesArr),
+    );
   } catch (error) {
     // Error saving data
   }

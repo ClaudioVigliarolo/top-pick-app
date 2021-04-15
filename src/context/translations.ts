@@ -65,7 +65,7 @@ const translations = {
     ORANGE: 'arancio',
     VIOLET: 'viola',
     DEFAULT: 'default',
-    RELATED_TOPICS: 'sugg:',
+    RELATED_TOPICS: 'Relaz:',
     REASON_TRANSLATION: 'cattiva traduzione',
     REASON_PERTINENCE: 'non pertinente',
     REASON_SCURRILOUS: 'linguaggio scurrile',
@@ -76,6 +76,9 @@ const translations = {
       "E'necessario scaricare i contenuti per usare l'app",
     DOWNLOAD: 'Download',
     CANCEL: 'Chiudi',
+    DOWNALOD_LANGUAGE: 'Scarica Lingua',
+    DOWNALOD_LANGUAGE_REQUIRED_MESSAGE:
+      "E' necessario scaricare i contenuti per usare l'app in questa lingua",
   },
   en: {
     TOP_PICK: 'Top Pick',
@@ -148,6 +151,9 @@ const translations = {
     UPDATE_REQUIRED_MESSAGE: ' You need to upload the topics to use the app',
     DOWNLOAD: 'Download',
     CANCEL: 'Cancel',
+    DOWNALOD_LANGUAGE: 'Download language',
+    DOWNALOD_LANGUAGE_REQUIRED_MESSAGE:
+      'Download the content to start using the app in this language',
   },
 };
 

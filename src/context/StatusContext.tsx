@@ -9,6 +9,7 @@ import {
   isFirstUpdate,
   onTopicsUpdate,
   setFirstUpdate,
+  setUsedLanguage,
 } from '../utils/utils';
 import {LocalizationContext} from './LocalizationContext';
 /*
@@ -68,6 +69,7 @@ export const StatusProvider = ({children}: {children: any}) => {
 
   const handleFirstUpdate = async () => {
     setLoadingContent(true);
+    await setUsedLanguage(translations.LANG);
     const hasFirstUpdated = await updateTopics(
       await getLastUpdate(),
       translations.LANG,

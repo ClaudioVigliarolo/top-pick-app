@@ -4,7 +4,7 @@ import {View, Text, ScrollView, StyleSheet, Alert} from 'react-native';
 import {LocalizationContext} from '../context/LocalizationContext';
 import ListeItemCheck from '../components/lists/ListeItemCheck';
 import {StatusContext} from '../context/StatusContext';
-import {isUsedLanguage, onTopicsUpdate} from '../utils/utils';
+import {isUsedLanguage, onTopicsUpdate, setUsedLanguage} from '../utils/utils';
 import StatusModal from '../components/modals/StatusModal';
 interface Language {
   label: string;
@@ -25,6 +25,7 @@ export default function SelectLanguagePage() {
   const {translations, appLanguage, setAppLanguage} = React.useContext(
     LocalizationContext,
   );
+  const [selectedLanguage, setSelectedLanguage] = React.useState<string>('');
   const {theme} = React.useContext(ThemeContext);
   const {
     isLoadingContent,
@@ -42,11 +43,29 @@ export default function SelectLanguagePage() {
   });
 
   const onValChange = async (index: number): Promise<void> => {
-    setAppLanguage(defaultLanguages[index]['value']);
-    if (await isUsedLanguage(defaultLanguages[index]['value'])) {
+    if (!(await isUsedLanguage(defaultLanguages[index]['value']))) {
+      setSelectedLanguage(defaultLanguages[index]['value']);
+      setUsedLanguage(defaultLanguages[index]['value']);
+      setShowModal(true);
+    } else {
+      setAppLanguage(defaultLanguages[index]['value']);
+    }
+  };
+  {
+    console.log('curent lang', translations.LANG);
+  }
+
+  const onLangDownloadCallback = (
+    success: boolean,
+    newLang: string,
+    setShowModal: (val: boolean) => void,
+  ) => {
+    if (success) {
+      setAppLanguage(newLang);
+      setShowModal(false);
+    } else {
       setShowModal(true);
     }
-    setAppLanguage(defaultLanguages[index]['value']);
   };
 
   return (
@@ -61,7 +80,7 @@ export default function SelectLanguagePage() {
           <StatusModal
             show={isModalShown}
             showProgress={false}
-            title={translations.UPDATE_REQUIRED_TITLE}
+            title={translations.DOWNALOD_LANGUAGE}
             closeOnTouchOutside={false}
             showConfirmButton={true}
             showCancelButton={true}
@@ -69,16 +88,14 @@ export default function SelectLanguagePage() {
             cancelText={translations.CANCEL}
             onConfirmPressed={() => {
               setShowModal(false);
-              onTopicsUpdate(
-                translations.LANG,
-                setLoadingContent,
-                setUpdatedContent,
+              onTopicsUpdate(selectedLanguage, setLoadingContent, (success) =>
+                onLangDownloadCallback(success, selectedLanguage, setShowModal),
               );
             }}
             onCancelPressed={() => {
               setShowModal(false);
             }}
-            message={translations.UPDATE_REQUIRED_MESSAGE}
+            message={translations.DOWNALOD_LANGUAGE_REQUIRED_MESSAGE}
           />
         </View>
       ))}
