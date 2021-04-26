@@ -1,5 +1,5 @@
 # usage: python CreateDB.py
-# example usage: python CreateBackendLocalDB.py --languages en it
+# example usage: python CreateBackendDevDB.py --languages en it
 # We insert the data from /data/PREFIX/ to the db
 #!/usr/bin/python
 import time
@@ -24,13 +24,13 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-DB_URL = config('DB_URL')
-ROOT_USERNAME = config('DB_URL')
+DB_URL = config('DB_URL_DEV')
+ROOT_USERNAME = config('ROOT_USERNAME')
 ROOT_EMAIL = config('ROOT_EMAIL')
 HASHED_ROOT_PASSWORD = config('HASHED_ROOT_PASSWORD')
-DEF_CATEG = "all"
 # topics source
 DEF_SOURCE = "ESL, TopPicks"
+
 
 languages = args.languages
 print("Selected languages:")
@@ -39,20 +39,18 @@ print(languages)
 
 # Connect to an existing database
 try:
-    conn = psycopg2.connect(user="claudio",
-                            password="gennaio",
-                            host="127.0.0.1",
-                            port="5432",
-                            database="dev")
-
-    # Create a cursor to perform database operations
+    print(DB_URL)
+    url = up.urlparse(DB_URL)
+    conn = psycopg2.connect(database=url.path[1:],
+                            user=url.username,
+                            password=url.password,
+                            host=url.hostname,
+                            port=url.port)
     curs = conn.cursor()
-    # Print PostgreSQL details
-    print("You are connected to PostgreSQL (local db)")
+    print("You are connected to PostgreSQL")
 
 except (Exception) as error:
     print("Error while connecting to PostgreSQL", error)
-
 
 # initial cleanup
 curs.execute('DROP TABLE IF EXISTS categories cascade')

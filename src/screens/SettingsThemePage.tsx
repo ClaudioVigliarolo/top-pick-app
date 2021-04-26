@@ -1,6 +1,5 @@
 import React from 'react';
-import {ThemeContext} from '../context/ThemeContext';
-import {View, Text, ScrollView, StyleSheet, Alert} from 'react-native';
+import {View, StyleSheet, Alert} from 'react-native';
 import {LocalizationContext} from '../context/LocalizationContext';
 import ListeItemCheck from '../components/lists/ListeItemCheck';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -11,10 +10,8 @@ interface CardTheme {
   value: string;
 }
 
-export default function SelectLanguagePage() {
-  const {translations, appLanguage, setAppLanguage} = React.useContext(
-    LocalizationContext,
-  );
+export default function SelectThemePage() {
+  const {translations} = React.useContext(LocalizationContext);
   const [cardTheme, setCardTheme] = React.useState('default');
 
   const defaultCardThemes: CardTheme[] = [
@@ -25,8 +22,6 @@ export default function SelectLanguagePage() {
     {value: 'green', title: translations.GREEN},
     {value: 'violet', title: translations.VIOLET},
   ];
-
-  const {theme} = React.useContext(ThemeContext);
 
   const styles = StyleSheet.create({
     container: {

@@ -25,7 +25,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 DB_URL = config('DB_URL')
-ROOT_USERNAME = config('DB_URL')
+ROOT_USERNAME = config('ROOT_USERNAME')
 ROOT_EMAIL = config('ROOT_EMAIL')
 HASHED_ROOT_PASSWORD = config('HASHED_ROOT_PASSWORD')
 # topics source
@@ -52,7 +52,6 @@ try:
 except (Exception) as error:
     print("Error while connecting to PostgreSQL", error)
 
-
 # initial cleanup
 curs.execute('DROP TABLE IF EXISTS categories cascade')
 curs.execute('DROP TABLE IF EXISTS topics cascade')
@@ -63,6 +62,8 @@ curs.execute('DROP TABLE IF EXISTS reports cascade')
 curs.execute('DROP TABLE IF EXISTS user_languages cascade')
 curs.execute('DROP TABLE IF EXISTS users cascade')
 curs.execute('DROP TABLE IF EXISTS tokens cascade')
+curs.execute('DROP TABLE IF EXISTS languages cascade')
+
 
 curs.execute('DROP TABLE IF EXISTS USER_STATS cascade')
 curs.execute('DROP TABLE IF EXISTS CLIENT_STATS cascade')
@@ -70,12 +71,17 @@ curs.execute('DROP TABLE IF EXISTS TO_TRANSLATE cascade')
 
 
 # create categories table
+curs.execute('''CREATE TABLE "languages"
+              ( "lang" VARCHAR(2) PRIMARY KEY)''')
+
+
+# create categories table
 curs.execute('''CREATE TABLE "categories"
-              ( "title" VARCHAR(255) NOT NULL, "lang" VARCHAR(2) NOT NULL, "id" INTEGER PRIMARY KEY)''')
+              ( "title" VARCHAR(255) NOT NULL, "lang" VARCHAR(2) REFERENCES "languages" ("lang") , "id" INTEGER PRIMARY KEY,  "ref_id" INTEGER NOT NULL)''')
 
 # create topics table
 curs.execute('''CREATE TABLE topics
-             ( "id" INTEGER NOT NULL,  "title" TEXT NOT NULL, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,  PRIMARY KEY("id"))''')
+             ( "id" INTEGER PRIMARY KEY ,  "title" TEXT NOT NULL, "lang" VARCHAR(2) REFERENCES "languages" ("lang") , "source" TEXT NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,  "ref_id" INTEGER NOT NULL)''')
 
 
 # create questions table
@@ -83,28 +89,33 @@ curs.execute('''CREATE TABLE "questions" (
 	"id" INTEGER PRIMARY KEY,
 	"title"	TEXT NOT NULL,
     "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    "lang" VARCHAR(2) NOT NULL,
+    "lang" VARCHAR(2) REFERENCES "languages" ("lang") ,
     "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade
 )''')
 
 
 # create category_topics table
 curs.execute('''CREATE TABLE "category_topics" (
-    "id" INTEGER PRIMARY KEY,
-    "lang" VARCHAR(2) NOT NULL,
+    "id" SERIAL PRIMARY KEY,
 	"category_id" INTEGER REFERENCES "categories" ("id") on delete cascade,
-    "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade
+    "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade,
+    "category_ref_id" INTEGER NOT NULL,
+    "topic_ref_id"  INTEGER NOT NULL,
+    "lang" VARCHAR(2) REFERENCES "languages" ("lang") 
+
 )''')
 
 
 # create related topic table
 curs.execute('''CREATE TABLE "related" (
-    "id" INTEGER PRIMARY KEY,
+    "id" SERIAL PRIMARY KEY,
     "source_id" INTEGER NOT NULL,
 	"dest_id" INTEGER NOT NULL,
-    "lang" VARCHAR(2) NOT NULL,
+    "dest_ref_id" INTEGER NOT NULL,
+    "source_ref_id" INTEGER NOT NULL,
 	FOREIGN KEY("source_id") REFERENCES "topics" ("id") on delete cascade,
-	FOREIGN KEY("dest_id") REFERENCES "topics" ("id") on delete cascade
+	FOREIGN KEY("dest_id") REFERENCES "topics" ("id") on delete cascade,
+    "lang" VARCHAR(2) REFERENCES "languages" ("lang") 
 )''')
 
 
@@ -122,23 +133,28 @@ for LANG_PREFIX in languages:
 
     # file containing related
     related = "../data/" + LANG_PREFIX + "/related/related"
+
+    curs.execute('''INSERT INTO languages (lang)
+                    values (%s)''',
+                 (LANG_PREFIX,))
+
     # populate categories table
     with open(categories) as file_in:
         for line in file_in:
             categ = line.split()[0]
             if get_category(categ, LANG_PREFIX):
                 curs.execute('INSERT INTO categories' +
-                             '(title, id, lang) VALUES (%s,%s,%s)', (get_category(
-                                 categ, LANG_PREFIX), get_hash(get_category(categ, LANG_PREFIX), LANG_PREFIX), LANG_PREFIX))
+                             '(title, id, ref_id, lang) VALUES (%s,%s,%s,%s)', (get_category(
+                                 categ, LANG_PREFIX), get_hash(get_category(categ, LANG_PREFIX), LANG_PREFIX),  get_hash(get_category(categ, "en")), LANG_PREFIX))
 
     # populate topics table
     for topic_item_path in os.listdir(topics_path):
         topic = os.path.basename(topic_item_path)
         # discard pesky hidden files
         if get_topic(topic, LANG_PREFIX):
-            curs.execute('''INSERT INTO topics (id, title, source, lang)
-                        values (%s,%s,%s,%s)''',
-                         (get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX), get_topic(topic, LANG_PREFIX), DEF_SOURCE, LANG_PREFIX))
+            curs.execute('''INSERT INTO topics (id, ref_id, title, source, lang)
+                        values (%s,%s,%s,%s,%s)''',
+                         (get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX), get_hash(get_topic(topic, "en")), get_topic(topic, LANG_PREFIX), DEF_SOURCE, LANG_PREFIX))
 
     # populate questions table
     for topic_item_path in os.listdir(topics_path):
@@ -165,10 +181,11 @@ for LANG_PREFIX in languages:
                     for related_topic in topicsList:
                         if related_topic != topic and get_topic(related_topic, LANG_PREFIX):
                             print("r", related_topic)
-                            curs.execute('''INSERT INTO "related" (id, source_id, dest_id, lang)
-                                            values (%s,%s,%s,%s)''',
-                                         (get_hash(get_topic(topic, LANG_PREFIX), get_topic(related_topic, LANG_PREFIX)), get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX), get_hash(
-                                             get_topic(related_topic, LANG_PREFIX), LANG_PREFIX), LANG_PREFIX))
+                            curs.execute('''INSERT INTO "related" (source_id, source_ref_id, dest_id, dest_ref_id, lang)
+                                            values (%s,%s,%s,%s, %s)''',
+                                         (get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX), get_hash(get_topic(topic, "en")), get_hash(
+                                             get_topic(related_topic, LANG_PREFIX), LANG_PREFIX), get_hash(get_topic(related_topic, "en")), LANG_PREFIX))
+
     # assign topics to each category
     # we take the list of associated topics after char ":" in category file
 
@@ -181,10 +198,11 @@ for LANG_PREFIX in languages:
                 if get_topic(topic, LANG_PREFIX) and get_category(categ, LANG_PREFIX):
                     print("77",  get_topic(topic, LANG_PREFIX),
                           get_category(categ, LANG_PREFIX))
-                    curs.execute('''INSERT INTO "category_topics" (id, category_id, topic_id,lang)
-                                    values (%s, %s,%s,%s)''',
-                                 (get_hash(get_category(categ, LANG_PREFIX), get_topic(topic, LANG_PREFIX)), get_hash(
-                                     get_category(categ, LANG_PREFIX), LANG_PREFIX), (get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX)), LANG_PREFIX))
+
+                    curs.execute('''INSERT INTO "category_topics" (category_id, category_ref_id, topic_id, topic_ref_id,lang)
+                                        values (%s, %s, %s,%s, %s)''',
+                                 (get_hash(
+                                     get_category(categ, LANG_PREFIX), LANG_PREFIX), get_hash(get_category(categ, "en")), (get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX)), get_hash(get_topic(topic, "en")), LANG_PREFIX))
 
 
 # create additional tables used for authentication and report queries
@@ -196,7 +214,7 @@ curs.execute('''CREATE TABLE "reports"
         "client_id"  INTEGER  NOT NULL,
         "question_id" INTEGER  UNIQUE NOT NULL,
         "reason" TEXT  NOT NULL ,
-        "lang" VARCHAR(2) NOT NULL,
+        "lang" VARCHAR(2) REFERENCES "languages" ("lang") ,
         "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
          FOREIGN KEY("question_id") REFERENCES "questions" ("id") on delete cascade
     )''')
@@ -226,9 +244,9 @@ curs.execute('''CREATE TABLE tokens
 curs.execute('''CREATE TABLE user_languages
     (
         "id" INTEGER NOT NULL,
-        "language" TEXT NOT NULL,
-        FOREIGN KEY("id") REFERENCES "users" ("id") on delete cascade,
-        PRIMARY KEY("id","language")
+        "lang" VARCHAR(2) REFERENCES "languages" ("lang") ,
+         FOREIGN KEY("id") REFERENCES "users" ("id") on delete cascade,
+         PRIMARY KEY("id","lang")
     )''')
 
 # create reports table
@@ -236,7 +254,7 @@ curs.execute('''CREATE TABLE CLIENT_STATS
     (
         "id" SERIAL PRIMARY KEY,
         "client_id"  INTEGER  NOT NULL,
-        "lang" VARCHAR(2) NOT NULL,
+        "lang" VARCHAR(2) REFERENCES "languages" ("lang") ,
         "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     )''')
 
@@ -246,7 +264,7 @@ curs.execute('''CREATE TABLE USER_STATS
     (
         "id" SERIAL PRIMARY KEY,
         "user_id"  INTEGER  NOT NULL,
-        "lang" VARCHAR(2) NOT NULL,
+        "lang" VARCHAR(2) REFERENCES "languages" ("lang") ,
         "action"  INTEGER  NOT NULL,
         "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY("user_id") REFERENCES "users" ("id") on delete cascade
@@ -257,8 +275,8 @@ curs.execute('''CREATE TABLE USER_STATS
 curs.execute('''CREATE TABLE TO_TRANSLATE 
     (
         "id" SERIAL PRIMARY KEY,
-        "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade,
-        "lang" VARCHAR(2) NOT NULL
+        "ref_id"  INTEGER REFERENCES "topics" ("id") on delete cascade,
+        "lang" VARCHAR(2) REFERENCES "languages" ("lang") 
     )''')
 
 # add default user
@@ -266,13 +284,12 @@ curs.execute('''INSERT INTO users (id,username, email, password, type )
                     values (%s,%s,%s,%s,%s)''',
              (get_hash(ROOT_USERNAME), ROOT_USERNAME, ROOT_EMAIL, HASHED_ROOT_PASSWORD, "root"))
 
-curs.execute('''INSERT INTO user_languages (id, language )
-                    values (%s,%s)''',
-             (get_hash(ROOT_USERNAME), "en"))
 
-curs.execute('''INSERT INTO user_languages (id, language )
-                    values (%s,%s)''',
-             (get_hash(ROOT_USERNAME), "it"))
+# iterate adding languages
+for LANG_PREFIX in languages:
+    curs.execute('''INSERT INTO user_languages (id, lang )
+                        values (%s,%s)''',
+                 (get_hash(ROOT_USERNAME), LANG_PREFIX))
 
 # close communication with the PostgreSQL database server
 curs.close()

@@ -6,7 +6,7 @@ export const DEFAULT_LANGUAGE = 'en';
 
 const translations = {
   it: {
-    TOP_PICK: 'Top Pick',
+    TOP_PICK: 'TOP Pick',
     PICK_TOPIC: 'Pick Topic',
     EXPORT_TO_PDF: 'Esporta come PDF',
     START_PRESENTATION: 'Inizia Presentazione',
@@ -79,9 +79,11 @@ const translations = {
     DOWNALOD_LANGUAGE: 'Scarica Lingua',
     DOWNALOD_LANGUAGE_REQUIRED_MESSAGE:
       "E' necessario scaricare i contenuti per usare l'app in questa lingua",
+    CHECK_UPDATES: 'verifica aggiornamenti...',
+    UPDATING_TOPICS: 'aggiornamento in corso...',
   },
   en: {
-    TOP_PICK: 'Top Pick',
+    TOP_PICK: 'TOP Pick',
     PICK_TOPIC: 'Pick Topic',
     EXPORT_TO_PDF: 'Export to PDF',
     START_PRESENTATION: 'Start Presentation',
@@ -154,6 +156,8 @@ const translations = {
     DOWNALOD_LANGUAGE: 'Download language',
     DOWNALOD_LANGUAGE_REQUIRED_MESSAGE:
       'Download the content to start using the app in this language',
+    CHECK_UPDATES: 'checking for updates...',
+    UPDATING_TOPICS: 'updating topics...',
   },
 };
 

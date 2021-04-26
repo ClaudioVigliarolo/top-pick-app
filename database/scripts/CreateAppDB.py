@@ -22,24 +22,6 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-
-ROOT_USERNAME = "claudio"
-ROOT_EMAIL = "claudio.vigliarolo.dev@gmail.com"
-HASHED_ROOT_PASSWORD = "$2a$08$DzlasehfyenoY953KgB6Z.13izu0cS1MhDeZcczTbycELeEngitYy"
-
-# check if line is not empty
-MIN_CHAR = 2
-# topics source
-DEF_SOURCE = "ESL, TopPicks"
-
-# number of digits to hash questions
-HASH_DIGITS = 10
-
-languages = args.languages
-print("Selected languages:")
-print(languages)
-
-
 # Connect to an existing database
 #conn = connect('../../db/current.db')
 conn = connect(
@@ -60,11 +42,11 @@ curs.execute('DROP TABLE IF EXISTS questions')
 
 # create categories table
 curs.execute('''CREATE TABLE "categories"
-              ( "title" VARCHAR(255) NOT NULL, "lang" VARCHAR(2) NOT NULL, "id" INTEGER PRIMARY KEY)''')
+              ( "title" VARCHAR(255) NOT NULL, "ref_id" INTEGER NOT NULL,  "lang" VARCHAR(2) NOT NULL, "id" INTEGER PRIMARY KEY)''')
 
 # create topics table
 curs.execute('''CREATE TABLE topics
-             ( "id" INTEGER NOT NULL,  "title" TEXT NOT NULL, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL,  PRIMARY KEY("id"))''')
+             ( "id" INTEGER NOT NULL,  "ref_id" INTEGER NOT NULL, "title" TEXT NOT NULL, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL,  PRIMARY KEY("id"))''')
 
 
 # create questions table
@@ -81,20 +63,22 @@ curs.execute('''CREATE TABLE "questions" (
 # create category_topics table
 curs.execute('''CREATE TABLE "category_topics" (
     "id" INTEGER PRIMARY KEY,
-    "lang" VARCHAR(2) NOT NULL,
-	"category_id" INTEGER REFERENCES "categories" ("id"),
-    "topic_id" INTEGER REFERENCES "topics" ("id")
+    "category_id" INTEGER REFERENCES "categories" ("id") on delete cascade,
+    "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade,
+	"category_ref_id" INTEGER NOT NULL,
+    "topic_ref_id" INTEGER NOT NULL,
+    "lang" VARCHAR(2) NOT NULL
 )''')
 
 
 # create related topic table
-curs.execute('''CREATE TABLE "related" (
+curs.execute('''CREATE TABLE "related" ( 
     "id" INTEGER PRIMARY KEY,
     "source_id" INTEGER NOT NULL,
 	"dest_id" INTEGER NOT NULL,
-    "lang" VARCHAR(2) NOT NULL,
-	FOREIGN KEY("source_id") REFERENCES "topics" ("id"),
-	FOREIGN KEY("dest_id") REFERENCES "topics" ("id")
+    "source_ref_id" INTEGER NOT NULL,
+	"dest_ref_id" INTEGER NOT NULL,
+    "lang" VARCHAR(2) NOT NULL
 )''')
 
 # close communication with the PostgreSQL database server

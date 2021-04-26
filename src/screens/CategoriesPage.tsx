@@ -27,7 +27,6 @@ export default function CategoryList({navigation}: {navigation: any}) {
         [],
         (tx, results) => {
           const rows = results.rows;
-          console.log('URSS', rows);
           let newArr = [];
 
           for (let i = 0; i < rows.length; i++) {

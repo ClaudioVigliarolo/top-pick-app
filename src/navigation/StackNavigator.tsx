@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, Image, TouchableOpacity, Button, Alert} from 'react-native';
+import {View, TouchableOpacity} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
 import MenuIcon from 'react-native-vector-icons/MaterialIcons';
@@ -16,28 +16,21 @@ import {LocalizationContext} from '../context/LocalizationContext';
 import FavouritesPage from '../screens/FavouritesPage';
 import SearchPage from '../screens/SearchPage';
 import PresentationPage from '../screens/PresentationPage';
-import AwesomeAlert from 'react-native-awesome-alerts';
 import {getColor} from '../constants/Themes';
 import Dimensions from '../constants/Dimensions';
 import SettingsPage from '../screens/SettingsPage';
 import {StatusContext} from '../context/StatusContext';
-import {updateTopics} from '../utils/api';
-import {
-  getLastUpdate,
-  isConnected,
-  onTopicsUpdate,
-  setFirstUpdate,
-} from '../utils/utils';
+import {onTopicsUpdate} from '../utils/utils';
 import SelectLanguagePage from '../screens/SettingsLanguagePage';
 import ThemePage from '../screens/SettingsThemePage';
 import translations from '../context/translations';
 import StatusModal from '../components/modals/StatusModal';
+import {Lang} from '../interfaces/Interfaces';
 
 const Stack = createStackNavigator();
 
 const NavigationDrawerStructure = (props: any) => {
   const {theme} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
 
   //Structure for the navigatin Drawer
   const toggleDrawer = () => {
@@ -47,7 +40,6 @@ const NavigationDrawerStructure = (props: any) => {
   return (
     <View style={{flexDirection: 'row'}}>
       <TouchableOpacity onPress={() => toggleDrawer()}>
-        {/*Donute Button Image */}
         <MenuIcon
           name="menu"
           color={getColor(theme, 'headerPrimary')}
@@ -84,9 +76,9 @@ const BackStructure = (props: BackStructureProps) => {
         <IconBack
           name="arrow-back"
           color={getColor(theme, 'secondaryIcon')}
-          size={Dimensions.iconMed}
+          size={30}
           style={{
-            marginLeft: 5,
+            marginLeft: 8,
           }}
         />
       </TouchableOpacity>
@@ -136,7 +128,12 @@ const CategoriesStack = ({
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },
-
+          headerLeft: () => (
+            <BackStructure
+              destination="CategoriesScreen"
+              navigation={navigation}
+            />
+          ),
           headerTitleStyle: {
             fontWeight: 'bold',
           },
@@ -267,8 +264,6 @@ const renderConnectivityIcon = (
   setUpdatedContent: (val: boolean) => void,
   setUpdatedAlert: (val: boolean) => void,
 ): any => {
-  console.log('laoding', isLoadingContent);
-
   if (isLoadingContent) {
     return <Spinner color="white" size="small" style={{marginRight: 20}} />;
   }
@@ -294,7 +289,7 @@ const renderConnectivityIcon = (
         color={iconColor}
         onPress={() =>
           onTopicsUpdate(
-            translations.LANG,
+            translations.LANG as Lang,
             setLoadingContent,
             setUpdatedContent,
           )
@@ -313,12 +308,12 @@ const getAppTitle = (
   isLoadingContent: boolean,
 ): string => {
   if (isCheckingUpdates) {
-    return 'checking for updates';
+    return translations.CHECK_UPDATES;
   }
   if (isLoadingContent) {
-    return 'updating topics...';
+    return translations.UPDATING_TOPICS;
   } else {
-    return 'TOP Pick';
+    return translations.TOP_PICK;
   }
 };
 

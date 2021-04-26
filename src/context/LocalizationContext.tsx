@@ -7,8 +7,8 @@ import keys from '../../database/keys/keys';
 export const LocalizationContext = createContext({
   translations,
   setAppLanguage: (newLang: string) => {},
-  configureLanguage: async () => {},
   appLanguage: DEFAULT_LANGUAGE,
+  configureDeviceDefaultLanguage: async () => {},
 });
 
 export const LocalizationProvider = ({children}: {children: any}) => {
@@ -16,18 +16,17 @@ export const LocalizationProvider = ({children}: {children: any}) => {
 
   React.useEffect(() => {
     (async () => {
-      configureLanguage();
+      configureDeviceDefaultLanguage();
     })();
   });
 
-  const setLanguage = async (language: string) => {
-    console.log('setttting', language);
+  const onSetAppLanguage = async (language: string) => {
     translations.setLanguage(language);
     setAppLanguage(language);
     AsyncStorage.setItem(keys.LANGUAGE_KEY, language);
   };
 
-  const configureLanguage = async () => {
+  const configureDeviceDefaultLanguage = async () => {
     const currentLanguage = await AsyncStorage.getItem(keys.LANGUAGE_KEY);
     if (!currentLanguage) {
       let localeCode = DEFAULT_LANGUAGE;
@@ -41,9 +40,9 @@ export const LocalizationProvider = ({children}: {children: any}) => {
           return true;
         }
       });
-      setLanguage(localeCode);
+      onSetAppLanguage(localeCode);
     } else {
-      setLanguage(currentLanguage);
+      onSetAppLanguage(currentLanguage);
     }
   };
 
@@ -51,9 +50,9 @@ export const LocalizationProvider = ({children}: {children: any}) => {
     <LocalizationContext.Provider
       value={{
         translations,
-        setAppLanguage: setLanguage,
+        setAppLanguage: onSetAppLanguage,
         appLanguage,
-        configureLanguage,
+        configureDeviceDefaultLanguage,
       }}>
       {children}
     </LocalizationContext.Provider>

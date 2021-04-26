@@ -140,7 +140,6 @@ export default function OrderPage({
   };
   //, user_modified = ${newVal ? 1 : 0}
   const onQuestionAdd = () => {
-    console.log('1ui', topic.title, questionText);
     const id = hashCode(questionText);
     getDB().transaction((tx) => {
       tx.executeSql(
@@ -148,7 +147,6 @@ export default function OrderPage({
          VALUES (${id}, "${topic.id}", "${questionText}", 0, 1, "${translations.LANG}")`,
         [],
         (tx, results) => {
-          console.log(questionId);
           const newQuestionItem: Question = {
             id,
             topic_id: topic.id,
@@ -156,7 +154,6 @@ export default function OrderPage({
             selected: false,
             title: questionText,
           };
-          console.log(newQuestionItem);
           const newArray = [newQuestionItem].concat(items);
           setItems(newArray.slice());
         },
@@ -205,7 +202,6 @@ export default function OrderPage({
     let itemsCopy = [...items];
     const index = items.findIndex((item) => item.id == id);
     const newVal = !items[index].liked;
-    console.log(newVal, id);
     getDB().transaction((tx) => {
       tx.executeSql(
         `UPDATE "questions"

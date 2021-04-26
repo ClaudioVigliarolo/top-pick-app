@@ -46,7 +46,6 @@ const ButtonsSection = (props: ButtonsSectionProps) => {
     <View style={styles.container}>
       <Text style={styles.header}>{props.header}</Text>
       <View style={styles.buttonContainer}>
-        {console.log(props.buttons)}
         {props.buttons.map((button: Topic, i) => (
           <React.Fragment key={i}>
             <Button

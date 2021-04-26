@@ -64,11 +64,11 @@ export default function QuestionsPage({
     getDB().transaction((tx) => {
       tx.executeSql(
         `
-            SELECT * from  topics
-            WHERE id IN ( 
-            SELECT  dest_id
-            FROM related
-            WHERE source_id="${topic.id}")`,
+        SELECT * from topics
+        WHERE lang="${translations.LANG}" AND ref_id IN ( 
+        SELECT  r.dest_ref_id
+        FROM related r
+        WHERE r.source_ref_id="${topic.ref_id}")`,
         [],
         (tx, results) => {
           const rows = results.rows;
@@ -152,9 +152,6 @@ export default function QuestionsPage({
       flex: 1,
     },
   });
-  {
-    console.log(topic);
-  }
   return (
     <React.Fragment>
       <SearchBar
@@ -201,13 +198,6 @@ export default function QuestionsPage({
               <ListItem
                 key={i}
                 editable={true}
-                onPress={() => {
-                  Clipboard.setString(item.title);
-                  setShowCopy(true);
-                  setTimeout(function () {
-                    setShowCopy(false);
-                  }, 2000);
-                }}
                 text={item.title}
                 id={item.id}
                 topic={topic.title}

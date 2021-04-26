@@ -33,7 +33,6 @@ interface ListItemCheckBoxProps {
   id: number;
   topic?: string;
   editable?: boolean;
-  onPress: () => void;
 }
 
 const ListItemCheckBox = ({
@@ -42,7 +41,6 @@ const ListItemCheckBox = ({
   onValChange,
   id,
   editable = true,
-  onPress = () => {},
 }: ListItemCheckBoxProps) => {
   const {theme} = React.useContext(ThemeContext);
   const [isModalVisible, setModalVisible] = React.useState(false);
@@ -50,6 +48,7 @@ const ListItemCheckBox = ({
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+    setModalReportOn(false);
   };
 
   const onReport = async (reason: string, question_id: number) => {
@@ -65,7 +64,6 @@ const ListItemCheckBox = ({
     <ListItem style={styles.container} noBorder={true}>
       <TouchableWithoutFeedback
         onPress={() => {
-          onPress();
           editable && toggleModal();
         }}>
         <View style={styles.textContainer}>

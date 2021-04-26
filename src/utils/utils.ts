@@ -9,6 +9,8 @@ import {
   CategoryTopic,
   Question,
   Related,
+  Updates,
+  Lang,
 } from '../interfaces/Interfaces';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -66,7 +68,7 @@ export const setFirstLaunch = async () => {
 
 export const setFirstUpdate = async () => {
   try {
-    AsyncStorage.setItem(keys.HAS_UPDATED, 'true');
+    AsyncStorage.setItem(keys.FIRST_UPDATED, 'true');
   } catch (error) {
     console.log(error);
   }
@@ -74,8 +76,30 @@ export const setFirstUpdate = async () => {
 
 export const isFirstUpdate = async (): Promise<boolean> => {
   try {
-    const hasLaunched = await AsyncStorage.getItem(keys.HAS_UPDATED);
+    const hasLaunched = await AsyncStorage.getItem(keys.FIRST_UPDATED);
     if (hasLaunched === null) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+export const setStorageIsUpdated = async (val: boolean) => {
+  try {
+    AsyncStorage.setItem(keys.IS_UPDATED, val.toString());
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const isStorageUpdated = async (): Promise<boolean> => {
+  try {
+    const isUpdated = await AsyncStorage.getItem(keys.IS_UPDATED);
+    if (isUpdated === 'true') {
       return true;
     } else {
       return false;
@@ -108,7 +132,6 @@ export const setUsedLanguage = async (lang: string): Promise<void> => {
   try {
     let usedLanguagesArr: string[] = [];
     const usedLanguages = await AsyncStorage.getItem(keys.USED_LANGUAGES);
-    console.log('UUUUUUUUUUUUUU', usedLanguages);
     if (usedLanguages !== null) {
       usedLanguagesArr = JSON.parse(usedLanguages);
       if (!usedLanguagesArr.includes(lang)) {
@@ -166,9 +189,9 @@ export const readTheme = async (): Promise<string> => {
   }
 };
 
-export const getLastUpdate = async (): Promise<string> => {
+export const getLastUpdate = async (lang: Lang): Promise<string> => {
   try {
-    const date = await AsyncStorage.getItem(keys.LAST_UPDATE_KEY);
+    const date = await AsyncStorage.getItem(keys.LAST_UPDATE_KEY + lang);
     if (date === null) {
       return NO_DATE;
     } else {
@@ -184,13 +207,13 @@ const isValidDate = (date: string) => !isNaN(new Date(date).getDate());
 
 export const setLastUpdate = async (
   serverUpdateDate: string,
+  lang: Lang,
 ): Promise<void> => {
   try {
-    if (isValidDate(serverUpdateDate))
-      await AsyncStorage.setItem(
-        keys.LAST_UPDATE_KEY,
-        isValidDate(serverUpdateDate) ? serverUpdateDate : Date(),
-      );
+    await AsyncStorage.setItem(
+      keys.LAST_UPDATE_KEY + lang,
+      isValidDate(serverUpdateDate) ? serverUpdateDate : Date(),
+    );
   } catch (e) {
     console.log('Failed to fetch date from storage');
   }
@@ -214,7 +237,7 @@ export const getStoredLanguage = async (): Promise<string> => {
 };
 
 export const generateDB = async (
-  data: JSONresponse,
+  data: Updates,
   LANG: string,
 ): Promise<boolean> => {
   console.log('start generate');
@@ -248,6 +271,8 @@ export const generateDB = async (
       tx.executeSql(`delete from related where lang = "${LANG}"`);
     });
 
+    console.log('ok delete');
+
     //insert new related table
     await bulkInsertRelated(data.related, LANG);
 
@@ -259,8 +284,6 @@ export const generateDB = async (
     });
     //insert new questions
     await bulkInsertQuestions(data.questions, LANG);
-
-    console.log('FINISH BULLKKKK');
     return true;
   } catch (e) {
     console.log(e);
@@ -274,11 +297,11 @@ const bulkInsertTopics = async (topics: Topic[], LANG: string) => {
   return new Promise<void>(async (resolve, reject) => {
     await db.transaction((tx) => {
       topics.forEach((el: Topic, i: number) => {
-        bigqery += '(?,?,?,?)';
-        parameters.push(el.id, el.title, el.source, LANG);
+        bigqery += '(?,?,?,?,?)';
+        parameters.push(el.id, el.ref_id, el.title, el.source, LANG);
         if (parameters.length == SQL_MAX_TUPLES || i == topics.length - 1) {
           tx.executeSql(
-            'INSERT INTO topics  (id,title,source,lang) VALUES ' +
+            'INSERT INTO topics  (id, ref_id, title,source,lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -338,11 +361,17 @@ const bulkInsertRelated = async (related: Related[], LANG: string) => {
   return new Promise<void>(async (resolve, reject) => {
     await db.transaction((tx) => {
       related.forEach((el: Related, i: number) => {
-        bigqery += '(?,?,?,?)';
-        parameters.push(el.id, el.source_id, el.dest_id, LANG);
+        bigqery += '(?,?,?,?,?)';
+        parameters.push(
+          el.source_id,
+          el.dest_id,
+          el.source_ref_id,
+          el.dest_ref_id,
+          LANG,
+        );
         if (parameters.length == SQL_MAX_TUPLES || i == related.length - 1) {
           tx.executeSql(
-            `INSERT INTO related (id, source_id, dest_id, lang) VALUES` +
+            `INSERT INTO related (source_id, dest_id, source_ref_id, dest_ref_id, lang) VALUES` +
               bigqery +
               ';',
             parameters,
@@ -373,14 +402,20 @@ const bulkInsertCategoryTopics = async (
   return new Promise<void>(async (resolve, reject) => {
     await db.transaction((tx) => {
       categoryTopics.forEach((el: CategoryTopic, i: number) => {
-        bigqery += '(?,?,?)';
-        parameters.push(el.category_id, el.topic_id, LANG);
+        bigqery += '(?,?,?,?,?)';
+        parameters.push(
+          el.category_id,
+          el.topic_id,
+          el.category_ref_id,
+          el.topic_ref_id,
+          LANG,
+        );
         if (
           parameters.length == SQL_MAX_TUPLES ||
           i == categoryTopics.length - 1
         ) {
           tx.executeSql(
-            `INSERT INTO category_topics (category_id, topic_id, lang) VALUES` +
+            `INSERT INTO category_topics (category_id, topic_id, category_ref_id, topic_ref_id, lang) VALUES` +
               bigqery +
               ';',
             parameters,
@@ -408,11 +443,13 @@ const bulkInsertCategories = async (categories: Category[], LANG: string) => {
   return new Promise<void>(async (resolve, reject) => {
     await db.transaction((tx) => {
       categories.forEach((el: Category, i: number) => {
-        bigqery += '(?,?,?)';
-        parameters.push(el.id, el.title, LANG);
+        bigqery += '(?,?,?,?)';
+        parameters.push(el.id, el.ref_id, el.title, LANG);
         if (parameters.length == SQL_MAX_TUPLES || i == categories.length - 1) {
           tx.executeSql(
-            'INSERT INTO categories  (id,title,lang) VALUES ' + bigqery + ';',
+            'INSERT INTO categories  (id, ref_id, title,lang) VALUES ' +
+              bigqery +
+              ';',
             parameters,
             (tx, results) => {
               console.log('ok categories');
@@ -453,7 +490,6 @@ export const getHash = (str1: string, str2: string = '') => {
 export const getUserID = () => {
   try {
     const deviceID = DeviceInfo.getUniqueId();
-    console.log('device id', deviceID);
     if (!deviceID) throw new Error('device id cannot be null');
     return getHash(deviceID);
   } catch (error) {
@@ -463,14 +499,20 @@ export const getUserID = () => {
 };
 
 export const onTopicsUpdate = async (
-  lang: string,
+  lang: Lang,
   setLoading: (val: boolean) => void,
   setSuccess: (val: boolean) => void,
 ) => {
   if (await isConnected()) {
     setLoading(true);
-    const hasUpdated = await updateTopics(await getLastUpdate(), lang);
+    const hasUpdated = await updateTopics(lang);
+    console.log('finished update');
     setLoading(false);
     setSuccess(hasUpdated);
   }
+};
+
+export const getDifferentLang = (lang: string, langs: string[]): string => {
+  const diffLang = langs.find((l) => l != lang);
+  return diffLang ? diffLang : lang;
 };

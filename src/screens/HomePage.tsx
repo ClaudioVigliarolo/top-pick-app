@@ -8,7 +8,6 @@ import Button from '../components/buttons/CustomButton';
 import Dimensions from '../constants/Dimensions';
 import {getColor} from '../constants/Themes';
 import {getDB} from '../utils/utils';
-import {StatusContext} from '../context/StatusContext';
 
 const INITIALS_TOPICS_LOADED = 10;
 const NEW_TOPICS_LOADED = 10;
@@ -18,13 +17,8 @@ const HomePage = ({navigation}: {navigation: any}) => {
   const [carouselItems, setCarouselItems] = React.useState<Topic[]>([]);
   const [carouselIndex, setCarouselIndex] = React.useState(0);
   const {theme} = React.useContext(ThemeContext);
-  const {translations, configureLanguage} = React.useContext(
-    LocalizationContext,
-  );
-  const {isLoadingContent} = React.useContext(StatusContext);
-
+  const {translations} = React.useContext(LocalizationContext);
   React.useEffect(() => {
-    configureLanguage();
     setCarouselItems(carouselItems.splice(0, carouselItems.length));
     loadTopics(INITIALS_TOPICS_LOADED);
   }, [translations.LANG]);
@@ -45,7 +39,6 @@ const HomePage = ({navigation}: {navigation: any}) => {
               ...rows.item(i),
             });
           }
-          console.log('setting new items');
           setCarouselItems([...newArr]);
         },
         (err) => {
@@ -67,10 +60,6 @@ const HomePage = ({navigation}: {navigation: any}) => {
       params: {topic},
     });
   };
-  {
-    console.log(translations.LANG);
-  }
-
   return (
     <SafeAreaView
       style={{

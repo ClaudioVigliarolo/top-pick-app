@@ -1,20 +1,17 @@
 import axios from 'axios';
-import {JSONresponse, Report} from '../interfaces/Interfaces';
-import {generateDB, getUserID, setLastUpdate} from './utils';
+import {JSONresponse, Lang, Report} from '../interfaces/Interfaces';
+import {generateDB, getLastUpdate, getUserID, setLastUpdate} from './utils';
 
-const HOSTNAME = 'https://top-pick-api.herokuapp.com';
-export const updateTopics = async (
-  date: string,
-  lang: string,
-): Promise<boolean> => {
+const HOSTNAME = 'https://top-pick-api-dev.herokuapp.com';
+export const updateTopics = async (lang: Lang): Promise<boolean> => {
   const id = getUserID();
-  console.log('before', 'my date', date, lang, id);
   let hasUpdated = false;
   try {
     const response = await axios.get(
-      `${HOSTNAME}/topick/get_updates/${id}/${date}/${lang}`,
+      `${HOSTNAME}/topick/get_updates/${id}/${await getLastUpdate(
+        lang,
+      )}/${lang}`,
     );
-    console.log('rress', response);
     if (!response) {
       throw new Error('got null response');
     }
@@ -24,15 +21,13 @@ export const updateTopics = async (
     const data: JSONresponse = response.data;
 
     if (data.already_updated) {
-      console.log('ALREADY UPDATED');
       hasUpdated = true;
     } else {
       //set the app as updated
-      console.log('GENERATING?????');
-      const generated = await generateDB(response.data, lang);
+      const generated = await generateDB(response.data.updates, lang);
       if (generated) {
         hasUpdated = true;
-        setLastUpdate(data.last_update);
+        await setLastUpdate(data.last_update, lang);
       } else {
         hasUpdated = false;
       }
@@ -60,14 +55,10 @@ export const addReport = async (
   }
 };
 
-export const checkUpdates = async (
-  date: string,
-  lang: string,
-): Promise<boolean> => {
+export const checkUpdates = async (lang: Lang): Promise<boolean> => {
   try {
-    console.log('chiam', date, lang);
     const response = await axios.get(
-      `${HOSTNAME}/topick/check_updates/${date}/${lang}`,
+      `${HOSTNAME}/topick/check_updates/${await getLastUpdate(lang)}/${lang}`,
     );
 
     if (!response) {
@@ -75,10 +66,10 @@ export const checkUpdates = async (
     }
 
     const data: JSONresponse = response.data;
-    console.log('isupdated', data);
     return data.already_updated;
   } catch (err) {
     console.log(err);
+
     return false;
   }
 };

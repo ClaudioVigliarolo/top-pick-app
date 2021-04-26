@@ -98,15 +98,14 @@ const SearchPage = ({navigation}: {navigation: any}) => {
         // We have data!!
         const recentsArray: Topic[] = JSON.parse(retrievedArray).map(
           (el: Topic) => {
-            if (el.lang == translations.LANG) return el;
+            if (el.lang === translations.LANG) return el;
           },
         );
-        // const recents = recentsArray.filter((el) => el);
         const newRecents =
           recentsArray.length > MAX_RECENTS
             ? recentsArray.slice(0, MAX_RECENTS)
             : recentsArray;
-        setRecents(newRecents);
+        setRecents(newRecents.filter((e) => e));
       }
     } catch (error) {
       // Error retrieving data
@@ -151,7 +150,6 @@ const SearchPage = ({navigation}: {navigation: any}) => {
       marginTop: '10%',
     },
   });
-  console.log('cazzo', recents.length);
 
   return (
     <React.Fragment>

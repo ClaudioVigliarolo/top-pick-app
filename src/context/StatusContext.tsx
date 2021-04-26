@@ -1,14 +1,18 @@
 import React from 'react';
 import {Alert} from 'react-native';
 import StatusModal from '../components/modals/StatusModal';
+import {Lang} from '../interfaces/Interfaces';
 import {checkUpdates, updateTopics} from '../utils/api';
 import {
+  getDifferentLang,
   getLastUpdate,
   isAutomaticUpdate,
   isConnected,
   isFirstUpdate,
+  isStorageUpdated,
   onTopicsUpdate,
   setFirstUpdate,
+  setStorageIsUpdated,
   setUsedLanguage,
 } from '../utils/utils';
 import {LocalizationContext} from './LocalizationContext';
@@ -24,6 +28,7 @@ export const StatusContext = React.createContext({
   setLoadingContent: (value: boolean) => {},
   setUpdatedContent: (value: boolean) => {},
   setRequiredUpdate: (value: boolean) => {},
+  onCheckUpdates: () => {},
 });
 
 export const StatusProvider = ({children}: {children: any}) => {
@@ -43,44 +48,45 @@ export const StatusProvider = ({children}: {children: any}) => {
     })();
 
     (async () => {
-      //check if first time
-      //if it is the first time try loading the data
-      //if it fails fai apparire un bottone speciale retry
-      if (await isConnected()) {
-        const isUpdated = await checkUpdates(
-          await getLastUpdate(),
-          translations.LANG,
-        );
-        setUpdatedContent(isUpdated);
-
-        if ((await isAutomaticUpdate()) && !isUpdated) {
-          setLoadingContent(true);
-          const hasUpdated = await updateTopics(
-            await getLastUpdate(),
-            translations.LANG,
-          );
-          setLoadingContent(false);
-          setUpdatedContent(hasUpdated);
-        }
-      }
-      setCheckUpdates(false);
+      //se c'è internet => fai check e verifica
+      await onCheckUpdates();
     })();
   }, []);
+
+  const onCheckUpdates = async () => {
+    if (await isConnected()) {
+      const isUpdated = await checkUpdates(translations.LANG as Lang);
+      setUpdatedContent(isUpdated);
+      setStorageIsUpdated(isUpdated);
+
+      if ((await isAutomaticUpdate()) && !isUpdated) {
+        setLoadingContent(true);
+        const hasUpdated = await updateTopics(translations.LANG as Lang);
+        setLoadingContent(false);
+        setUpdatedContent(hasUpdated);
+      }
+    } else {
+      setUpdatedContent(await isStorageUpdated());
+      //se non c'è internet => prendi il valore da update
+    }
+    setCheckUpdates(false);
+  };
 
   const handleFirstUpdate = async () => {
     setLoadingContent(true);
     await setUsedLanguage(translations.LANG);
-    const hasFirstUpdated = await updateTopics(
-      await getLastUpdate(),
-      translations.LANG,
-    );
+    const hasFirstUpdated = await updateTopics(translations.LANG as Lang);
     setLoadingContent(false);
     setUpdatedContent(hasFirstUpdated);
 
     if (hasFirstUpdated) {
       const currLang = translations.LANG;
-      setAppLanguage('');
-      setAppLanguage(currLang);
+      setAppLanguage(
+        getDifferentLang(currLang, translations.getAvailableLanguages()),
+      );
+      setTimeout(() => {
+        setAppLanguage(currLang);
+      }, 300);
       setRequiredUpdate(false);
       setFirstUpdate();
     } else {
@@ -99,8 +105,6 @@ export const StatusProvider = ({children}: {children: any}) => {
     setRequiredUpdate(newVal);
   };
 
-  //update app
-
   return (
     <StatusContext.Provider
       value={{
@@ -108,6 +112,7 @@ export const StatusProvider = ({children}: {children: any}) => {
         isUpdatedContent,
         isCheckingUpdates,
         isRequiredUpdate,
+        onCheckUpdates,
         setLoadingContent: onSetLoadingContent,
         setUpdatedContent: onSetUpdatedContent,
         setRequiredUpdate: onSetRequiredUpdate,

@@ -15,21 +15,20 @@ export default function TopicsPage({
   navigation: any;
 }) {
   const {theme} = React.useContext(ThemeContext);
-  const {translations, appLanguage, setAppLanguage} = React.useContext(
-    LocalizationContext,
-  );
+  const {translations} = React.useContext(LocalizationContext);
   const [items, setItems] = React.useState<Topic[]>([]);
   const {category}: {category: Category} = route.params;
-
+  /*
+AND c.lang="${translations.LANG}*/
   React.useEffect(() => {
     getDB().transaction((tx) => {
       tx.executeSql(
         `SELECT *
           FROM topics
-          WHERE lang = "${translations.LANG}" AND id IN(
+          WHERE lang="${translations.LANG}" AND id IN(
             SELECT c.topic_id 
             FROM category_topics c
-            WHERE c.category_id = "${category.id}"
+            WHERE c.category_id = "${category.id}" AND c.lang="${translations.LANG}"
         )`,
         [],
         (tx, results) => {
@@ -40,6 +39,7 @@ export default function TopicsPage({
               ...rows.item(i),
             });
           }
+          console.log('33333', newArr);
           setItems(newArr);
         },
         (err) => {
