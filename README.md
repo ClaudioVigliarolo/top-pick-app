@@ -30,7 +30,7 @@ Once the user chooses a topic, he can select the questions he likes.
 Finally, he can reorder the questions by dragging each question in the list using the right icon.
 Once the user is ready, he can either export the selected questions to pdf or start a presentation where each question will be shown on a single page.
 
-The app interacts with a backend LINK, to get updates and send reports about poor app content.
+The app interacts with a <a href="https://play.google.com/store?hl=it&gl=US"><strong>backend server</strong></a> to get updates and send reports about poor app content.
 
 <br />
 
