@@ -25,10 +25,9 @@ parser.add_argument(
 args = parser.parse_args()
 
 DB_URL = config('DB_URL')
-ROOT_USERNAME = config('DB_URL')
+ROOT_USERNAME = config('ROOT_USERNAME')
 ROOT_EMAIL = config('ROOT_EMAIL')
 HASHED_ROOT_PASSWORD = config('HASHED_ROOT_PASSWORD')
-DEF_CATEG = "all"
 # topics source
 DEF_SOURCE = "ESL, TopPicks"
 
