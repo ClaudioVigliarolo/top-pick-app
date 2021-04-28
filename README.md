@@ -17,7 +17,7 @@ The Top Pick app is based on the React Native Framework, which supports both IOS
 <br />
 <br />
 
-### Structure
+## Structure
 
 The App offers a new and simple way to find interesting conversational topics. From the drawer menu, you have access to the main screens of the app:
 -a screen for finding topics sorted by category
