@@ -3,10 +3,11 @@ import translations, {DEFAULT_LANGUAGE} from './translations';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as RNLocalize from 'react-native-localize';
 import keys from '../../database/keys/keys';
+import {Lang} from '../interfaces/Interfaces';
 
 export const LocalizationContext = createContext({
   translations,
-  setAppLanguage: (newLang: string) => {},
+  setAppLanguage: (newLang: Lang) => {},
   appLanguage: DEFAULT_LANGUAGE,
   configureDeviceDefaultLanguage: async () => {},
 });
@@ -20,7 +21,7 @@ export const LocalizationProvider = ({children}: {children: any}) => {
     })();
   });
 
-  const onSetAppLanguage = async (language: string) => {
+  const onSetAppLanguage = async (language: Lang) => {
     translations.setLanguage(language);
     setAppLanguage(language);
     AsyncStorage.setItem(keys.LANGUAGE_KEY, language);
@@ -36,13 +37,13 @@ export const LocalizationProvider = ({children}: {children: any}) => {
       );
       phoneLocaleCodes.some((code) => {
         if (supportedLocaleCodes.includes(code)) {
-          localeCode = code;
+          localeCode = code as Lang;
           return true;
         }
       });
       onSetAppLanguage(localeCode);
     } else {
-      onSetAppLanguage(currentLanguage);
+      onSetAppLanguage(currentLanguage as Lang);
     }
   };
 

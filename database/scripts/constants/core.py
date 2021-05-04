@@ -117,6 +117,126 @@ englishTopics = {
 }
 
 
+frenchTopics = {
+    "all": "all",
+    "computers": "ordinateurs",
+    "easter": "pâques",
+    "disabilities": "handicaps",
+    "comics": "comics",
+    "change": "changer",
+    "chores": "corvées",
+    "airplanes": "avions",
+    "university": "université",
+    "cheating": "tricherie",
+    "clothes": "vêtements",
+    "creativity": "créativité",
+    "drugs": "drogues",
+    "art": "art",
+    "celebrities": "célébrités",
+    "death": "mort",
+    "childhood": "enfance",
+    "education": "éducation",
+    "entertainment": "divertissement",
+    "business": "entreprise",
+    "body_language": "langage corporel",
+    "adoption": "adoption",
+    "birthdays": "anniversaires",
+    "advice": "conseil",
+    "conflict": "conflit",
+    "diet": "régime",
+    "books": "livres",
+    "basketball": "basketball",
+    "complaining": "se plaindre",
+    "beauty": "beauté",
+    "arguing": "argumenter",
+    "facebook": "facebook",
+    "wishes": "souhaite",
+    "cities": "villes",
+    "colors": "couleurs",
+    "animals": "animaux",
+    "disaster": "catastrophe",
+    "corruption": "corruption",
+    "cars": "voitures",
+    "advertising": "publicité",
+    "environment": "environment",
+    "beach": "plage",
+    "dreams": "rêves",
+    "behaviour": "comportement",
+    "countries": "pays",
+    "crime": "crime",
+    "pets": "pets",
+    "bags": "sacs",
+    "dating": "dating",
+    "community": "communauté",
+    "children": "enfants",
+    "charity": "charity",
+    "earthquakes": "tremblements de terre",
+    "culture": "culture",
+    "dangers": "dangers",
+    "conversation": "conversation",
+    "aging": "vieillissement",
+}
+
+spanishTopics = {
+    "all": "todos",
+    "computers": "computadores",
+    "easter": "pascua",
+    "disabilities": "discapacidades",
+    "comics": "comics",
+    "change": "cambiamento",
+    "chores": "deberes",
+    "airplanes": "aeroplanos",
+    "university": "universidad",
+    "cheating": "trampa",
+    "clothes": "ropa",
+    "creativity": "creatividad",
+    "drugs": "drogas",
+    "art": "arte",
+    "celebrities": "celebridades",
+    "death": "muerte",
+    "childhood": "infancia",
+    "education": "Educación",
+    "entertainment": "entretenimiento",
+    "business": "business",
+    "body_language": "lenguaje corporal",
+    "adoption": "adopción",
+    "birthdays": "cumpleaños",
+    "advice": "consejos",
+    "conflict": "conflictos",
+    "diet": "dieta",
+    "books": "libros",
+    "basketball": "basketball",
+    "complaining": "quejárse",
+    "beauty": "belleza",
+    "arguing": "discutir",
+    "facebook": "facebook",
+    "wishes": "deseos",
+    "cities": "ciudades",
+    "colors": "colores",
+    "animals": "animales",
+    "disaster": "desastres",
+    "corruption": "corrupción",
+    "cars": "coches",
+    "advertising": "publicidad",
+    "environment": "entorno",
+    "beach": "playa",
+    "dreams": "sueños",
+    "behaviour": "comportamiento",
+    "countries": "países",
+    "crime": "crimen",
+    "pets": "pets",
+    "bags": "bolsas",
+    "dating": "citas",
+    "community": "comunidad",
+    "children": "niños",
+    "charity": "caridad",
+    "earthquakes": "terremotos",
+    "culture": "culturas",
+    "dangers": "peligros",
+    "conversation": "conversación",
+    "aging": "vejez",
+}
+
 italianCategories = {
     "all": 'tutte',
     "languages": 'Lingue',
@@ -141,9 +261,36 @@ englishCategories = {
 }
 
 
+frenchCategories = {
+    "all": 'tous',
+    "languages": 'langues',
+    "friends": 'amis',
+    "school": 'école',
+    "work": 'travail',
+    "relax": 'relax',
+    "fun": 'fun',
+    "romance": 'romance',
+}
+
+spanishCategories = {
+    "all": 'todos',
+    "languages": 'idiomas',
+    "friends": 'amigos',
+    "school": 'escuela',
+    "work": 'trabajo',
+    "relax": 'relax',
+    "fun": 'divertimiento',
+    "romance": 'romance',
+}
+
+
 def get_topic(word, lang):
     if lang == "it":
         return italianTopics[word] if word in italianTopics else False
+    if lang == "fr":
+        return frenchTopics[word] if word in frenchTopics else False
+    if lang == "es":
+        return spanishTopics[word] if word in spanishTopics else False
     else:
         return englishTopics[word] if word in englishTopics else False
 
@@ -151,6 +298,10 @@ def get_topic(word, lang):
 def get_category(word, lang):
     if lang == "it":
         return italianCategories[word] if word in italianCategories else False
+    if lang == "fr":
+        return frenchCategories[word] if word in frenchCategories else False
+    if lang == "es":
+        return spanishCategories[word] if word in spanishCategories else False
     else:
         return englishCategories[word] if word in englishCategories else False
 

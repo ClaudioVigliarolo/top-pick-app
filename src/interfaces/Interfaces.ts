@@ -40,9 +40,16 @@ export interface Question {
   selected?: boolean;
 }
 
+export interface Language {
+  label: string;
+  value: Lang;
+}
+
 export enum Lang {
   italian = 'it',
   english = 'en',
+  spanish = 'es',
+  french = 'fr',
 }
 
 export interface JSONresponse {

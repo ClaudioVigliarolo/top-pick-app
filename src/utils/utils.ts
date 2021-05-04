@@ -512,7 +512,7 @@ export const onTopicsUpdate = async (
   }
 };
 
-export const getDifferentLang = (lang: string, langs: string[]): string => {
+export const getDifferentLang = (lang: Lang, langs: string[]): Lang => {
   const diffLang = langs.find((l) => l != lang);
-  return diffLang ? diffLang : lang;
+  return diffLang ? (diffLang as Lang) : lang;
 };

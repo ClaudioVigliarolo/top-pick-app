@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Platform, Alert, PermissionsAndroid} from 'react-native';
-import {Question, Topic} from '../interfaces/Interfaces';
+import {Lang, Question, Topic} from '../interfaces/Interfaces';
 import {getColor} from '../constants/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
 import FileViewer from 'react-native-file-viewer';
@@ -14,10 +14,10 @@ import RNHTMLtoPDF, {Pdf} from 'react-native-html-to-pdf';
 import EditOverlay from '../components/custom/EditOverlay';
 import {getDB, hashCode} from '../utils/utils';
 
-const getQuestionHtml = (items: Question[], title: string) => {
+const getQuestionHtml = (items: Question[], title: string, lang: Lang) => {
   const htmlContent = `
   <!DOCTYPE html>
-  <html lang="en">
+  <html lang=${lang}>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -236,7 +236,9 @@ export default function OrderPage({
   const handleButtons = (functionName: string): void => {
     switch (functionName) {
       case translations.EXPORT_TO_PDF:
-        createPDF(getQuestionHtml(items, topic.title));
+        createPDF(
+          getQuestionHtml(items, topic.title, translations.LANG as Lang),
+        );
         break;
 
       case translations.START_PRESENTATION:

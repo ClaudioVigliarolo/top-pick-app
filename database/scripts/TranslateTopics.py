@@ -1,6 +1,6 @@
 
 # usage: python TranslateTopics.py
-# example usage: python TranslateTopics.py --prefix it --language german python TranslateTopics.py --prefix it --language italian
+# example usage: python TranslateTopics.py --prefix it --language italian
 # 1 We translate the data created in the  1CreateRootDB.py  in other languages
 # 2 we create a parallel [dbname]LANG_PREFIX with translated data
 
@@ -84,8 +84,8 @@ MAX_FILE_LEN = 4999
 MAX_LINES_N = 50
 
 
-SOURCE_PATH = "../../data/en/"
-DEST_PATH = "../../data/"+LANG_PREFIX + "/"
+SOURCE_PATH = "../data/en/"
+DEST_PATH = "../data/"+LANG_PREFIX + "/"
 
 # file containing categories
 categories_source_dir = SOURCE_PATH + "categories/"

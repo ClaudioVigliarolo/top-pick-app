@@ -80,7 +80,7 @@ export const StatusProvider = ({children}: {children: any}) => {
     setUpdatedContent(hasFirstUpdated);
 
     if (hasFirstUpdated) {
-      const currLang = translations.LANG;
+      const currLang = translations.LANG as Lang;
       setAppLanguage(
         getDifferentLang(currLang, translations.getAvailableLanguages()),
       );

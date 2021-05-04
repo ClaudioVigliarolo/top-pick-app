@@ -1,8 +1,27 @@
 import LocalizedStrings from 'localized-strings';
-
+import {Lang, Language} from '../interfaces/Interfaces';
 // the translations
 // (tip: move them in separate JSON files and import them)
-export const DEFAULT_LANGUAGE = 'en';
+export const DEFAULT_LANGUAGE = Lang.english;
+
+export const defaultLanguages: Language[] = [
+  {
+    label: 'English',
+    value: Lang.english,
+  },
+  {
+    label: 'Italiano',
+    value: Lang.italian,
+  },
+  {
+    label: 'French',
+    value: Lang.french,
+  },
+  {
+    label: 'Spanish',
+    value: Lang.spanish,
+  },
+];
 
 const translations = {
   it: {
@@ -158,6 +177,166 @@ const translations = {
       'Download the content to start using the app in this language',
     CHECK_UPDATES: 'checking for updates...',
     UPDATING_TOPICS: 'updating topics...',
+  },
+
+  fr: {
+    TOP_PICK: 'TOP Pick',
+    PICK_TOPIC: 'Pick Topic',
+    EXPORT_TO_PDF: 'Exporter au format PDF',
+    START_PRESENTATION: 'Commencer la présentation',
+    START: 'Commencer',
+    READY: 'Je suis prêt!',
+    IS_TIME: "C'est le moment",
+    ADD_YOUR_QUESTION: 'Ajouter une Question',
+    NEXT: 'Suivant',
+    DARK_MODE: 'Dark Mode',
+    LIGHT_MODE: 'Light Mode',
+    SOURCE_TOPICS: 'source:',
+    RELATED_TOPICS: 'lié:',
+    SELECTED: 'Sélectionné',
+    POPULAR_SEARCHES: 'Recherches populaires',
+    LANGUAGE_SELECT: 'Changer de langue',
+    SEARCH_A_TOPIC: 'Rechercher un sujet',
+    CATEGORIES: 'Catégories',
+    FAVOURITES: 'Favoris',
+    SETTINGS: 'Paramètres',
+    SELECT_LANGUAGE: 'Sélectionner la langue',
+    SEARCH: 'Chercher',
+    QUESTIONS: 'Questions',
+    CHANGE_THEME: 'Changer de thème',
+    SEARCH_IN: 'Rechercher dans',
+    ARRANGE_QUESTIONS: 'Arranger les questions',
+    LANG: 'fr',
+    READY_TO_TALK: 'Prêt à parler',
+    NO_LIKED_QUESTIONS: 'pas de question préférée',
+    AUTOMATIC_UPDATE: 'Mise à jour automatique',
+    WELCOME_TOPICK_TITLE: 'Bienvenue dans Top Pick!',
+    WELCOME_TOPICK_DESCRIPTION:
+      "Voici un guide rapide pour vous montrer comment utiliser l'application",
+    STEP_1_TITLE: 'Étape 1: Choisissez',
+    STEP_1_DESCRIPTION:
+      'Appuyez simplement sur la carte pour sélectionner le sujet',
+    UPDATING_QUESTIONS: 'mise à jour en cours ...',
+    STEP_2_TITLE: 'Étape 2: Sélectionnez',
+    STEP_2_DESCRIPTION:
+      'Vous pouvez sélectionner les questions que vous aimez en appuyant sur le petit carré à droite',
+    WAIT_UPDATE: "Attendez pendant que l'appli se met a jour",
+    STEP_3_TITLE: 'Step 3: Arranger',
+    STEP_3_DESCRIPTION:
+      "Vous pouvez poser les questions dans l'ordre que vous préférez en faisant glisser l'icône à droite",
+    READY_TO_START: 'prêt à commencer!',
+    READY_TO_START_TIP:
+      'ASTUCE: vous pouvez revoir ce tutoriel dans le dossier des paramètres',
+    CLOSE: 'fermer',
+    EDIT: 'éditer',
+    COPY: 'copier',
+    SELECT: 'sélectionner',
+    REPORT: 'signaler',
+    DESELECT: 'désélectionner',
+    REMOVE: 'supprimer',
+    REMOVE_FAVOURITE: 'retirer le like',
+    ADD_FAVOURITE: 'Like',
+    GREEN: 'vert',
+    BLUE: 'bleu',
+    RED: 'rouge',
+    ORANGE: 'orange',
+    VIOLET: 'violet',
+    DEFAULT: 'défaut',
+    REASON_TRANSLATION: 'mauvaise traduction',
+    REASON_PERTINENCE: 'pas pertinent',
+    REASON_SCURRILOUS: 'langage grossier',
+    REASON_OTHERS: 'autre chose',
+    TOPICS_SYNCRONIZED: 'Tous les sujets sont à jour!',
+    UPDATE_REQUIRED_TITLE: 'Top Pick',
+    UPDATE_REQUIRED_MESSAGE:
+      "Vous devez importer les sujets pour utiliser l'application",
+    DOWNLOAD: 'Télécharger',
+    CANCEL: 'Annuler',
+    DOWNALOD_LANGUAGE: 'Télécharger la langue',
+    DOWNALOD_LANGUAGE_REQUIRED_MESSAGE:
+      "Téléchargez le contenu pour commencer à utiliser l'application dans cette langue",
+    CHECK_UPDATES: 'Vérification des mises à jour...',
+    UPDATING_TOPICS: 'mise à jour en cours...',
+  },
+
+  es: {
+    TOP_PICK: 'TOP Pick',
+    PICK_TOPIC: 'Pick Topic',
+    EXPORT_TO_PDF: 'Exportar a PDF',
+    START_PRESENTATION: 'Iniciar presentación',
+    START: 'Iniciamos',
+    READY: 'Estoy listo',
+    IS_TIME: 'Es el momento',
+    ADD_YOUR_QUESTION: 'añadir una pregunta',
+    NEXT: 'Proximo',
+    DARK_MODE: 'Dark Mode',
+    LIGHT_MODE: 'Light Mode',
+    SOURCE_TOPICS: 'fuente:',
+    RELATED_TOPICS: 'relacionados:',
+    SELECTED: 'Seleccionado',
+    POPULAR_SEARCHES: 'Búsquedas populares',
+    LANGUAGE_SELECT: 'Cambiar de idioma',
+    SEARCH_A_TOPIC: 'Buscar un tema',
+    CATEGORIES: 'Categorías',
+    FAVOURITES: 'Favoritos',
+    SETTINGS: 'Ajustes',
+    SELECT_LANGUAGE: 'Seleccione el idioma',
+    SEARCH: 'Buscar',
+    QUESTIONS: 'Preguntas',
+    CHANGE_THEME: 'Cambiar de tema',
+    SEARCH_IN: 'Buscar en',
+    ARRANGE_QUESTIONS: 'Organizar preguntas',
+    LANG: 'es',
+    READY_TO_TALK: 'Listo para hablar',
+    NO_LIKED_QUESTIONS: 'No hay preguntas preferidas',
+    AUTOMATIC_UPDATE: 'Actualización automática',
+    WELCOME_TOPICK_TITLE: 'Bienvenido a Top Pick!',
+    WELCOME_TOPICK_DESCRIPTION:
+      'Aquí tienes una guía rápida para mostrarte cómo usar la aplicación',
+    STEP_1_TITLE: 'Paso 1: Elija',
+    STEP_1_DESCRIPTION:
+      'Simplemente presione en la tarjeta para seleccionar el tema',
+    UPDATING_QUESTIONS: 'actualización en curso ...',
+    STEP_2_TITLE: 'Paso 2: Seleccionar',
+    STEP_2_DESCRIPTION:
+      'Puede seleccionar las preguntas que desee presionando el recuadro en la derecha',
+    WAIT_UPDATE: 'espera que los temas se actuen',
+    STEP_3_TITLE: 'Paso 3: Organizar',
+    STEP_3_DESCRIPTION:
+      'Puede poner las preguntas en el orden que prefiera arrastrando el icono de la derecha',
+    READY_TO_START: 'Estoy listo!',
+    READY_TO_START_TIP:
+      'CONSEJO: puede volver a ver este tutorial en las configuraciónes',
+    CLOSE: 'cerrar',
+    EDIT: 'editar',
+    COPY: 'copiar',
+    SELECT: 'seleccionar',
+    REPORT: 'reportar',
+    DESELECT: 'deseleccionar',
+    REMOVE: 'eliminar',
+    REMOVE_FAVOURITE: 'No me gusta',
+    ADD_FAVOURITE: 'Me gusta',
+    GREEN: 'verde',
+    BLUE: 'Azul',
+    RED: 'rojo',
+    ORANGE: 'naranja',
+    VIOLET: 'violeta',
+    DEFAULT: 'défaut',
+    REASON_TRANSLATION: 'mala traducción',
+    REASON_PERTINENCE: 'no pertinente',
+    REASON_SCURRILOUS: 'lenguaje grosero',
+    REASON_OTHERS: 'autra cosa',
+    TOPICS_SYNCRONIZED: 'Todos los temas están sincronizados!',
+    UPDATE_REQUIRED_TITLE: 'Top Pick',
+    UPDATE_REQUIRED_MESSAGE:
+      'Necesitas importar los contenidos para usar la aplicación',
+    DOWNLOAD: 'Descargar',
+    CANCEL: 'Cancelar',
+    DOWNALOD_LANGUAGE: 'Descargar el idioma',
+    DOWNALOD_LANGUAGE_REQUIRED_MESSAGE:
+      'Descarga los contenidos para usar la aplicación en este idioma',
+    CHECK_UPDATES: 'Buscando actualizaciones en curso ......',
+    UPDATING_TOPICS: 'actualizando los temas...',
   },
 };
 

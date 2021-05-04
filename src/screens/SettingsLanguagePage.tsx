@@ -4,6 +4,7 @@ import {View, Text, ScrollView, StyleSheet, Alert} from 'react-native';
 import {LocalizationContext} from '../context/LocalizationContext';
 import ListeItemCheck from '../components/lists/ListeItemCheck';
 import {StatusContext} from '../context/StatusContext';
+import {defaultLanguages} from '../context/translations';
 import {
   getDifferentLang,
   isUsedLanguage,
@@ -16,16 +17,6 @@ interface Language {
   label: string;
   value: string;
 }
-const defaultLanguages: Language[] = [
-  {
-    label: 'English',
-    value: 'en',
-  },
-  {
-    label: 'Italiano',
-    value: 'it',
-  },
-];
 
 export default function SelectLanguagePage() {
   const {translations, appLanguage, setAppLanguage} = React.useContext(
