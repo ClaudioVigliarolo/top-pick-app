@@ -1,121 +1,67 @@
 {\rtf1\ansi\ansicpg1252\cocoartf2578
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 Menlo-Italic;
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 FiraCode-Regular;
 }
-{\colortbl;\red255\green255\blue255;\red184\green14\blue61;\red247\green238\blue241;}
-{\*\expandedcolortbl;;\cssrgb\c78039\c14510\c30588;\cssrgb\c97647\c94902\c95686;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww24880\viewh16020\viewkind0
+{\colortbl;\red255\green255\blue255;\red184\green14\blue61;\red247\green238\blue241;\red185\green122\blue229;
+\red2\green17\blue29;\red112\green150\blue255;\red205\green214\blue230;}
+{\*\expandedcolortbl;;\cssrgb\c78039\c14510\c30588;\cssrgb\c97647\c94902\c95686;\cssrgb\c78039\c57255\c91765;
+\cssrgb\c392\c8627\c15294;\cssrgb\c50980\c66667\c100000;\cssrgb\c83922\c87059\c92157;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww35640\viewh20780\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\f0\fs24 \cf0 	
+\f0\fs24 \cf0   
 \f1\fs25\fsmilli12600 \cf2 \cb3 \expnd0\expndtw0\kerning0
-Come organizzare la conoscenza?\
+\
 \pard\pardeftab720\partightenfactor0
-\cf2 \
-Obiettivo: avere abbastanza questions per il primo test.\
-Se voglio translate delle questions dallo spagnolo deve essere semplice.\
-\
-Posso aggiungere un ruolo: translator.\
-\
-Aggiungo quelle che ci sono + \
-\
-\
-Devo mettermi sotto per la parte del core. In comune ad entrambi per categorie\
-\
-Il translator avr\'e0 ad esempio SP-EN.\
-\
-Vede tutti i topics inseriti.\
-\
-\
-\
-I topic da tradurre li scelgo io da un menu(il menu vede la differenza tra\
-Le varie lingue. E io posso scegliere quali dare da tradurre e quali no.\
-\
-Seleziona il topic title.\
-Copia il testo.\
-\
-Clicca su review translation. \
-\
-Appare in colore diverso originale e traduzione. Clicca su conferma. Aggiunto ai topics. Rimosso da quelli da tradurre.\
-\
-\
-last_update, chiamata al db (get_updates). Mi salvo (id, caller, date_chiamata, lingua).\
-\
-//come misurare le statistiche di chi inserisce? Posso mostrarlo nella lista degli users.\
-\
-Expected result: 						\
-User Katia: inserito 5 nuovi topic, updated 5 \'85, aggiunto 4\'85.\
-\
-
-\f2\i ACTIONS\
-id_incremental, client_id, action_type[topic_add, topic_delete, category_add\'85], date.\
-\
-
-\f1\i0 \
-										\
-			\
-\
-Domanda se voglio aggiungere qualcosa nel server finale come faccio?\
-Non posso cancellare tutto. Devo vedere come gestirmi i backup\
-\
-\
-\
-CREO ROUTE TRANSLATE:\
-Ogni volta che aggiungo un topic => \
-Da lingua \
-Uguale a quella create. La persona traduce da \'93LINGUA SPAGN - A (MENU SELEZ PER LINGUA DEST)\
-\
-Copy text. \
-\
-\
-\
-\
-\
-Nel\
-\
-\
-Posso fare un table toTranslate ogni volta che aggiungo un topic:\
-Questo verr\'e0 aggiunto automaticamente ad ogni lingua (lo scarto dopo semmai).\
-\
-Si tradurre sempre: \
-Da \'85  A LINGUA DEST IN ALTO\
-\
-\
-esempio: creo topic \'93comida\'94.\
-\
-Verranno creati nel table to_translate alcune tuple: \'93comida\'94: en,  \'93comida\'94:it.\
-\
-\
-Sarebbe bello differenziare a partire anche dalla lingua sorgente. Se assumo una spagnola \
-\
-\
-\
-\
-\
-Quando il signore traduce. 1) remuovi da toTranslate 2) aggiungi nuovo topic nella lingua.\
-\
-\
-\
-\
-\
-\
-\'97\'97\'97\
+\cf2 \'97\'97\'97\
 TODO:\
 Evidenzia in rosso quando un topic non ha una category/related topic\
-Crea un enum per lo user type\
-Lang lettera maiuscola\
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardeftab720\pardirnatural\partightenfactor0
 
-\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 Show each user has a funny name
+\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 Aggiungo related in senso anche opposto\
+Aggiungo una nuova category (o edit category) aggiungi categorytopic related.\
+\
+Per fare questo devo iterare su ogni topic related. E per ogni topic related, prendere quelli preesistenti e aggiungere quello nuovo (SE NON ESISTEVA Gi\'e0!)\
+\
+
 \f1\fs25\fsmilli12600 \cf2 \cb3 \expnd0\expndtw0\kerning0
 \
+
+\f0\fs24 \cf0 \cb1 \kerning1\expnd0\expndtw0 Vedi tutorial git squash\
+Fai app per iOS\
+\
+\
+\
+\
+Per aggiungere una lingua, da python aggiungo le poche del nucleo.\
+Aggiungi i topic uno a uno tradotti CON Computer a fianco.\
+Traduci i topic uno a uno(senza related o category)\
+Inserisci le domande di ognuno cercando in create di una lingua e dell\'92altra(meglio con 2 browser)\
+\
+\
+\
+\
 \pard\pardeftab720\partightenfactor0
-\cf2 \
+
+\f1\fs25\fsmilli12600 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\
+\
+Cambio\
 \
 \
 \
 \
-claudio.vigliarolo.dev@gmail.com\
+UPDATE users\
+SET email = \
+\
+\pard\pardeftab720\sl360\partightenfactor0
+
+\f2\fs24 \cf4 \cb5 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec4 export const \cf6 \strokec6 onQuestionUpdate\cf4 \strokec4  = async \cf7 \strokec7 (\cb1 \
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs25\fsmilli12600 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \
 \
 \
 \
-}
+Styles del menu}

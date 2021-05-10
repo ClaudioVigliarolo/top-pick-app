@@ -4,6 +4,7 @@ export default {
   fontBold: 'bold',
   fontDefault: 15,
   fontSmall: 14,
+  fontSmallMed: 17,
   fontBig: 30,
   fontMed: 20,
   fontList: 15,

@@ -1,19 +1,15 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Text, View, StyleSheet, Alert, Dimensions as Dim} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {ThemeContext} from '../../context/ThemeContext';
 import {Topic} from '../../interfaces/Interfaces';
 import Carousel from 'react-native-snap-carousel'; // Version can be specified in package.json
-import {ThemeContext} from '../../context/ThemeContext';
-import {getColor} from '../../constants/Themes';
 import Dimensions from '../../constants/Dimensions';
-
 import {scrollInterpolator, animatedStyles} from '../../utils/animations';
 import keys from '../../../database/keys/keys';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useIsFocused} from '@react-navigation/native';
-
-//const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 4) / 4);
-const colorsData = require('../../constants/card_templates.json');
+import {getCardTemplate} from '../../constants/Themes';
 
 interface CarouselProps {
   carouselItems: Topic[];
@@ -28,17 +24,20 @@ for (let i = 0; i < 10; i++) {
 }
 
 const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
-  const [colors, setColors] = React.useState<string[]>([]);
   const isFocused = useIsFocused();
-  const [color, setColor] = React.useState<string>('');
+  const [color, setColor] = React.useState<string>('orange');
   const [width, setWidth] = React.useState<number>(Dim.get('window').width);
   const [height, setheight] = React.useState<number>(Dim.get('window').height);
+  const {theme} = React.useContext(ThemeContext);
+  let _carousel: any = {};
+  const itemWidth = width * Dimensions.CAROUSEL_ITEM_WIDTH_FACTOR;
+  const itemHeight = height * Dimensions.CAROUSEL_ITEM_HEIGHT_FACTOR;
 
   React.useEffect(() => {
     (async () => {
-      let theme = await AsyncStorage.getItem(keys.CARDS_THEME);
-      theme = theme ? theme : 'default';
-      setRandomColors(theme);
+      let cardTheme = await AsyncStorage.getItem(keys.CARDS_THEME);
+      cardTheme = cardTheme ? cardTheme : 'default';
+      setColor(getCardTemplate(theme, cardTheme as any));
     })();
 
     Dim.addEventListener('change', (e) => {
@@ -48,56 +47,12 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
     });
   }, [isFocused]);
 
-  const itemWidth = width * Dimensions.CAROUSEL_ITEM_WIDTH_FACTOR;
-  const itemHeight = height * Dimensions.CAROUSEL_ITEM_HEIGHT_FACTOR;
-  let _carousel: any = {};
-
   React.useImperativeHandle(ref, () => ({
     validate() {},
-
     getCarousel() {
       return _carousel;
     },
   }));
-  const _renderItem = ({item}: {item: any}) => {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => props.onTopicPress(item)}>
-        <View
-          style={[
-            styles.itemContainer,
-            {
-              backgroundColor: color,
-              width: itemWidth,
-              height: itemHeight,
-            },
-          ]}>
-          <Text style={styles.itemLabel}>{item.title}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const setRandomColors = (theme: string): void => {
-    const colors = colorsData[theme];
-    let randomIndex = Math.floor(Math.random() * colors.length);
-    setColors(colors);
-    setColor(colors[randomIndex]);
-  };
-  const getCarousel = () => {
-    return _carousel;
-  };
-
-  const getRandomColor = (): void => {
-    /* let newcolor = color;
-    if (colors.length == 1) setColor(color);
-    while (newcolor == color) {
-      let randomIndex = Math.floor(Math.random() * colors.length);
-      newcolor = colors[randomIndex];
-    }
-    setColor(newcolor);*/
-  };
 
   const styles = StyleSheet.create({
     carouselContainer: {
@@ -120,6 +75,26 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
     },
   });
 
+  const _renderItem = ({item}: {item: any}) => {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => props.onTopicPress(item)}>
+        <View
+          style={[
+            styles.itemContainer,
+            {
+              backgroundColor: color,
+              width: itemWidth,
+              height: itemHeight,
+            },
+          ]}>
+          <Text style={styles.itemLabel}>{item.title}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View>
       <Carousel
@@ -138,7 +113,6 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
         //sliderHeight={Dimensions.SCREEN_HEIGHT / 1.7}
         itemHeight={Dimensions.SCREEN_HEIGHT / 1.7}
         onSnapToItem={(index) => {
-          getRandomColor();
           props.setIndex(index);
         }}
       />

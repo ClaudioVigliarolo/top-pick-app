@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Header, Item, Input, Button, Text} from 'native-base';
+import {Header, Item, Input, Button, Text} from 'native-base';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/Themes';
 import IconBack from 'react-native-vector-icons/MaterialIcons';

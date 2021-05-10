@@ -1,56 +1,34 @@
 import * as React from 'react';
-import {View, SafeAreaView, Alert} from 'react-native';
+import {View, SafeAreaView} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
-import {Topic} from '../interfaces/Interfaces';
+import {Lang, Topic} from '../interfaces/Interfaces';
 import {LocalizationContext} from '../context/LocalizationContext';
 import TopicsCarousel from '../components/custom/CustomCarousel';
 import Button from '../components/buttons/CustomButton';
 import Dimensions from '../constants/Dimensions';
 import {getColor} from '../constants/Themes';
-import {getDB} from '../utils/utils';
-
-const INITIALS_TOPICS_LOADED = 10;
-const NEW_TOPICS_LOADED = 10;
+import {getTopics} from '../utils/sql';
+import CONSTANTS from '../constants/App';
 
 const HomePage = ({navigation}: {navigation: any}) => {
-  const mycarousel = React.useRef(null);
+  const mycarousel = React.useRef<any>(null);
   const [carouselItems, setCarouselItems] = React.useState<Topic[]>([]);
   const [carouselIndex, setCarouselIndex] = React.useState(0);
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
   React.useEffect(() => {
     setCarouselItems(carouselItems.splice(0, carouselItems.length));
-    loadTopics(INITIALS_TOPICS_LOADED);
+    loadTopics(CONSTANTS.INITIALS_TOPICS_LOADED);
   }, [translations.LANG]);
 
   const loadTopics = async (n: number): Promise<void> => {
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `SELECT * from topics
-         WHERE lang = "${translations.LANG}"
-         ORDER BY RANDOM()
-         LIMIT ${n};`,
-        [],
-        (tx, results) => {
-          const rows = results.rows;
-          let newArr = carouselItems;
-          for (let i = 0; i < rows.length; i++) {
-            newArr.push({
-              ...rows.item(i),
-            });
-          }
-          setCarouselItems([...newArr]);
-        },
-        (err) => {
-          console.log(err);
-        },
-      );
-    });
+    const topics: Topic[] = await getTopics(n, translations.LANG as Lang);
+    setCarouselItems([...carouselItems, ...topics]);
   };
 
   const getNewTopics = (n: number): void => {
     if (carouselItems.length == n + 1) {
-      loadTopics(NEW_TOPICS_LOADED);
+      loadTopics(CONSTANTS.NEW_TOPICS_LOADED);
     }
   };
 

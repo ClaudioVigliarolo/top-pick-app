@@ -73,7 +73,6 @@ export default function SettingsPage({navigation}: {navigation: any}) {
         secondaryText=""
       />
       <ListItemCheckBox
-        onPress={() => {}}
         text={translations.AUTOMATIC_UPDATE}
         value={isUpdate}
         editable={false}

@@ -2,22 +2,19 @@ import * as React from 'react';
 import {
   View,
   StyleSheet,
-  Alert,
   ScrollView,
-  LayoutAnimation,
   Text,
   TouchableOpacity,
 } from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
-import {Question, Topic} from '../interfaces/Interfaces';
+import {Lang, Question, Topic} from '../interfaces/Interfaces';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {getColor} from '../constants/Themes';
 import ListItem from '../components/lists/ListItemCheckbox';
 import BottomButton from '../components/buttons/BottomButtons';
 import SearchBar from '../components/search/SearchBar';
-import Clipboard from '@react-native-community/clipboard';
 import Dimensions from '../constants/Dimensions';
-import {getDB} from '../utils/utils';
+import {getQuestionsByTopic, getRelatedTopics} from '../utils/sql';
 
 export default function QuestionsPage({
   route,
@@ -31,61 +28,25 @@ export default function QuestionsPage({
   const [filter, setFilter] = React.useState('');
   const [counter, setCounter] = React.useState(0);
   const {theme} = React.useContext(ThemeContext);
-  const [isCopyShown, setShowCopy] = React.useState(false);
   const {translations} = React.useContext(LocalizationContext);
 
   const {topic}: {topic: Topic} = route.params;
 
   React.useEffect(() => {
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `SELECT * from questions
-          WHERE topic_id = "${topic.id}";`,
-        [],
-        (tx, results) => {
-          const rows = results.rows;
-          let newArr = [];
-          for (let i = 0; i < rows.length; i++) {
-            newArr.push({
-              ...rows.item(i),
-            });
-          }
-          newArr.forEach(function (element: Question) {
-            element['selected'] = false;
-          });
-          setItems(newArr);
-        },
-        (err) => {
-          console.error(err);
-        },
+    (async () => {
+      const questions: Question[] = await getQuestionsByTopic(topic.id);
+      questions.forEach(function (element: Question) {
+        element['selected'] = false;
+      });
+      setItems(questions);
+
+      const related: Topic[] = await getRelatedTopics(
+        topic.ref_id,
+        translations.LANG as Lang,
       );
-    });
-    //get related topics
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `
-        SELECT * from topics
-        WHERE lang="${translations.LANG}" AND ref_id IN ( 
-        SELECT  r.dest_ref_id
-        FROM related r
-        WHERE r.source_ref_id="${topic.ref_id}")`,
-        [],
-        (tx, results) => {
-          const rows = results.rows;
-          let newArr = [];
-          for (let i = 0; i < rows.length; i++) {
-            newArr.push({
-              ...rows.item(i),
-            });
-          }
-          setRelated(newArr);
-        },
-        (err) => {
-          console.error(err);
-        },
-      );
-    });
-  }, [topic.id]);
+      setRelated(related);
+    })();
+  }, [topic.ref_id]);
 
   const onSubmit = (): void => {
     const newQuestions: Question[] = [];

@@ -1,15 +1,15 @@
 import * as React from 'react';
-import {StyleSheet, Alert, View, ScrollView} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {Text} from 'native-base';
-import {Question} from '../interfaces/Interfaces';
+import {Lang, Question} from '../interfaces/Interfaces';
 import {getColor} from '../constants/Themes';
 import ListItemDrag from '../components/lists/ListItemDrag';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {ThemeContext} from '../context/ThemeContext';
 import Dimensions from '../constants/Dimensions';
 import {LocalizationContext} from '../context/LocalizationContext';
-import {getDB} from '../utils/utils';
+import {getFavourites, toggleLike} from '../utils/sql';
 
 export default function CategoryList({navigation}: {navigation: any}) {
   const [items, setItems] = React.useState<Question[]>([]);
@@ -20,27 +20,13 @@ export default function CategoryList({navigation}: {navigation: any}) {
   const {theme} = React.useContext(ThemeContext);
   React.useEffect(() => {
     getItems();
-  }, [isFocused]); // Only re-run the effect if count changes
+  }, [isFocused]);
 
-  const getItems = () => {
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `SELECT * from questions
-         WHERE LANG = "${translations.LANG}"  AND liked = 1;`,
-        [],
-        (tx, results) => {
-          const rows = results.rows;
-          let newArr = [];
-          for (let i = 0; i < rows.length; i++) {
-            newArr.push({
-              ...rows.item(i),
-            });
-          }
-          setItems([...newArr]);
-          setLoading(false);
-        },
-      );
-    });
+  const getItems = async () => {
+    const questions: Question[] = await getFavourites(
+      translations.LANG as Lang,
+    );
+    setItems([...questions]);
   };
 
   const onRemove = (id: number) => {
@@ -51,19 +37,8 @@ export default function CategoryList({navigation}: {navigation: any}) {
   };
 
   const onDislike = (id: number) => {
-    const index = items.findIndex((item) => item.id == id);
-    const newVal = !items[index].liked;
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `UPDATE "questions"
-         SET liked = 0
-         WHERE "id" = ${id}`,
-        [],
-        (tx, results) => {
-          getItems();
-        },
-      );
-    });
+    toggleLike(id, false);
+    getItems();
   };
 
   const renderItem = ({

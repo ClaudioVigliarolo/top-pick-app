@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {JSONresponse, Lang, Report} from '../interfaces/Interfaces';
-import {generateDB, getLastUpdate, getUserID, setLastUpdate} from './utils';
+import {generateDB} from './sql';
+import {getLastUpdate, getUserID, setLastUpdate} from './utils';
 
 const HOSTNAME = 'https://top-pick-api-dev.herokuapp.com';
 export const updateTopics = async (lang: Lang): Promise<boolean> => {
@@ -12,7 +13,7 @@ export const updateTopics = async (lang: Lang): Promise<boolean> => {
         lang,
       )}/${lang}`,
     );
-    if (!response) {
+    if (!response || !response.data) {
       throw new Error('got null response');
     }
     if (response.status !== 200) {
@@ -24,7 +25,7 @@ export const updateTopics = async (lang: Lang): Promise<boolean> => {
       hasUpdated = true;
     } else {
       //set the app as updated
-      const generated = await generateDB(response.data.updates, lang);
+      const generated = await generateDB(data.updates, lang);
       if (generated) {
         hasUpdated = true;
         await setLastUpdate(data.last_update, lang);

@@ -1,21 +1,23 @@
 import * as React from 'react';
-import {Text, View, StyleSheet, Image} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Linking,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import {
   DrawerContentScrollView,
   DrawerItemList,
-  DrawerItem,
 } from '@react-navigation/drawer';
 import {
-  Icon,
   Container,
   Header,
   Footer,
   Content,
   ListItem,
   Right,
-  Body,
-  Left,
   Switch,
   List,
 } from 'native-base';
@@ -43,23 +45,48 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
     } catch (e) {}
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: getColor(theme, 'primaryBackground'),
+    },
+    header: {
+      backgroundColor: getColor(theme, 'primaryOrange'),
+      borderBottomWidth: 0,
+      height: 100,
+    },
+    headerText: {
+      color: '#fff',
+      fontSize: Dimensions.fontMed,
+      paddingRight: 5,
+    },
+    footerText: {
+      color: '#fff',
+      fontSize: Dimensions.fontSmall,
+      marginLeft: 20,
+    },
+
+    footerContainer: {
+      backgroundColor: getColor(theme, 'lighterOrange'),
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+    },
+
+    listItemContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+    },
+    listItemText: {
+      color: getColor(theme, 'drawerGrey'),
+      paddingRight: 20,
+    },
+  });
+
   return (
-    <Container style={{backgroundColor: getColor(theme, 'primaryBackground')}}>
-      <Header
-        style={{
-          backgroundColor: getColor(theme, 'primaryOrange'),
-          borderBottomWidth: 0,
-          height: 100,
-        }}>
+    <Container style={styles.container}>
+      <Header style={styles.header}>
         <Right>
-          <Text
-            style={{
-              color: '#fff',
-              fontSize: Dimensions.fontMed,
-            }}>
-            {' '}
-            TOP Picks
-          </Text>
+          <Text style={styles.headerText}>TOP Picks</Text>
         </Right>
       </Header>
       <Content>
@@ -70,17 +97,8 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
         </DrawerContentScrollView>
         <List>
           <ListItem>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-              }}>
-              <Text
-                style={{
-                  color: getColor(theme, 'drawerGrey'),
-                  paddingRight: 20,
-                }}>
+            <View style={styles.listItemContainer}>
+              <Text style={styles.listItemText}>
                 {theme == 'dark'
                   ? translations.LIGHT_MODE
                   : translations.DARK_MODE}
@@ -98,16 +116,14 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
         </List>
       </Content>
 
-      <Footer
-        style={{backgroundColor: getColor(theme, 'lighterOrange')}}></Footer>
+      <Footer style={styles.footerContainer}>
+        <TouchableWithoutFeedback
+          onPress={() => Linking.openURL('market://details?id=com.topick')}>
+          <Text style={styles.footerText}>Leave a rating</Text>
+        </TouchableWithoutFeedback>
+      </Footer>
     </Container>
   );
 };
 
 export default CustomDrawer;
-
-const styles = StyleSheet.create({
-  container: {},
-});
-
-//"#787878"

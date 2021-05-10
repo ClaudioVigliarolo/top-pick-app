@@ -44,7 +44,6 @@ const renderIcon = (name: string, isCurrent: boolean, theme: string): any => {
           }}
         />
       );
-
     default:
       break;
   }
@@ -71,17 +70,3 @@ export const BottomMenuItem = ({
     </View>
   );
 };
-/* 
-    case "Categories":
-      return (
-        <Entypo
-          name="list"
-          size={25}
-          style={{
-            color: isCurrent
-              ? getColor(theme, 'primaryOrange')
-              :  getColor(theme, 'lightGray'),
-          }}
-        />
-      );
-      */

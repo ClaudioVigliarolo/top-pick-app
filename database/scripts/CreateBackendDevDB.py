@@ -57,7 +57,7 @@ except (Exception) as error:
 curs.execute('DROP TABLE IF EXISTS categories cascade')
 curs.execute('DROP TABLE IF EXISTS topics cascade')
 curs.execute('DROP TABLE IF EXISTS related cascade')
-curs.execute('DROP TABLE IF EXISTS category_topics cascade')
+curs.execute('DROP TABLE IF EXISTS topic_categories cascade')
 curs.execute('DROP TABLE IF EXISTS questions cascade')
 curs.execute('DROP TABLE IF EXISTS reports cascade')
 curs.execute('DROP TABLE IF EXISTS user_languages cascade')
@@ -92,13 +92,13 @@ curs.execute('''CREATE TABLE "questions" (
 	"title"	TEXT NOT NULL,
     "timestamp" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "lang" VARCHAR(2) REFERENCES "languages" ("lang") ,
-    "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade,
+    "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade
 
 )''')
 
 
-# create category_topics table
-curs.execute('''CREATE TABLE "category_topics" (
+# create topic_categories table
+curs.execute('''CREATE TABLE "topic_categories" (
     "id" SERIAL PRIMARY KEY,
 	"category_id" INTEGER REFERENCES "categories" ("id") on delete cascade,
     "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade,
@@ -193,7 +193,7 @@ for LANG_PREFIX in languages:
     # assign topics to each category
     # we take the list of associated topics after char ":" in category file
 
-    # populate category_topics table
+    # populate topic_categories table
     with open(categories) as file_in:
         for line in file_in:
             categ = line.split()[0]
@@ -202,7 +202,7 @@ for LANG_PREFIX in languages:
                 if get_topic(topic, LANG_PREFIX) and get_category(categ, LANG_PREFIX):
                     print("77",  get_topic(topic, LANG_PREFIX),
                           get_category(categ, LANG_PREFIX))
-                    curs.execute('''INSERT INTO "category_topics" (category_id, category_ref_id, topic_id, topic_ref_id,lang)
+                    curs.execute('''INSERT INTO "topic_categories" (category_id, category_ref_id, topic_id, topic_ref_id,lang)
                                             values (%s, %s, %s,%s, %s)''',
                                  (get_hash(
                                      get_category(categ, LANG_PREFIX), LANG_PREFIX), get_hash(get_category(categ, "en")), (get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX)), get_hash(get_topic(topic, "en")), LANG_PREFIX))

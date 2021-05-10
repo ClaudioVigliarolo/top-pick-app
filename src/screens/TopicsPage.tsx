@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {StyleSheet, ScrollView} from 'react-native';
-import {Topic, Category} from '../interfaces/Interfaces';
+import {Topic, Category, Lang} from '../interfaces/Interfaces';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {ThemeContext} from '../context/ThemeContext';
 import {getColor} from '../constants/Themes';
 import ListItem from '../components/lists/ListItem';
-import {getDB} from '../utils/utils';
+import {getTopicByCategory} from '../utils/sql';
 
 export default function TopicsPage({
   route,
@@ -18,35 +18,15 @@ export default function TopicsPage({
   const {translations} = React.useContext(LocalizationContext);
   const [items, setItems] = React.useState<Topic[]>([]);
   const {category}: {category: Category} = route.params;
-  /*
-AND c.lang="${translations.LANG}*/
+
   React.useEffect(() => {
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `SELECT *
-          FROM topics
-          WHERE lang="${translations.LANG}" AND id IN(
-            SELECT c.topic_id 
-            FROM category_topics c
-            WHERE c.category_id = "${category.id}" AND c.lang="${translations.LANG}"
-        )`,
-        [],
-        (tx, results) => {
-          const rows = results.rows;
-          let newArr = [];
-          for (let i = 0; i < rows.length; i++) {
-            newArr.push({
-              ...rows.item(i),
-            });
-          }
-          console.log('33333', newArr);
-          setItems(newArr);
-        },
-        (err) => {
-          console.log(err);
-        },
+    (async () => {
+      const topics: Topic[] = await getTopicByCategory(
+        category.id,
+        translations.LANG as Lang,
       );
-    });
+      setItems(topics);
+    })();
   }, []);
 
   const styles = StyleSheet.create({

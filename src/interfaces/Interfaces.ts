@@ -15,7 +15,7 @@ export interface Category {
 }
 
 //counter: number;
-export interface CategoryTopic {
+export interface TopicCategory {
   topic_id: number;
   category_id: number;
   category_ref_id: number;
@@ -62,7 +62,7 @@ export interface JSONresponse {
 export interface Updates {
   categories: Category[];
   topics: Topic[];
-  category_topics: CategoryTopic[];
+  topic_categories: TopicCategory[];
   related: [];
   questions: Question[];
 }

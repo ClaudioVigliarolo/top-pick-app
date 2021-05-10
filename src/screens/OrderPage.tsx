@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Platform, Alert, PermissionsAndroid} from 'react-native';
+import {View, Platform, PermissionsAndroid} from 'react-native';
 import {Lang, Question, Topic} from '../interfaces/Interfaces';
 import {getColor} from '../constants/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
@@ -8,11 +8,12 @@ import BottomButton from '../components/buttons/BottomButtons';
 import {ThemeContext} from '../context/ThemeContext';
 import ListItemDrag from '../components/lists/ListItemDrag';
 import DraggableFlatList from 'react-native-draggable-flatlist';
-import BottomsDownToUp from '../components/buttons/BottomsDownToUp';
+import ButtonsDownToUp from '../components/buttons/ButtonsDownToUp';
 import AddBar from '../components/custom/AddBar';
 import RNHTMLtoPDF, {Pdf} from 'react-native-html-to-pdf';
 import EditOverlay from '../components/custom/EditOverlay';
-import {getDB, hashCode} from '../utils/utils';
+import {hashCode} from '../utils/utils';
+import {addQuestion, toggleLike, updateQuestion} from '../utils/sql';
 
 const getQuestionHtml = (items: Question[], title: string, lang: Lang) => {
   const htmlContent = `
@@ -69,7 +70,7 @@ export default function OrderPage({
   const [isEditing, setEditing] = React.useState<boolean>(false);
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
-  let actionSheet = React.useRef<HTMLInputElement>();
+  let actionSheet = React.useRef<any>();
 
   React.useEffect(() => {
     setItems(questions);
@@ -122,46 +123,27 @@ export default function OrderPage({
     if (index != -1) {
       newItems[index].title = editedQuestion;
       //update question in db
-      getDB().transaction((tx) => {
-        tx.executeSql(
-          `UPDATE "questions"
-          SET title = "${editedQuestion}" , user_modified = 1
-          WHERE "id" = ${questionId}`,
-          [],
-          (tx, results) => {
-            setItems(newItems.slice());
-          },
-          (err) => {
-            console.log(err);
-          },
-        );
-      });
+      if (updateQuestion(questionId, editedQuestion)) {
+        setItems(newItems.slice());
+      }
     }
   };
+
   //, user_modified = ${newVal ? 1 : 0}
   const onQuestionAdd = () => {
     const id = hashCode(questionText);
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `INSERT INTO "questions"
-         VALUES (${id}, "${topic.id}", "${questionText}", 0, 1, "${translations.LANG}")`,
-        [],
-        (tx, results) => {
-          const newQuestionItem: Question = {
-            id,
-            topic_id: topic.id,
-            liked: false,
-            selected: false,
-            title: questionText,
-          };
-          const newArray = [newQuestionItem].concat(items);
-          setItems(newArray.slice());
-        },
-        (err) => {
-          console.log(err);
-        },
-      );
-    });
+
+    if (addQuestion(id, topic.id, questionText, translations.LANG as Lang)) {
+      const newQuestionItem: Question = {
+        id,
+        topic_id: topic.id,
+        liked: false,
+        selected: false,
+        title: questionText,
+      };
+      const newArray = [newQuestionItem].concat(items);
+      setItems(newArray.slice());
+    }
   };
 
   const createPDF = async (htmlContent: string) => {
@@ -202,25 +184,13 @@ export default function OrderPage({
     let itemsCopy = [...items];
     const index = items.findIndex((item) => item.id == id);
     const newVal = !items[index].liked;
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `UPDATE "questions"
-        SET liked = ${newVal ? 1 : 0}
-        WHERE "id" = ${id}`,
-        [],
-        (tx, results) => {
-          console.log(results.rows);
-          items[index].liked = newVal;
-          setItems(itemsCopy.slice());
-        },
-        (err) => {
-          console.log('errr', err);
-        },
-      );
-    });
+    if (toggleLike(id, newVal)) {
+      items[index].liked = newVal;
+      setItems(itemsCopy.slice());
+    }
   };
 
-  const BottomsDownToUpData: string[] = [
+  const ButtonsDownToUpData: string[] = [
     translations.EXPORT_TO_PDF,
     translations.START_PRESENTATION,
     translations.CLOSE,
@@ -282,8 +252,8 @@ export default function OrderPage({
         isTextEnabled={false}
         visible={true}
       />
-      <BottomsDownToUp
-        data={BottomsDownToUpData}
+      <ButtonsDownToUp
+        data={ButtonsDownToUpData}
         isActive={isMenuOptionShown}
         actionSheet={actionSheet}
         backgroundColor={getColor(theme, 'primaryBackground')}

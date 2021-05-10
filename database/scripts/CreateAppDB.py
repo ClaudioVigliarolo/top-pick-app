@@ -34,7 +34,7 @@ curs = conn.cursor()
 curs.execute('DROP TABLE IF EXISTS categories')
 curs.execute('DROP TABLE IF EXISTS topics')
 curs.execute('DROP TABLE IF EXISTS related')
-curs.execute('DROP TABLE IF EXISTS category_topics')
+curs.execute('DROP TABLE IF EXISTS topic_categories')
 curs.execute('DROP TABLE IF EXISTS questions')
 
 
@@ -60,8 +60,8 @@ curs.execute('''CREATE TABLE "questions" (
 )''')
 
 
-# create category_topics table
-curs.execute('''CREATE TABLE "category_topics" (
+# create topic_categories table
+curs.execute('''CREATE TABLE "topic_categories" (
     "id" INTEGER PRIMARY KEY,
     "category_id" INTEGER REFERENCES "categories" ("id") on delete cascade,
     "topic_id" INTEGER REFERENCES "topics" ("id") on delete cascade,

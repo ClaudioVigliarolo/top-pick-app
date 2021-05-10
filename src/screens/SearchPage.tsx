@@ -1,18 +1,16 @@
 import * as React from 'react';
-import {Text, View, StyleSheet, Alert} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import AsyncStorage from '@react-native-community/async-storage';
 import SearchBar from '../components/search/SearchBar';
 import {getColor} from '../constants/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
-import {Topic} from '../interfaces/Interfaces';
+import {Lang, Topic} from '../interfaces/Interfaces';
 import CardItem from '../components/lists/CardItem';
 import ButtonsSection from '../components/buttons/ButtonsSearchSection';
 import keys from '../../database/keys/keys';
-import {getDB} from '../utils/utils';
-
-const MAX_RECENTS = 3;
-const MAX_POPULAR = 6;
+import {getPopularTopics, searchByTopic} from '../utils/sql';
+import CONSTANTS from '../constants/App';
 
 const SearchPage = ({navigation}: {navigation: any}) => {
   const [text, setText] = React.useState('');
@@ -33,29 +31,12 @@ const SearchPage = ({navigation}: {navigation: any}) => {
       params: {topic},
     });
   };
-  const getPopular = (): void => {
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `SELECT * from topics
-        WHERE lang = "${translations.LANG}"
-        ORDER BY RANDOM()
-        LIMIT ${MAX_POPULAR};`,
-        [],
-        (tx, results) => {
-          const rows = results.rows;
-          let newArr = [];
-          for (let i = 0; i < rows.length; i++) {
-            newArr.push({
-              ...rows.item(i),
-            });
-          }
-          newArr.map(function (item: Topic) {
-            return item['title'];
-          });
-          setPopular(newArr);
-        },
-      );
+  const getPopular = async (): Promise<void> => {
+    const topics: Topic[] = await getPopularTopics(translations.LANG as Lang);
+    topics.map(function (item: Topic) {
+      return item['title'];
     });
+    setPopular(topics);
   };
 
   const onChangeRecents = async (newSearchTopic: Topic) => {
@@ -64,13 +45,13 @@ const SearchPage = ({navigation}: {navigation: any}) => {
     if (newRecents.includes(newSearchTopic)) {
       newRecents = recents.filter((el) => el.title != newSearchTopic.title);
       newRecents.unshift(newSearchTopic);
-    } else if (recents.length < MAX_RECENTS) {
+    } else if (recents.length < CONSTANTS.MAX_RECENTS) {
       newRecents.unshift(newSearchTopic);
     } else {
       //const newRecents = recents.splice(0, MAX_RECENTS - 1);
       newRecents.map((r) => console.log(r.title));
       newRecents.unshift(newSearchTopic);
-      newRecents = newRecents.slice(0, MAX_RECENTS);
+      newRecents = newRecents.slice(0, CONSTANTS.MAX_RECENTS);
       newRecents.map((r) => console.log(r.title));
     }
     setRecents([...newRecents]);
@@ -83,9 +64,7 @@ const SearchPage = ({navigation}: {navigation: any}) => {
         keys.RECENT_SEARCH_KEY + translations.LANG,
         JSON.stringify(newRecentsArray),
       );
-    } catch (error) {
-      // Error saving data
-    }
+    } catch (error) {}
   };
 
   const getRecents = async () => {
@@ -102,8 +81,8 @@ const SearchPage = ({navigation}: {navigation: any}) => {
           },
         );
         const newRecents =
-          recentsArray.length > MAX_RECENTS
-            ? recentsArray.slice(0, MAX_RECENTS)
+          recentsArray.length > CONSTANTS.MAX_RECENTS
+            ? recentsArray.slice(0, CONSTANTS.MAX_RECENTS)
             : recentsArray;
         setRecents(newRecents.filter((e) => e));
       }
@@ -112,38 +91,22 @@ const SearchPage = ({navigation}: {navigation: any}) => {
     }
   };
 
-  const executeSearch = (param: string): void => {
+  const executeSearch = async (param: string): Promise<void> => {
     if (param == '') {
       setItems([]);
       return;
     }
-
-    getDB().transaction((tx) => {
-      tx.executeSql(
-        `SELECT * from topics
-        WHERE lang = "${translations.LANG}" AND title LIKE "%${param}%"  
-        LIMIT ${MAX_RECENTS};`,
-        [],
-        (tx, results) => {
-          const rows = results.rows;
-          let newArr = [];
-          for (let i = 0; i < rows.length; i++) {
-            newArr.push({
-              ...rows.item(i),
-            });
-          }
-          setItems(newArr);
-        },
-      );
-    });
+    const topics: Topic[] = await searchByTopic(
+      param,
+      translations.LANG as Lang,
+    );
+    setItems(topics);
   };
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection: 'column',
-      //  alignItems:'flex-start'
-      // flexDirection:'column',
       backgroundColor: getColor(theme, 'primaryBackground'),
     },
     buttonsContainer: {
