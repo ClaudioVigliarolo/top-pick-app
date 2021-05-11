@@ -100,6 +100,7 @@ const translations = {
       "E' necessario scaricare i contenuti per usare l'app in questa lingua",
     CHECK_UPDATES: 'verifica aggiornamenti...',
     UPDATING_TOPICS: 'aggiornamento in corso...',
+    LEAVE_RATING: "valuta l'app",
   },
   en: {
     TOP_PICK: 'TOP Pick',
@@ -177,6 +178,7 @@ const translations = {
       'Download the content to start using the app in this language',
     CHECK_UPDATES: 'checking for updates...',
     UPDATING_TOPICS: 'updating topics...',
+    LEAVE_RATING: 'leave a rating',
   },
 
   fr: {
@@ -257,6 +259,7 @@ const translations = {
       "Téléchargez le contenu pour commencer à utiliser l'application dans cette langue",
     CHECK_UPDATES: 'Vérification des mises à jour...',
     UPDATING_TOPICS: 'mise à jour en cours...',
+    LEAVE_RATING: 'laisser un commentaire',
   },
 
   es: {
@@ -337,6 +340,7 @@ const translations = {
       'Descarga los contenidos para usar la aplicación en este idioma',
     CHECK_UPDATES: 'Buscando actualizaciones en curso ......',
     UPDATING_TOPICS: 'actualizando los temas...',
+    LEAVE_RATING: 'deja una calificación',
   },
 };
 

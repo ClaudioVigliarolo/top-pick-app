@@ -1,16 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  TouchableOpacity,
-  Animated,
-  StyleSheet,
-  Platform,
-  Keyboard,
-  Dimensions as Dim,
-} from 'react-native';
-import Dimensions from '../constants/Dimensions';
+import {View, TouchableOpacity, Platform, Keyboard} from 'react-native';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {BottomMenuItem} from '../components/buttons/BottomMenuItem';
+import styles from '../styles/styles';
 
 export const TabBar = ({state, descriptors, navigation}: BottomTabBarProps) => {
   const [visible, setVisible] = useState(true);
@@ -25,24 +17,12 @@ export const TabBar = ({state, descriptors, navigation}: BottomTabBarProps) => {
     return () => {
       if (Platform.OS === 'android') {
         keyboardEventListeners &&
-          keyboardEventListeners.forEach((eventListener) =>
+          keyboardEventListeners.forEach((eventListener: {remove: () => any}) =>
             eventListener.remove(),
           );
       }
     };
   }, []);
-
-  const style = StyleSheet.create({
-    tabContainer: {
-      height: Dimensions.tabHeight,
-      backgroundColor: 'white',
-      borderTopRightRadius: 20,
-      borderTopLeftRadius: 20,
-      elevation: 10,
-      position: 'absolute',
-      bottom: 0,
-    },
-  });
 
   if (
     !visible ||
@@ -50,7 +30,7 @@ export const TabBar = ({state, descriptors, navigation}: BottomTabBarProps) => {
   )
     return null;
   return (
-    <View style={[style.tabContainer, {width: '100%'}]}>
+    <View style={styles.TabBarContainer}>
       <View style={{flexDirection: 'row'}}>
         {state.routes.map((route, index) => {
           const {options} = descriptors[route.key];

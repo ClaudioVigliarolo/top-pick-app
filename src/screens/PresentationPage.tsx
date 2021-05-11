@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {View} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import {Question, Topic} from '../interfaces/Interfaces';
 import {getColor} from '../constants/Themes';
@@ -18,10 +18,9 @@ export default function PresentationPage({
   }: {questions: Question[]; topic: Topic} = route.params;
   const {theme} = React.useContext(ThemeContext);
   return (
-    <View style={styles.container}>
+    <View style={{flex: 1}}>
       <Slider
         backgroundColor={getColor(theme, 'primaryOrange')}
-        textColor={'#fff'}
         title={topic.title}
         items={questions}
         image={null}
@@ -32,9 +31,3 @@ export default function PresentationPage({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

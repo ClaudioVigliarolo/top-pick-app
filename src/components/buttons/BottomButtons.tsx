@@ -1,15 +1,9 @@
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  Text as NativeText,
-  Keyboard,
-  Button,
-} from 'react-native';
+import {View, Text as NativeText, Keyboard} from 'react-native';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/Themes';
-import Dimensions from '../../constants/Dimensions';
 import CustomButton from './CustomButton';
+import styles from '../../styles/styles';
 interface BottomButtonsProps {
   onPress: any;
   text: string;
@@ -22,26 +16,6 @@ interface BottomButtonsProps {
 interface BottomButtonsState {
   isKeyboadVisible: boolean;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: Dimensions.bottomButtonsHeight,
-    width: '100%',
-    borderTopWidth: 2,
-    padding: 10,
-  },
-
-  content: {
-    flex: 1,
-    justifyContent: 'space-evenly',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  secondaryText: {
-    fontSize: Dimensions.fontMed,
-    textAlign: 'center',
-  },
-});
 
 export default class BottomButtons extends React.Component<
   BottomButtonsProps,
@@ -88,7 +62,7 @@ export default class BottomButtons extends React.Component<
     return (
       <View
         style={[
-          styles.container,
+          styles.buttomButtonsContainer,
           {
             backgroundColor: getColor(
               this.context.theme,
@@ -106,7 +80,7 @@ export default class BottomButtons extends React.Component<
                 : 'none',
           },
         ]}>
-        <View style={styles.content}>
+        <View style={styles.buttomButtonsContent}>
           <View
             style={{
               flex: 1,
@@ -114,7 +88,7 @@ export default class BottomButtons extends React.Component<
             }}>
             <NativeText
               style={[
-                styles.secondaryText,
+                styles.bottomButtonsText,
 
                 {
                   color: getColor(this.context.theme, 'primaryOrange'),
@@ -124,12 +98,10 @@ export default class BottomButtons extends React.Component<
             </NativeText>
           </View>
           <View
-            style={{
-              flex: 1.2,
-              justifyContent: 'center',
-              maxWidth: '75%',
-              display: this.props.isButtonEnabled ? 'flex' : 'none',
-            }}>
+            style={[
+              styles.buttomButtonsBottomContainer,
+              {display: this.props.isButtonEnabled ? 'flex' : 'none'},
+            ]}>
             <CustomButton
               title={this.props.text}
               onPress={this.props.onPress}

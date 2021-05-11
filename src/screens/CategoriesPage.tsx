@@ -1,14 +1,16 @@
 import * as React from 'react';
-import {StyleSheet, ScrollView} from 'react-native';
+import {ScrollView} from 'react-native';
 import {Category, Lang} from '../interfaces/Interfaces';
 import {getColor} from '../constants/Themes';
 import {ThemeContext} from '../context/ThemeContext';
 import {LocalizationContext} from '../context/LocalizationContext';
-import ListItem from '../components/lists/ListItem';
+import ListItem from '../components/lists/ListItemBasic';
 import {getCategories} from '../utils/sql';
+import styles from '../styles/styles';
 
 export default function CategoryList({navigation}: {navigation: any}) {
-  const [items, setItems] = React.useState<Category[]>([]);
+  const [defaultCategory, setDefaultCategory] = React.useState<Category>();
+  const [categories, setCategories] = React.useState<Category[]>([]);
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
 
@@ -18,21 +20,30 @@ export default function CategoryList({navigation}: {navigation: any}) {
       const categories: Category[] = await getCategories(
         translations.LANG as Lang,
       );
-      console.log('olaola', categories);
-      setItems([...categories]);
+      setCategories([...categories]);
+
+      //get default category
     })();
   }, [translations.LANG]);
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'column',
-      backgroundColor: getColor(theme, 'primaryBackground'),
-    },
-  });
+  /* {categories.length >0 &&
+     <ListItem
+          icon={true}
+          secondaryText={item.counter}
+          text={item.title}
+          onPress={() =>
+            navigation.navigate('Topics', {
+              category: item,
+            })
+          }
+           />}*/
   return (
-    <ScrollView style={styles.container}>
-      {items.map((item: Category, i) => (
+    <ScrollView
+      style={[
+        styles.DefaultContainer,
+        {backgroundColor: getColor(theme, 'primaryBackground')},
+      ]}>
+      {categories.map((item: Category, i) => (
         <ListItem
           key={i}
           icon={true}

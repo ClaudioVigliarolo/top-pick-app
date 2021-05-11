@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {Text} from 'native-base';
 import {Lang, Question} from '../interfaces/Interfaces';
@@ -7,14 +7,13 @@ import {getColor} from '../constants/Themes';
 import ListItemDrag from '../components/lists/ListItemDrag';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {ThemeContext} from '../context/ThemeContext';
-import Dimensions from '../constants/Dimensions';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {getFavourites, toggleLike} from '../utils/sql';
+import styles from '../styles/styles';
 
 export default function CategoryList({navigation}: {navigation: any}) {
   const [items, setItems] = React.useState<Question[]>([]);
   const isFocused = useIsFocused();
-  const [isLoading, setLoading] = React.useState<boolean>(true);
   const {translations} = React.useContext(LocalizationContext);
 
   const {theme} = React.useContext(ThemeContext);
@@ -67,29 +66,20 @@ export default function CategoryList({navigation}: {navigation: any}) {
     );
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'column',
-      backgroundColor: getColor(theme, 'primaryBackground'),
-    },
-
-    text: {
-      color: getColor(theme, 'primaryOrange'),
-      textAlign: 'center',
-      fontSize: Dimensions.fontMed,
-    },
-  });
   return (
     <View
-      style={{
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        backgroundColor: getColor(theme, 'primaryBackground'),
-      }}>
-      {!isLoading && items.length == 0 && (
-        <Text style={styles.text}>{translations.NO_LIKED_QUESTIONS}</Text>
+      style={[
+        styles.DefaultContainerCenter,
+        {backgroundColor: getColor(theme, 'primaryBackground')},
+      ]}>
+      {items.length == 0 && (
+        <Text
+          style={[
+            styles.FavouritesPageText,
+            {color: getColor(theme, 'primaryOrange')},
+          ]}>
+          {translations.NO_LIKED_QUESTIONS}
+        </Text>
       )}
       {items.length > 0 && (
         <DraggableFlatList

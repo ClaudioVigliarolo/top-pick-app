@@ -1,11 +1,12 @@
 import * as React from 'react';
-import {StyleSheet, ScrollView} from 'react-native';
+import {ScrollView} from 'react-native';
 import {Topic, Category, Lang} from '../interfaces/Interfaces';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {ThemeContext} from '../context/ThemeContext';
 import {getColor} from '../constants/Themes';
-import ListItem from '../components/lists/ListItem';
+import ListItem from '../components/lists/ListItemBasic';
 import {getTopicByCategory} from '../utils/sql';
+import styles from '../styles/styles';
 
 export default function TopicsPage({
   route,
@@ -29,16 +30,12 @@ export default function TopicsPage({
     })();
   }, []);
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'column',
-      backgroundColor: getColor(theme, 'primaryBackground'),
-    },
-  });
-
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={[
+        styles.DefaultContainer,
+        {backgroundColor: getColor(theme, 'primaryBackground')},
+      ]}>
       {items.map((item: Topic, i) => (
         <ListItem
           key={i}

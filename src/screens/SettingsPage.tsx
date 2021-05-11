@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import {getColor} from '../constants/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {ThemeContext} from '../context/ThemeContext';
 import SQLite from 'react-native-sqlite-storage';
-import ListItem from '../components/lists/ListItem';
+import ListItem from '../components/lists/ListItemBasic';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import AsyncStorage from '@react-native-community/async-storage';
 import ListItemCheckBox from '../components/lists/ListItemCheckbox';

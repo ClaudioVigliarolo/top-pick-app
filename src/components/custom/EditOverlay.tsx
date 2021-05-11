@@ -4,6 +4,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/Themes';
 import Dimensions from '../../constants/Dimensions';
+import styles from '../../styles/styles';
 
 interface EditOverlayProps {
   isVisible: boolean;
@@ -15,68 +16,29 @@ interface EditOverlayProps {
 
 const EditOverlay = (props: EditOverlayProps) => {
   const {theme} = React.useContext(ThemeContext);
-
-  const styles = StyleSheet.create({
-    container: {
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      backgroundColor: getColor(theme, 'primaryHeaderBackground'),
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: 1,
-      flexDirection: 'column',
-      alignContent: 'center',
-    },
-    editingContainer: {
-      flex: 1,
-      flexDirection: 'column',
-      alignItems: 'center',
-      backgroundColor: getColor(theme, 'primaryBackground'),
-      width: '100%',
-      maxHeight: 200,
-    },
-    editing: {
-      width: '100%',
-      textAlignVertical: 'center',
-      height: 100,
-      alignSelf: 'center',
-    },
-    textInput: {
-      color: getColor(theme, 'primaryText'),
-      padding: 10,
-    },
-    header: {
-      color: '#fff',
-      textAlign: 'center',
-      fontSize: Dimensions.fontMed,
-      marginBottom: 20,
-    },
-  });
-
   return (
     <React.Fragment>
       {props.isVisible && (
-        <View style={styles.container}>
+        <View
+          style={[
+            styles.EditOverlaycontainer,
+            {backgroundColor: getColor(theme, 'primaryHeaderBackground')},
+          ]}>
           <AntDesign
             name="close"
             onPress={props.onClose}
             size={35}
-            style={{
-              color: '#fff',
-              position: 'absolute',
-              right: '2%',
-              top: '5%',
-              opacity: 0.7,
-            }}
+            style={styles.EditOverlayCloseIcon}
           />
-          <Text style={styles.header}>Editing Question</Text>
+          <Text style={styles.EditOverlayheader}>Editing Question</Text>
 
-          <View style={styles.editingContainer}>
+          <View
+            style={[
+              styles.EditOverlayediting,
+              {backgroundColor: getColor(theme, 'primaryBackground')},
+            ]}>
             <TextInput
-              style={styles.textInput}
+              style={styles.EditOverlaytextInput}
               multiline={true}
               value={props.text}
               onSubmitEditing={props.onSubmit}

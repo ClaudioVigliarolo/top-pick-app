@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {View, ScrollView, Text, TouchableOpacity} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import {Lang, Question, Topic} from '../interfaces/Interfaces';
 import {LocalizationContext} from '../context/LocalizationContext';
@@ -15,6 +9,7 @@ import BottomButton from '../components/buttons/BottomButtons';
 import SearchBar from '../components/search/SearchBar';
 import Dimensions from '../constants/Dimensions';
 import {getQuestionsByTopic, getRelatedTopics} from '../utils/sql';
+import styles from '../styles/styles';
 
 export default function QuestionsPage({
   route,
@@ -68,51 +63,6 @@ export default function QuestionsPage({
     setItems(itemsCopy.slice());
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'column',
-      backgroundColor: getColor(theme, 'primaryBackground'),
-    },
-    counter: {
-      textAlign: 'center',
-      color: 'black',
-      fontWeight: 'bold',
-      position: 'absolute',
-      top: -50,
-      zIndex: 1000,
-    },
-    related: {
-      color: getColor(theme, 'primaryOrange'),
-      textAlign: 'left',
-      paddingLeft: 10,
-      paddingTop: 5,
-      textTransform: 'uppercase',
-      textDecorationLine: 'underline',
-    },
-    title: {
-      color: getColor(theme, 'lightGray'),
-      textAlign: 'left',
-      paddingLeft: '3%',
-      paddingTop: 5,
-      textTransform: 'uppercase',
-      fontStyle: 'italic',
-      fontSize: Dimensions.fontSmall,
-    },
-    source: {
-      color: getColor(theme, 'lightGray'),
-      textAlign: 'left',
-      paddingLeft: '3%',
-      paddingTop: 5,
-      textTransform: 'uppercase',
-      fontSize: Dimensions.fontSmall,
-    },
-    relatedContainer: {
-      flexWrap: 'wrap',
-      flexDirection: 'row',
-      flex: 1,
-    },
-  });
   return (
     <React.Fragment>
       <SearchBar
@@ -123,20 +73,40 @@ export default function QuestionsPage({
         placeholder={translations.SEARCH_IN + ' ' + topic.title}
         automatic={false}
       />
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={[
+          styles.DefaultContainer,
+          {backgroundColor: getColor(theme, 'primaryBackground')},
+        ]}>
         <View
           style={{
             backgroundColor: getColor(theme, 'primaryBackground'),
             flexDirection: 'column',
           }}>
           <View style={{flexDirection: 'row'}}>
-            <Text style={styles.title}>
+            <Text
+              style={[
+                styles.QuestionsPagetitle,
+                {color: getColor(theme, 'lightGray')},
+              ]}>
               {translations.SOURCE_TOPICS + '  '}
             </Text>
-            <Text style={styles.source}>{topic.source}</Text>
+            <Text
+              style={[
+                styles.QuestionsPagesource,
+                {
+                  color: getColor(theme, 'lightGray'),
+                },
+              ]}>
+              {topic.source}
+            </Text>
           </View>
-          <View style={styles.relatedContainer}>
-            <Text style={styles.title}>
+          <View style={[styles.QuestionsPagerelatedContainer]}>
+            <Text
+              style={[
+                styles.QuestionsPagetitle,
+                {color: getColor(theme, 'lightGray')},
+              ]}>
               {translations.RELATED_TOPICS + ' '}
             </Text>
             {related.map((related: Topic) => (
@@ -148,7 +118,15 @@ export default function QuestionsPage({
                     params: {topic: related},
                   });
                 }}>
-                <Text style={styles.related}>{related.title}</Text>
+                <Text
+                  style={[
+                    styles.QuestionsPagerelatedText,
+                    {
+                      color: getColor(theme, 'primaryOrange'),
+                    },
+                  ]}>
+                  {related.title}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>

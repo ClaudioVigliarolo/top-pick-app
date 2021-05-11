@@ -1,14 +1,12 @@
 import {Dimensions} from 'react-native';
 
 export default {
-  fontBold: 'bold',
-  fontDefault: 15,
-  fontSmall: 14,
+  fontSmaller: 13,
+  fontSmall: 15,
   fontSmallMed: 17,
-  fontBig: 30,
   fontMed: 20,
-  fontList: 15,
-  sizeBig: 30,
+  fontBigMed: 25,
+  fontBig: 30,
   iconBig: 60,
   iconMed: 30,
   iconMedBig: 40,

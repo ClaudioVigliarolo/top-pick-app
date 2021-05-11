@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, StyleSheet, Alert} from 'react-native';
+import {View} from 'react-native';
 import {LocalizationContext} from '../context/LocalizationContext';
 import ListeItemCheck from '../components/lists/ListeItemCheck';
 import AsyncStorage from '@react-native-community/async-storage';
 import keys from '../../database/keys/keys';
+import styles from '../styles/styles';
 
 interface CardTheme {
   title: string;
@@ -23,13 +24,6 @@ export default function SelectThemePage() {
     {value: 'violet', title: translations.VIOLET},
   ];
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'column',
-    },
-  });
-
   React.useEffect(() => {
     (async () => {
       const cardColor = await AsyncStorage.getItem(keys.CARDS_THEME);
@@ -46,7 +40,7 @@ export default function SelectThemePage() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.DefaultContainer}>
       {defaultCardThemes.map((theme: CardTheme, index) => (
         <View key={index}>
           <ListeItemCheck

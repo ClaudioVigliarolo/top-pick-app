@@ -1,22 +1,14 @@
 import React from 'react';
 import {ThemeContext} from '../context/ThemeContext';
-import {View, Text, ScrollView, StyleSheet, Alert} from 'react-native';
+import {View} from 'react-native';
 import {LocalizationContext} from '../context/LocalizationContext';
 import ListeItemCheck from '../components/lists/ListeItemCheck';
 import {StatusContext} from '../context/StatusContext';
 import {defaultLanguages} from '../context/translations';
-import {
-  getDifferentLang,
-  isUsedLanguage,
-  onTopicsUpdate,
-  setUsedLanguage,
-} from '../utils/utils';
+import {isUsedLanguage, onTopicsUpdate, setUsedLanguage} from '../utils/utils';
 import StatusModal from '../components/modals/StatusModal';
 import {Lang} from '../interfaces/Interfaces';
-interface Language {
-  label: string;
-  value: string;
-}
+import styles from '../styles/styles';
 
 export default function SelectLanguagePage() {
   const {translations, appLanguage, setAppLanguage} = React.useContext(
@@ -26,21 +18,8 @@ export default function SelectLanguagePage() {
     Lang.english,
   );
   const {theme} = React.useContext(ThemeContext);
-  const {
-    isLoadingContent,
-    setRequiredUpdate,
-    setLoadingContent,
-    onCheckUpdates,
-    setUpdatedContent,
-  } = React.useContext(StatusContext);
+  const {setLoadingContent, onCheckUpdates} = React.useContext(StatusContext);
   const [isModalShown, setShowModal] = React.useState<boolean>(false);
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'column',
-    },
-  });
 
   const onValChange = async (index: number): Promise<void> => {
     if (!(await isUsedLanguage(defaultLanguages[index]['value']))) {
@@ -71,7 +50,7 @@ export default function SelectLanguagePage() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.DefaultContainer}>
       {defaultLanguages.map((language, index) => (
         <View key={index}>
           <ListeItemCheck

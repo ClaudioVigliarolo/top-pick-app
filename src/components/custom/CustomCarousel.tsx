@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, StyleSheet, Alert, Dimensions as Dim} from 'react-native';
+import {Text, View, Dimensions as Dim} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ThemeContext} from '../../context/ThemeContext';
 import {Topic} from '../../interfaces/Interfaces';
@@ -10,17 +10,13 @@ import keys from '../../../database/keys/keys';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useIsFocused} from '@react-navigation/native';
 import {getCardTemplate} from '../../constants/Themes';
+import styles from '../../styles/styles';
 
 interface CarouselProps {
   carouselItems: Topic[];
   activeIndex: number;
   setIndex: Function;
   onTopicPress: Function;
-}
-
-const DATA = [];
-for (let i = 0; i < 10; i++) {
-  DATA.push(i);
 }
 
 const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
@@ -54,27 +50,6 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
     },
   }));
 
-  const styles = StyleSheet.create({
-    carouselContainer: {
-      marginTop: '10%',
-    },
-    itemContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'dodgerblue',
-    },
-    itemLabel: {
-      color: 'white',
-      fontSize: 24,
-    },
-    counter: {
-      marginTop: 25,
-      fontSize: 30,
-      fontWeight: 'bold',
-      textAlign: 'center',
-    },
-  });
-
   const _renderItem = ({item}: {item: any}) => {
     return (
       <TouchableOpacity
@@ -82,14 +57,14 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
         onPress={() => props.onTopicPress(item)}>
         <View
           style={[
-            styles.itemContainer,
+            styles.CustomCarouselContainer,
             {
               backgroundColor: color,
               width: itemWidth,
               height: itemHeight,
             },
           ]}>
-          <Text style={styles.itemLabel}>{item.title}</Text>
+          <Text style={styles.CustomCarouselitemLabel}>{item.title}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -101,7 +76,7 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
         renderItem={_renderItem}
         sliderWidth={width}
         itemWidth={itemWidth}
-        containerCustomStyle={styles.carouselContainer}
+        containerCustomStyle={{marginTop: '10%'}}
         inactiveSlideShift={0}
         scrollInterpolator={scrollInterpolator}
         slideInterpolatedStyle={animatedStyles}

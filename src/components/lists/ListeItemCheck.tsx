@@ -1,17 +1,10 @@
 import * as React from 'react';
-import {
-  Container,
-  Header,
-  Content,
-  List,
-  ListItem,
-  Text,
-  Right,
-} from 'native-base';
-import {View, StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {ListItem, Text, Right} from 'native-base';
+import {View, TouchableWithoutFeedback} from 'react-native';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/Themes';
 import IconCheck from 'react-native-vector-icons/Feather';
+import styles from '../../styles/styles';
 
 interface ListItemCheckProps {
   text: string;
@@ -24,8 +17,8 @@ const ListItemCheck = (props: ListItemCheckProps) => {
 
   return (
     <TouchableWithoutFeedback onPress={props.onPress}>
-      <ListItem style={styles.container}>
-        <View style={styles.textContainer}>
+      <ListItem style={styles.ListItemcontainer}>
+        <View style={{maxWidth: '82%'}}>
           <Text style={{color: getColor(theme, 'primaryText')}}>
             {props.text.replace(/\s+/g, ' ').trim()}
           </Text>
@@ -48,13 +41,3 @@ const ListItemCheck = (props: ListItemCheckProps) => {
 };
 
 export default ListItemCheck;
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    position: 'relative',
-  },
-  textContainer: {
-    maxWidth: '82%',
-  },
-});

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
-import {ThemeContext} from '../../context/ThemeContext';
+import {Text, View, TouchableOpacity} from 'react-native';
+import styles from '../../styles/styles';
 
 const CustomButton = ({
   onPress,
@@ -11,27 +11,10 @@ const CustomButton = ({
   title: string;
   color: string;
 }) => {
-  const {theme, setTheme} = React.useContext(ThemeContext);
-  const styles = StyleSheet.create({
-    button: {
-      backgroundColor: 'darkorange',
-      paddingVertical: 10,
-      paddingHorizontal: 15,
-      borderRadius: 5,
-    },
-    buttonText: {
-      color: '#fff',
-      textAlign: 'center',
-      fontSize: 18,
-      fontWeight: '900',
-      textTransform: 'uppercase',
-    },
-  });
-
   return (
     <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
-      <View style={[styles.button, {backgroundColor: color}]}>
-        <Text style={styles.buttonText}>{title}</Text>
+      <View style={[styles.CustomButtonContainer, {backgroundColor: color}]}>
+        <Text style={styles.CustomButtonbuttonText}>{title}</Text>
       </View>
     </TouchableOpacity>
   );

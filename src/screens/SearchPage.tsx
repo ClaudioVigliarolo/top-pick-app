@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {View} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import AsyncStorage from '@react-native-community/async-storage';
 import SearchBar from '../components/search/SearchBar';
@@ -7,10 +7,11 @@ import {getColor} from '../constants/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {Lang, Topic} from '../interfaces/Interfaces';
 import CardItem from '../components/lists/CardItem';
-import ButtonsSection from '../components/buttons/ButtonsSearchSection';
+import ButtonsSearch from '../components/buttons/ButtonsSearch';
 import keys from '../../database/keys/keys';
 import {getPopularTopics, searchByTopic} from '../utils/sql';
 import CONSTANTS from '../constants/App';
+import styles from '../styles/styles';
 
 const SearchPage = ({navigation}: {navigation: any}) => {
   const [text, setText] = React.useState('');
@@ -103,17 +104,6 @@ const SearchPage = ({navigation}: {navigation: any}) => {
     setItems(topics);
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'column',
-      backgroundColor: getColor(theme, 'primaryBackground'),
-    },
-    buttonsContainer: {
-      marginTop: '10%',
-    },
-  });
-
   return (
     <React.Fragment>
       <SearchBar
@@ -155,9 +145,15 @@ const SearchPage = ({navigation}: {navigation: any}) => {
             />
           ))}
       </View>
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.DefaultContainer,
+          {
+            backgroundColor: getColor(theme, 'primaryBackground'),
+          },
+        ]}>
         <View style={{height: '50%', marginTop: '20%'}}>
-          <ButtonsSection
+          <ButtonsSearch
             buttons={popular}
             header={translations.POPULAR_SEARCHES}
             onSearch={(topic: Topic) => {

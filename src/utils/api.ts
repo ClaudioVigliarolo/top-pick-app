@@ -3,7 +3,7 @@ import {JSONresponse, Lang, Report} from '../interfaces/Interfaces';
 import {generateDB} from './sql';
 import {getLastUpdate, getUserID, setLastUpdate} from './utils';
 
-const HOSTNAME = 'https://top-pick-api-dev.herokuapp.com';
+const HOSTNAME = 'https://top-pick-api.herokuapp.com';
 export const updateTopics = async (lang: Lang): Promise<boolean> => {
   const id = getUserID();
   let hasUpdated = false;

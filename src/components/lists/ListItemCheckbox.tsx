@@ -1,20 +1,6 @@
 import * as React from 'react';
-import {
-  Container,
-  Header,
-  Content,
-  List,
-  ListItem,
-  Text,
-  Right,
-} from 'native-base';
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {ListItem, Text, Right} from 'native-base';
+import {View, TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/Themes';
 import CheckBox from '@react-native-community/checkbox';
@@ -25,6 +11,7 @@ import translations from '../../context/translations';
 import {addReport} from '../../utils/api';
 import {Report} from '../../interfaces/Interfaces';
 import {getUserID} from '../../utils/utils';
+import styles from '../../styles/styles';
 
 interface ListItemCheckBoxProps {
   text: string;
@@ -61,16 +48,16 @@ const ListItemCheckBox = ({
     addReport(newReport, translations.LANG);
   };
   return (
-    <ListItem style={styles.container} noBorder={true}>
+    <ListItem style={styles.ListItemcontainer} noBorder={true}>
       <TouchableWithoutFeedback
         onPress={() => {
           editable && toggleModal();
         }}>
-        <View style={styles.textContainer}>
+        <View style={styles.ListItemCheckBoxtextContainer}>
           <Text
             style={{
               color: getColor(theme, 'primaryText'),
-              fontSize: Dimensions.fontList,
+              fontSize: Dimensions.fontSmall,
             }}>
             {text.replace(/\s+/g, ' ').trim()}
           </Text>
@@ -89,84 +76,92 @@ const ListItemCheckBox = ({
       </Right>
       <Modal isVisible={isModalVisible}>
         <TouchableOpacity
-          style={styles.modalContainer}
+          style={styles.ListItemCheckBoxmodalContainer}
           activeOpacity={1}
           onPressOut={() => {
             setModalVisible(false);
             setModalReportOn(false);
           }}>
           {!isModalReportOn && (
-            <TouchableOpacity style={styles.modalItemContainer}>
+            <TouchableOpacity style={styles.ListItemCheckBoxmodalItemContainer}>
               <TouchableOpacity
-                style={styles.modalItem}
+                style={styles.ListItemCheckBoxmodalItem}
                 onPress={() => {
                   toggleModal();
                   Clipboard.setString(text);
                 }}>
-                <Text style={styles.modalText}>{translations.COPY}</Text>
+                <Text style={styles.ListItemCheckBoxmodalText}>
+                  {translations.COPY}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.modalItem}
+                style={styles.ListItemCheckBoxmodalItem}
                 onPress={() => {
                   toggleModal();
                   onValChange(!value);
                 }}>
-                <Text style={styles.modalText}>
+                <Text style={styles.ListItemCheckBoxmodalText}>
                   {value ? translations.DESELECT : translations.SELECT}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.modalItem}
+                style={styles.ListItemCheckBoxmodalItem}
                 onPress={() => {
                   setModalReportOn(true);
                 }}>
-                <Text style={styles.modalText}>{translations.REPORT}</Text>
+                <Text style={styles.ListItemCheckBoxmodalText}>
+                  {translations.REPORT}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.modalItem} onPress={toggleModal}>
-                <Text style={styles.modalText}>{translations.CLOSE}</Text>
+              <TouchableOpacity
+                style={styles.ListItemCheckBoxmodalItem}
+                onPress={toggleModal}>
+                <Text style={styles.ListItemCheckBoxmodalText}>
+                  {translations.CLOSE}
+                </Text>
               </TouchableOpacity>
             </TouchableOpacity>
           )}
 
           {isModalReportOn && (
-            <TouchableOpacity style={styles.modalItemContainer}>
+            <TouchableOpacity style={styles.ListItemCheckBoxmodalItemContainer}>
               <TouchableOpacity
-                style={styles.modalItem}
+                style={styles.ListItemCheckBoxmodalItem}
                 onPress={() => {
                   toggleModal();
                   onReport(translations.REASON_TRANSLATION, id);
                 }}>
-                <Text style={styles.modalText}>
+                <Text style={styles.ListItemCheckBoxmodalText}>
                   {translations.REASON_TRANSLATION}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.modalItem}
+                style={styles.ListItemCheckBoxmodalItem}
                 onPress={() => {
                   toggleModal();
                   onReport(translations.REASON_PERTINENCE, id);
                 }}>
-                <Text style={styles.modalText}>
+                <Text style={styles.ListItemCheckBoxmodalText}>
                   {translations.REASON_PERTINENCE}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.modalItem}
+                style={styles.ListItemCheckBoxmodalItem}
                 onPress={() => {
                   toggleModal();
                   onReport(translations.REASON_SCURRILOUS, id);
                 }}>
-                <Text style={styles.modalText}>
+                <Text style={styles.ListItemCheckBoxmodalText}>
                   {translations.REASON_SCURRILOUS}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.modalItem}
+                style={styles.ListItemCheckBoxmodalItem}
                 onPress={() => {
                   toggleModal();
                   onReport(translations.REASON_OTHERS, id);
                 }}>
-                <Text style={styles.modalText}>
+                <Text style={styles.ListItemCheckBoxmodalText}>
                   {translations.REASON_OTHERS}
                 </Text>
               </TouchableOpacity>
@@ -179,36 +174,3 @@ const ListItemCheckBox = ({
 };
 
 export default ListItemCheckBox;
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    position: 'relative',
-  },
-  modalItem: {
-    justifyContent: 'flex-start',
-    padding: 10,
-    paddingLeft: 20,
-  },
-  modalItemContainer: {
-    backgroundColor: 'white',
-    borderRadius: 2,
-    alignSelf: 'center',
-    opacity: 0.9,
-    padding: 2,
-    width: Dimensions.MODAL_WIDTH,
-  },
-  modalText: {
-    alignSelf: 'baseline',
-    textTransform: 'capitalize',
-  },
-  modalContainer: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-  },
-
-  textContainer: {
-    maxWidth: '82%',
-  },
-});
