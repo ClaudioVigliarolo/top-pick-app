@@ -2,7 +2,7 @@ import * as React from 'react';
 import {View} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import {Question, Topic} from '../interfaces/Interfaces';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import Slider from '../components/custom/Slider';
 
 export default function PresentationPage({

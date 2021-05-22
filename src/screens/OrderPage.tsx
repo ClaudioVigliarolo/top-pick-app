@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Platform, PermissionsAndroid} from 'react-native';
 import {Lang, Question, Topic} from '../interfaces/Interfaces';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
 import FileViewer from 'react-native-file-viewer';
 import BottomButton from '../components/buttons/BottomButtons';

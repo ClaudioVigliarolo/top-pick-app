@@ -2,9 +2,10 @@ import * as React from 'react';
 import {Text, View, StyleSheet, TextInput} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ThemeContext} from '../../context/ThemeContext';
-import {getColor} from '../../constants/Themes';
-import Dimensions from '../../constants/Dimensions';
+import {getColor} from '../../constants/theme/Themes';
+import Dimensions from '../../constants/theme/Dimensions';
 import styles from '../../styles/styles';
+import {getFontSize} from '../../constants/theme/Fonts';
 
 interface EditOverlayProps {
   isVisible: boolean;
@@ -15,7 +16,7 @@ interface EditOverlayProps {
 }
 
 const EditOverlay = (props: EditOverlayProps) => {
-  const {theme} = React.useContext(ThemeContext);
+  const {theme, fontsize} = React.useContext(ThemeContext);
   return (
     <React.Fragment>
       {props.isVisible && (
@@ -30,7 +31,15 @@ const EditOverlay = (props: EditOverlayProps) => {
             size={35}
             style={styles.EditOverlayCloseIcon}
           />
-          <Text style={styles.EditOverlayheader}>Editing Question</Text>
+          <Text
+            style={[
+              styles.EditOverlayheader,
+              {
+                fontSize: getFontSize(fontsize, 'fontMed'),
+              },
+            ]}>
+            Editing Question
+          </Text>
 
           <View
             style={[

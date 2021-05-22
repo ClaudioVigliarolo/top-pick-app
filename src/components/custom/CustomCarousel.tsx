@@ -4,13 +4,12 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ThemeContext} from '../../context/ThemeContext';
 import {Topic} from '../../interfaces/Interfaces';
 import Carousel from 'react-native-snap-carousel'; // Version can be specified in package.json
-import Dimensions from '../../constants/Dimensions';
+import Dimensions from '../../constants/theme/Dimensions';
 import {scrollInterpolator, animatedStyles} from '../../utils/animations';
-import keys from '../../../database/keys/keys';
-import AsyncStorage from '@react-native-community/async-storage';
 import {useIsFocused} from '@react-navigation/native';
-import {getCardTemplate} from '../../constants/Themes';
+import {getCardTemplate} from '../../constants/theme/Cardtheme';
 import styles from '../../styles/styles';
+import {getFontSize} from '../../constants/theme/Fonts';
 
 interface CarouselProps {
   carouselItems: Topic[];
@@ -24,16 +23,15 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
   const [color, setColor] = React.useState<string>('orange');
   const [width, setWidth] = React.useState<number>(Dim.get('window').width);
   const [height, setheight] = React.useState<number>(Dim.get('window').height);
-  const {theme} = React.useContext(ThemeContext);
+  const {theme, fontsize, cardTheme} = React.useContext(ThemeContext);
+
   let _carousel: any = {};
   const itemWidth = width * Dimensions.CAROUSEL_ITEM_WIDTH_FACTOR;
   const itemHeight = height * Dimensions.CAROUSEL_ITEM_HEIGHT_FACTOR;
 
   React.useEffect(() => {
     (async () => {
-      let cardTheme = await AsyncStorage.getItem(keys.CARDS_THEME);
-      cardTheme = cardTheme ? cardTheme : 'default';
-      setColor(getCardTemplate(theme, cardTheme as any));
+      setColor(getCardTemplate(theme, cardTheme));
     })();
 
     Dim.addEventListener('change', (e) => {
@@ -64,7 +62,15 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
               height: itemHeight,
             },
           ]}>
-          <Text style={styles.CustomCarouselitemLabel}>{item.title}</Text>
+          <Text
+            style={[
+              styles.CustomCarouselitemLabel,
+              {
+                fontSize: getFontSize(fontsize, 'fontBigMed'),
+              },
+            ]}>
+            {item.title}
+          </Text>
         </View>
       </TouchableOpacity>
     );

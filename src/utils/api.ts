@@ -9,9 +9,7 @@ export const updateTopics = async (lang: Lang): Promise<boolean> => {
   let hasUpdated = false;
   try {
     const response = await axios.get(
-      `${HOSTNAME}/topick/get_updates/${id}/${await getLastUpdate(
-        lang,
-      )}/${lang}`,
+      `${HOSTNAME}/updates/${id}/${await getLastUpdate(lang)}/${lang}`,
     );
     if (!response || !response.data) {
       throw new Error('got null response');
@@ -45,7 +43,7 @@ export const addReport = async (
   lang: string,
 ): Promise<boolean> => {
   try {
-    let response = await axios.post(`${HOSTNAME}/topick/add_report`, {
+    let response = await axios.post(`${HOSTNAME}/reports`, {
       report,
       lang,
     });

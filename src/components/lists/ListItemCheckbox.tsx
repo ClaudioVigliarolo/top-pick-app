@@ -2,16 +2,17 @@ import * as React from 'react';
 import {ListItem, Text, Right} from 'native-base';
 import {View, TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
 import {ThemeContext} from '../../context/ThemeContext';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 import CheckBox from '@react-native-community/checkbox';
 import Modal from 'react-native-modal';
 import Clipboard from '@react-native-community/clipboard';
-import Dimensions from '../../constants/Dimensions';
+import Dimensions from '../../constants/theme/Dimensions';
 import translations from '../../context/translations';
 import {addReport} from '../../utils/api';
 import {Report} from '../../interfaces/Interfaces';
 import {getUserID} from '../../utils/utils';
 import styles from '../../styles/styles';
+import {getFontSize} from '../../constants/theme/Fonts';
 
 interface ListItemCheckBoxProps {
   text: string;
@@ -29,7 +30,7 @@ const ListItemCheckBox = ({
   id,
   editable = true,
 }: ListItemCheckBoxProps) => {
-  const {theme} = React.useContext(ThemeContext);
+  const {theme, fontsize} = React.useContext(ThemeContext);
   const [isModalVisible, setModalVisible] = React.useState(false);
   const [isModalReportOn, setModalReportOn] = React.useState(false);
 
@@ -57,7 +58,7 @@ const ListItemCheckBox = ({
           <Text
             style={{
               color: getColor(theme, 'primaryText'),
-              fontSize: Dimensions.fontSmall,
+              fontSize: getFontSize(fontsize, 'fontSmall'),
             }}>
             {text.replace(/\s+/g, ' ').trim()}
           </Text>

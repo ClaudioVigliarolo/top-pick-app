@@ -101,6 +101,12 @@ const translations = {
     CHECK_UPDATES: 'verifica aggiornamenti...',
     UPDATING_TOPICS: 'aggiornamento in corso...',
     LEAVE_RATING: "valuta l'app",
+    FONT_BIGGER: 'molto grande',
+    FONT_BIG: 'grande',
+    FONT_MEDIUM: 'normale',
+    FONT_SMALL: 'piccolo',
+    FONT_SMALLER: 'molto piccolo',
+    CHANGE_FONTSIZE: 'cambia dimensione caratteri',
   },
   en: {
     TOP_PICK: 'TOP Pick',
@@ -179,6 +185,12 @@ const translations = {
     CHECK_UPDATES: 'checking for updates...',
     UPDATING_TOPICS: 'updating topics...',
     LEAVE_RATING: 'leave a rating',
+    FONT_BIGGER: 'bigger',
+    FONT_BIG: 'big',
+    FONT_MEDIUM: 'default',
+    FONT_SMALL: 'small',
+    FONT_SMALLER: 'smaller',
+    CHANGE_FONTSIZE: 'change fontsize',
   },
 
   fr: {
@@ -260,6 +272,12 @@ const translations = {
     CHECK_UPDATES: 'Vérification des mises à jour...',
     UPDATING_TOPICS: 'mise à jour en cours...',
     LEAVE_RATING: 'laisser un commentaire',
+    FONT_BIGGER: 'très grand',
+    FONT_BIG: 'grand',
+    FONT_MEDIUM: 'normale',
+    FONT_SMALL: 'petit',
+    FONT_SMALLER: 'très petit',
+    CHANGE_FONTSIZE: 'changer taille de police',
   },
 
   es: {
@@ -341,6 +359,12 @@ const translations = {
     CHECK_UPDATES: 'Buscando actualizaciones en curso ......',
     UPDATING_TOPICS: 'actualizando los temas...',
     LEAVE_RATING: 'deja una calificación',
+    FONT_BIGGER: 'muy grande',
+    FONT_BIG: 'grande',
+    FONT_MEDIUM: 'normal',
+    FONT_SMALL: 'pequeño',
+    FONT_SMALLER: 'muy pequeño',
+    CHANGE_FONTSIZE: 'cambiar tamaño de fuente',
   },
 };
 

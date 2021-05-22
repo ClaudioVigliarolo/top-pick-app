@@ -3,7 +3,7 @@ import {ScrollView} from 'react-native';
 import {Topic, Category, Lang} from '../interfaces/Interfaces';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {ThemeContext} from '../context/ThemeContext';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import ListItem from '../components/lists/ListItemBasic';
 import {getTopicByCategory} from '../utils/sql';
 import styles from '../styles/styles';
@@ -39,7 +39,6 @@ export default function TopicsPage({
       {items.map((item: Topic, i) => (
         <ListItem
           key={i}
-          secondaryText=""
           icon={true}
           text={item.title}
           onPress={() => {

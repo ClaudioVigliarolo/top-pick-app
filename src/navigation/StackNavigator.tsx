@@ -16,13 +16,14 @@ import {LocalizationContext} from '../context/LocalizationContext';
 import FavouritesPage from '../screens/FavouritesPage';
 import SearchPage from '../screens/SearchPage';
 import PresentationPage from '../screens/PresentationPage';
-import {getColor} from '../constants/Themes';
-import Dimensions from '../constants/Dimensions';
+import {getColor} from '../constants/theme/Themes';
+import Dimensions from '../constants/theme/Dimensions';
 import SettingsPage from '../screens/SettingsPage';
 import {StatusContext} from '../context/StatusContext';
 import {onTopicsUpdate} from '../utils/utils';
 import SelectLanguagePage from '../screens/SettingsLanguagePage';
-import ThemePage from '../screens/SettingsThemePage';
+import SelectFontsize from '../screens/SettingsFontsizePage';
+import ThemePage from '../screens/SettingsCardthemePage';
 import translations from '../context/translations';
 import StatusModal from '../components/modals/StatusModal';
 import {Lang} from '../interfaces/Interfaces';
@@ -239,6 +240,25 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
         component={ThemePage}
         options={{
           title: translations.CHANGE_THEME,
+          headerTintColor: getColor(theme, 'headerPrimary'),
+
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          headerLeft: () => (
+            <BackStructure destination="Settings" navigation={navigation} />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name="Fontsize"
+        component={SelectFontsize}
+        options={{
+          title: translations.CHANGE_FONTSIZE,
           headerTintColor: getColor(theme, 'headerPrimary'),
 
           headerStyle: {

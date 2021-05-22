@@ -1,9 +1,9 @@
 import React from 'react';
 import {View, Header, Item, Input, Icon, Button, Text} from 'native-base';
 import {ThemeContext} from '../../context/ThemeContext';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
-import Dimensions from '../../constants/Dimensions';
+import Dimensions from '../../constants/theme/Dimensions';
 interface SearchBarProps {
   text: string;
   placeholder: string;

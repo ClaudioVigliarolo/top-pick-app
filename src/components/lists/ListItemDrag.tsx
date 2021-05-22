@@ -3,13 +3,14 @@ import {ListItem, Text} from 'native-base';
 import Clipboard from '@react-native-community/clipboard';
 import {ThemeContext} from '../../context/ThemeContext';
 import {View, TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LikeIcon from 'react-native-vector-icons/AntDesign';
-import Dimensions from '../../constants/Dimensions';
+import Dimensions from '../../constants/theme/Dimensions';
 import Modal from 'react-native-modal';
 import translations from '../../context/translations';
 import styles from '../../styles/styles';
+import {getFontSize} from '../../constants/theme/Fonts';
 
 interface CustomListItemProps {
   id: number;
@@ -26,7 +27,7 @@ interface CustomListItemProps {
 }
 
 const CustomListItem = (props: CustomListItemProps) => {
-  const {theme} = React.useContext(ThemeContext);
+  const {theme, fontsize} = React.useContext(ThemeContext);
   const [isModalVisible, setModalVisible] = React.useState(false);
 
   const toggleModal = () => {
@@ -43,12 +44,13 @@ const CustomListItem = (props: CustomListItemProps) => {
           styles.ListItemDragcontainer,
           {backgroundColor: props.backgroundColor, opacity: props.opacity},
         ]}>
-        <View style={styles.ListItemDragnumberContainer}>
+        <View style={[styles.ListItemDragnumberContainer]}>
           <Text
             style={{
               color: getColor(theme, 'primaryText'),
               textAlignVertical: 'center',
               fontWeight: 'bold',
+              fontSize: getFontSize(fontsize, 'fontSmall'),
             }}>
             {props.number}
           </Text>
@@ -60,6 +62,7 @@ const CustomListItem = (props: CustomListItemProps) => {
               color: getColor(theme, 'primaryText'),
               textAlignVertical: 'center',
               marginRight: 'auto',
+              fontSize: getFontSize(fontsize, 'fontSmall'),
             }}>
             {props.text.replace(/^\s+/g, '')}
           </Text>

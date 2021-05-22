@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ScrollView} from 'react-native';
 import {Category, Lang} from '../interfaces/Interfaces';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import {ThemeContext} from '../context/ThemeContext';
 import {LocalizationContext} from '../context/LocalizationContext';
 import ListItem from '../components/lists/ListItemBasic';

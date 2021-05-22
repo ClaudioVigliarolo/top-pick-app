@@ -1,5 +1,5 @@
 import React from 'react';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 import {ThemeContext} from '../../context/ThemeContext';
 import ActionSheet from 'react-native-actionsheet';
 import translations from '../../context/translations';

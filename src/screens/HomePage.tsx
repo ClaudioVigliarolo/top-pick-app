@@ -5,10 +5,10 @@ import {Lang, Topic} from '../interfaces/Interfaces';
 import {LocalizationContext} from '../context/LocalizationContext';
 import TopicsCarousel from '../components/custom/CustomCarousel';
 import Button from '../components/buttons/CustomButton';
-import Dimensions from '../constants/Dimensions';
-import {getColor} from '../constants/Themes';
+import Dimensions from '../constants/theme/Dimensions';
+import {getColor} from '../constants/theme/Themes';
 import {getTopics} from '../utils/sql';
-import CONSTANTS from '../constants/App';
+import CONSTANTS from '../constants/app/App';
 
 const HomePage = ({navigation}: {navigation: any}) => {
   const mycarousel = React.useRef<any>(null);

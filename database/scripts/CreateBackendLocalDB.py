@@ -182,39 +182,6 @@ for LANG_PREFIX in languages:
                                 values (%s,%s,%s,%s)''',
                                      (hashed_id, get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX), line, LANG_PREFIX))
 
-    # fill related table with topics from related folder
-    with open(related) as file_in:
-        for line in file_in:
-            topicsList = line.split()
-            for topic in topicsList:
-                # add every related topic to list
-                if get_topic(topic, LANG_PREFIX):
-                    for related_topic in topicsList:
-                        if related_topic != topic and get_topic(related_topic, LANG_PREFIX):
-                            try:
-                                curs.execute('''INSERT INTO "related" (source_id, source_ref_id, dest_id, dest_ref_id, lang)
-                                                values (%s,%s,%s,%s, %s)''',
-                                             (get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX), get_hash(get_topic(topic, "en")), get_hash(
-                                                 get_topic(related_topic, LANG_PREFIX), LANG_PREFIX), get_hash(get_topic(related_topic, "en")), LANG_PREFIX))
-                            except Exception as e:
-                                continue
-    # assign topics to each category
-    # we take the list of associated topics after char ":" in category file
-
-    # populate topic_categories table
-    with open(categories) as file_in:
-        for line in file_in:
-            categ = line.split()[0]
-            topicsList = line[line.find(":")+1:].split()
-            for topic in topicsList:
-                if get_topic(topic, LANG_PREFIX) and get_category(categ, LANG_PREFIX):
-                    print("77",  get_topic(topic, LANG_PREFIX),
-                          get_category(categ, LANG_PREFIX))
-                    curs.execute('''INSERT INTO "topic_categories" (category_id, category_ref_id, topic_id, topic_ref_id,lang)
-                                            values (%s, %s, %s,%s, %s)''',
-                                 (get_hash(
-                                     get_category(categ, LANG_PREFIX), LANG_PREFIX), get_hash(get_category(categ, "en")), (get_hash(get_topic(topic, LANG_PREFIX), LANG_PREFIX)), get_hash(get_topic(topic, "en")), LANG_PREFIX))
-
 
 curs.execute('''CREATE TABLE "reports" 
     (
@@ -298,6 +265,13 @@ curs.execute('''CREATE TABLE TO_TRANSLATE
         
     )''')
 
+# for when the app is maintenance or we are adding topics
+curs.execute('''CREATE TABLE MAINTENANCE 
+    (
+        "lang" VARCHAR(2) REFERENCES "languages" ("lang") PRIMARY KEY,
+         value BOOLEAN NOT NULL
+    )''')
+
 # add default user
 curs.execute('''INSERT INTO users (id,username, email, password, type )
                     values (%s,%s,%s,%s,%s)''',
@@ -308,6 +282,10 @@ for LANG_PREFIX in languages:
     curs.execute('''INSERT INTO user_languages (id, lang )
                         values (%s,%s)''',
                  (get_hash(ROOT_USERNAME), LANG_PREFIX))
+
+    curs.execute('''INSERT INTO MAINTENANCE (lang, value)
+                        values (%s,%s)''',
+                 (LANG_PREFIX, False))
 
 # close communication with the PostgreSQL database server
 curs.close()

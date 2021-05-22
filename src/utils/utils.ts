@@ -1,9 +1,12 @@
 import DeviceInfo from 'react-native-device-info';
 import NetInfo from '@react-native-community/netinfo';
 import {updateTopics} from './api';
-import {Lang} from '../interfaces/Interfaces';
+import {Lang, Topic} from '../interfaces/Interfaces';
 import AsyncStorage from '@react-native-community/async-storage';
 import keys from '../../database/keys/keys';
+import {FontDimension} from '../constants/theme/Fonts';
+import {CardTemplates} from '../constants/theme/Cardtheme';
+import {Theme} from '../constants/theme/Themes';
 
 const NO_DATE = 'Sun May 11,2014';
 const NO_LANGUAGE = 'en';
@@ -164,6 +167,125 @@ export const setUsedLanguage = async (lang: string): Promise<void> => {
   }
 };
 
+export const setStorageTheme = async (theme: Theme): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.THEME_KEY, theme);
+  } catch (error) {
+    // Error saving data
+  }
+};
+
+export const setStorageLanguage = async (language: Lang): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.LANGUAGE_KEY, language);
+  } catch (error) {
+    // Error saving data
+  }
+};
+
+export const readStorageLanguage = async (): Promise<Lang | null> => {
+  try {
+    const retrievedLanguage = await AsyncStorage.getItem(keys.LANGUAGE_KEY);
+    if (retrievedLanguage === null) {
+      return null;
+    } else {
+      return retrievedLanguage as Lang;
+    }
+  } catch (e) {
+    return null;
+  }
+};
+
+export const setStorageFontsize = async (
+  fontsize: FontDimension,
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.FONTSIZE, fontsize);
+  } catch (error) {
+    // Error saving data
+  }
+};
+
+export const readStorageFontsize = async (): Promise<FontDimension> => {
+  try {
+    const retrievedFontsize = await AsyncStorage.getItem(keys.FONTSIZE);
+    if (retrievedFontsize === null) {
+      return FontDimension.MEDIUM;
+    } else {
+      return retrievedFontsize as FontDimension;
+    }
+  } catch (e) {
+    return FontDimension.MEDIUM;
+  }
+};
+
+export const saveStorageRecent = async (
+  recentsArray: Topic[],
+  language: Lang,
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(
+      keys.RECENT_SEARCH_KEY + language,
+      JSON.stringify(recentsArray),
+    );
+  } catch (error) {}
+
+  try {
+    await AsyncStorage.setItem(keys.LANGUAGE_KEY, language);
+  } catch (error) {
+    // Error saving data
+  }
+};
+
+export const clearStorage = async (): Promise<void> => {
+  AsyncStorage.clear();
+};
+
+export const readStorageRecents = async (
+  language: Lang,
+): Promise<string | null> => {
+  try {
+    const retrievedRecents = await AsyncStorage.getItem(
+      keys.RECENT_SEARCH_KEY + language,
+    );
+    if (retrievedRecents === null) {
+      return null;
+    } else {
+      return retrievedRecents;
+    }
+  } catch (e) {
+    return null;
+  }
+};
+
+export const saveStorageUpdateSettings = async (
+  val: boolean,
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.SETTINGS_UPDATE, val.toString());
+  } catch (error) {}
+};
+
+export const saveStoragCardtheme = async (theme: string): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.CARDS_THEME, theme);
+  } catch (error) {}
+};
+
+export const readStorageCardtheme = async (): Promise<keyof CardTemplates> => {
+  try {
+    const cardTheme = await AsyncStorage.getItem(keys.CARDS_THEME);
+    if (cardTheme === null) {
+      return 'default';
+    } else {
+      return cardTheme as keyof CardTemplates;
+    }
+  } catch (e) {
+    console.log('Failed to fetch the data from storage');
+    return 'default';
+  }
+};
+
 export const isAutomaticUpdate = async (): Promise<boolean> => {
   try {
     const isAutomaticUpdate = await AsyncStorage.getItem(keys.SETTINGS_UPDATE);
@@ -187,17 +309,17 @@ export function hashCode(str: string): number {
   return id;
 }
 
-export const readTheme = async (): Promise<string> => {
+export const readTheme = async (): Promise<Theme> => {
   try {
     const theme = await AsyncStorage.getItem(keys.THEME_KEY);
-    if (theme === null || theme == 'light') {
-      return 'light';
+    if (theme === null || theme == Theme.LIGHT) {
+      return Theme.LIGHT;
     } else {
-      return 'dark';
+      return Theme.DARK;
     }
   } catch (e) {
     console.log('Failed to fetch the data from storage');
-    return 'light';
+    return Theme.LIGHT;
   }
 };
 

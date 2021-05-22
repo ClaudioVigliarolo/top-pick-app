@@ -31,7 +31,7 @@ export const StatusContext = React.createContext({
   onCheckUpdates: () => {},
 });
 
-export const StatusProvider = ({children}: {children: any}) => {
+export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   const [isLoadingContent, setLoadingContent] = React.useState<boolean>(false);
   const [isUpdatedContent, setUpdatedContent] = React.useState<boolean>(false);
   const [isRequiredUpdate, setRequiredUpdate] = React.useState<boolean>(false);

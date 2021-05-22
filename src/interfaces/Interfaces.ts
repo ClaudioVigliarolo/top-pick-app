@@ -1,3 +1,5 @@
+import {FontDimension} from '../constants/theme/Fonts';
+
 export interface Topic {
   id: number;
   ref_id: number;
@@ -71,4 +73,9 @@ export interface Report {
   client_id: number;
   question_id: number;
   reason: string;
+}
+
+export interface FontsizeOption {
+  title: string;
+  value: FontDimension;
 }

@@ -9,8 +9,9 @@ import {Question} from '../../interfaces/Interfaces';
 import {Text, View, Image} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import styles from '../../styles/styles';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 import {ThemeContext} from '../../context/ThemeContext';
+import {getFontSize} from '../../constants/theme/Fonts';
 
 interface SliderProps {
   backgroundColor: string;
@@ -21,7 +22,7 @@ interface SliderProps {
 }
 
 const Slider = (props: SliderProps) => {
-  const {theme} = React.useContext(ThemeContext);
+  const {theme, fontsize} = React.useContext(ThemeContext);
   const [sliderState, setSliderState] = React.useState({currentPage: 0});
   const [width, setWidth] = React.useState<number>(Dim.get('window').width);
   const [height, setheight] = React.useState<number>(Dim.get('window').height);
@@ -54,7 +55,15 @@ const Slider = (props: SliderProps) => {
           {backgroundColor: getColor(theme, 'primaryOrange')},
         ]}>
         <View style={styles.SlidertitleSection}>
-          <Text style={styles.Slidertitle}>{props.title}</Text>
+          <Text
+            style={[
+              styles.Slidertitle,
+              {
+                fontSize: getFontSize(fontsize, 'fontMed'),
+              },
+            ]}>
+            {props.title}
+          </Text>
           <AntDesign
             name="close"
             onPress={props.onClose}
@@ -80,7 +89,15 @@ const Slider = (props: SliderProps) => {
           {props.items.map((item: Question, index: number) => (
             <View key={index} style={{width, height}}>
               <View style={styles.Sliderwrapper}>
-                <Text style={styles.Sliderquestion}>{item.title}</Text>
+                <Text
+                  style={[
+                    styles.Sliderquestion,
+                    {
+                      fontSize: getFontSize(fontsize, 'fontBig'),
+                    },
+                  ]}>
+                  {item.title}
+                </Text>
               </View>
             </View>
           ))}

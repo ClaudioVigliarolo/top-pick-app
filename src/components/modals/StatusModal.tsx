@@ -1,6 +1,6 @@
 import React from 'react';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 import {ThemeContext} from '../../context/ThemeContext';
 interface StatusModalProps {
   show: boolean;

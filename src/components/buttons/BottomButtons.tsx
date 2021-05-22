@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {View, Text as NativeText, Keyboard} from 'react-native';
 import {ThemeContext} from '../../context/ThemeContext';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 import CustomButton from './CustomButton';
 import styles from '../../styles/styles';
+import {getFontSize} from '../../constants/theme/Fonts';
 interface BottomButtonsProps {
-  onPress: any;
+  onPress: () => void;
   text: string;
   secondaryText?: string;
   visible: boolean;
@@ -57,8 +58,6 @@ export default class BottomButtons extends React.Component<
   };
 
   render() {
-    {
-    }
     return (
       <View
         style={[
@@ -92,6 +91,7 @@ export default class BottomButtons extends React.Component<
 
                 {
                   color: getColor(this.context.theme, 'primaryOrange'),
+                  fontSize: getFontSize(this.context.theme, 'fontMed'),
                 },
               ]}>
               {this.props.secondaryText}

@@ -1,4 +1,8 @@
-//"#ff9a00", "#ff7400", "#ff6a00", "#ff0000", "#ff4d00"
+export enum Theme {
+  LIGHT = 'light',
+  DARK = 'dark',
+}
+
 interface Colors {
   type: string;
   primaryOrange: string;
@@ -20,20 +24,6 @@ interface Colors {
   barExternalColor: string;
   bottomButtonsBackground: string;
   lineColor: string;
-}
-
-interface CardTemplates {
-  default: string;
-  orange: string;
-  red: string;
-  blue: string;
-  green: string;
-  violet: string;
-}
-
-export enum Theme {
-  light = 'light',
-  dark = 'dark',
 }
 
 const light: Colors = {
@@ -83,51 +73,17 @@ const dark: Colors = {
 };
 
 export const getColor = <K extends keyof Colors>(
-  theme: string,
+  theme: Theme,
   key: K,
 ): string => {
   switch (theme) {
-    case Theme.dark:
+    case Theme.DARK:
       return dark[key];
 
-    case Theme.light:
+    case Theme.LIGHT:
       return light[key];
 
     default:
       return light[key];
   }
-};
-
-export const getCardTemplate = <K extends keyof CardTemplates>(
-  theme: string,
-  key: K,
-): string => {
-  switch (theme) {
-    case Theme.light:
-      return cardTemplatesLight[key];
-
-    case Theme.dark:
-      return cardTemplatesDark[key];
-
-    default:
-      return cardTemplatesLight[key];
-  }
-};
-
-const cardTemplatesLight: CardTemplates = {
-  default: '#ff7400',
-  orange: 'orange',
-  red: '#ff0000',
-  blue: '#40a8c4',
-  green: '#00af91',
-  violet: '#7868e6',
-};
-
-const cardTemplatesDark: CardTemplates = {
-  default: '#ff7400',
-  orange: 'orange',
-  red: '#ff0000',
-  blue: '#40a8c4',
-  green: '#00af91',
-  violet: '#7868e6',
 };

@@ -1,8 +1,8 @@
 import React from 'react';
 import {ThemeContext} from '../../context/ThemeContext';
 import {View} from 'react-native';
-import {getColor} from '../../constants/Themes';
-import Dimensions from '../../constants/Dimensions';
+import {getColor} from '../../constants/theme/Themes';
+import Dimensions from '../../constants/theme/Dimensions';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 const renderIcon = (name: string, isCurrent: boolean, theme: string): any => {
   switch (name) {

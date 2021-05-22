@@ -2,13 +2,13 @@ import * as React from 'react';
 import {View, TouchableOpacity} from 'react-native';
 import {ThemeContext} from '../../context/ThemeContext';
 import {CardItem, Body, Text} from 'native-base';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 
 interface CustomCardItemProps {
   text: string;
   type: string;
   color: string;
-  onPress: any;
+  onPress: () => void;
 }
 
 const CustomCardItem = (props: CustomCardItemProps) => {

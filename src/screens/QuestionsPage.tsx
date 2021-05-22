@@ -3,13 +3,14 @@ import {View, ScrollView, Text, TouchableOpacity} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import {Lang, Question, Topic} from '../interfaces/Interfaces';
 import {LocalizationContext} from '../context/LocalizationContext';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import ListItem from '../components/lists/ListItemCheckbox';
 import BottomButton from '../components/buttons/BottomButtons';
 import SearchBar from '../components/search/SearchBar';
-import Dimensions from '../constants/Dimensions';
+import Dimensions from '../constants/theme/Dimensions';
 import {getQuestionsByTopic, getRelatedTopics} from '../utils/sql';
 import styles from '../styles/styles';
+import {getFontSize} from '../constants/theme/Fonts';
 
 export default function QuestionsPage({
   route,
@@ -22,7 +23,7 @@ export default function QuestionsPage({
   const [related, setRelated] = React.useState<Topic[]>([]);
   const [filter, setFilter] = React.useState('');
   const [counter, setCounter] = React.useState(0);
-  const {theme} = React.useContext(ThemeContext);
+  const {theme, fontsize} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
 
   const {topic}: {topic: Topic} = route.params;
@@ -87,7 +88,10 @@ export default function QuestionsPage({
             <Text
               style={[
                 styles.QuestionsPagetitle,
-                {color: getColor(theme, 'lightGray')},
+                {
+                  color: getColor(theme, 'lightGray'),
+                  fontSize: getFontSize(fontsize, 'fontSmall'),
+                },
               ]}>
               {translations.SOURCE_TOPICS + '  '}
             </Text>
@@ -96,6 +100,7 @@ export default function QuestionsPage({
                 styles.QuestionsPagesource,
                 {
                   color: getColor(theme, 'lightGray'),
+                  fontSize: getFontSize(fontsize, 'fontSmall'),
                 },
               ]}>
               {topic.source}
@@ -105,7 +110,10 @@ export default function QuestionsPage({
             <Text
               style={[
                 styles.QuestionsPagetitle,
-                {color: getColor(theme, 'lightGray')},
+                {
+                  color: getColor(theme, 'lightGray'),
+                  fontSize: getFontSize(fontsize, 'fontSmall'),
+                },
               ]}>
               {translations.RELATED_TOPICS + ' '}
             </Text>
@@ -123,6 +131,7 @@ export default function QuestionsPage({
                     styles.QuestionsPagerelatedText,
                     {
                       color: getColor(theme, 'primaryOrange'),
+                      fontSize: getFontSize(fontsize, 'fontSmall'),
                     },
                   ]}>
                   {related.title}

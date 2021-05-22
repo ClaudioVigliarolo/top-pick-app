@@ -1,5 +1,5 @@
 import SQLite from 'react-native-sqlite-storage';
-import CONSTANTS from '../constants/App';
+import CONSTANTS from '../constants/app/App';
 import {
   Category,
   Topic,

@@ -3,20 +3,21 @@ import {View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {Text} from 'native-base';
 import {Lang, Question} from '../interfaces/Interfaces';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import ListItemDrag from '../components/lists/ListItemDrag';
 import DraggableFlatList from 'react-native-draggable-flatlist';
 import {ThemeContext} from '../context/ThemeContext';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {getFavourites, toggleLike} from '../utils/sql';
 import styles from '../styles/styles';
+import {getFontSize} from '../constants/theme/Fonts';
 
 export default function CategoryList({navigation}: {navigation: any}) {
   const [items, setItems] = React.useState<Question[]>([]);
   const isFocused = useIsFocused();
   const {translations} = React.useContext(LocalizationContext);
 
-  const {theme} = React.useContext(ThemeContext);
+  const {theme, fontsize} = React.useContext(ThemeContext);
   React.useEffect(() => {
     getItems();
   }, [isFocused]);
@@ -76,7 +77,10 @@ export default function CategoryList({navigation}: {navigation: any}) {
         <Text
           style={[
             styles.FavouritesPageText,
-            {color: getColor(theme, 'primaryOrange')},
+            {
+              color: getColor(theme, 'primaryOrange'),
+              fontSize: getFontSize(fontsize, 'fontMed'),
+            },
           ]}>
           {translations.NO_LIKED_QUESTIONS}
         </Text>

@@ -1,9 +1,8 @@
 import React, {createContext, useState} from 'react';
 import translations, {DEFAULT_LANGUAGE} from './translations';
-import AsyncStorage from '@react-native-community/async-storage';
 import * as RNLocalize from 'react-native-localize';
-import keys from '../../database/keys/keys';
 import {Lang} from '../interfaces/Interfaces';
+import {readStorageLanguage, setStorageLanguage} from '../utils/utils';
 
 export const LocalizationContext = createContext({
   translations,
@@ -12,7 +11,11 @@ export const LocalizationContext = createContext({
   configureDeviceDefaultLanguage: async () => {},
 });
 
-export const LocalizationProvider = ({children}: {children: any}) => {
+export const LocalizationProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [appLanguage, setAppLanguage] = useState(DEFAULT_LANGUAGE);
 
   React.useEffect(() => {
@@ -24,11 +27,11 @@ export const LocalizationProvider = ({children}: {children: any}) => {
   const onSetAppLanguage = async (language: Lang) => {
     translations.setLanguage(language);
     setAppLanguage(language);
-    AsyncStorage.setItem(keys.LANGUAGE_KEY, language);
+    await setStorageLanguage(language);
   };
 
   const configureDeviceDefaultLanguage = async () => {
-    const currentLanguage = await AsyncStorage.getItem(keys.LANGUAGE_KEY);
+    const currentLanguage = await readStorageLanguage();
     if (!currentLanguage) {
       let localeCode = DEFAULT_LANGUAGE;
       const supportedLocaleCodes = translations.getAvailableLanguages();

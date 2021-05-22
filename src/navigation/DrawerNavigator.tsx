@@ -8,7 +8,7 @@ import {
   SettingsStack,
 } from './StackNavigator';
 import {LocalizationContext} from '../context/LocalizationContext';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import IconHome from 'react-native-vector-icons/Entypo';
 import IconCategory from 'react-native-vector-icons/Entypo';
 import IconFavourites from 'react-native-vector-icons/AntDesign';
@@ -22,7 +22,7 @@ const DrawerNavigator = ({navigation}: {navigation: any}) => {
   const {translations} = React.useContext(LocalizationContext);
   return (
     <Drawer.Navigator
-      drawerContent={(props) => <SideBar {...props} />}
+      drawerContent={(props) => <SideBar {...(props as any)} />}
       drawerContentOptions={{
         activeTintColor: getColor(theme, 'primaryOrange'),
         inactiveTintColor: getColor(theme, 'drawerGrey'),

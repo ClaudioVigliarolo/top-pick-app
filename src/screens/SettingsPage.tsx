@@ -1,15 +1,17 @@
 import * as React from 'react';
 import {View} from 'react-native';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {ThemeContext} from '../context/ThemeContext';
 import SQLite from 'react-native-sqlite-storage';
 import ListItem from '../components/lists/ListItemBasic';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import AsyncStorage from '@react-native-community/async-storage';
 import ListItemCheckBox from '../components/lists/ListItemCheckbox';
-import keys from '../../database/keys/keys';
-import {isAutomaticUpdate} from '../utils/utils';
+import {
+  clearStorage,
+  isAutomaticUpdate,
+  saveStorageUpdateSettings,
+} from '../utils/utils';
 
 export default function SettingsPage({navigation}: {navigation: any}) {
   const [isAlert, setAlert] = React.useState<boolean>(false);
@@ -29,7 +31,7 @@ export default function SettingsPage({navigation}: {navigation: any}) {
     setAlert(true);
   };
 
-  const resetDB = (): void => {
+  const resetDB = async (): Promise<void> => {
     SQLite.deleteDatabase(
       {name: 'db.db', location: 'default'},
       () => {
@@ -39,14 +41,12 @@ export default function SettingsPage({navigation}: {navigation: any}) {
         console.log('ERROR');
       },
     );
-
-    AsyncStorage.clear();
+    await clearStorage();
   };
 
   const setUpdateSettings = async (newVal: boolean) => {
-    AsyncStorage.setItem(keys.SETTINGS_UPDATE, newVal.toString()).then(() => {
-      setUpdate(newVal);
-    });
+    await saveStorageUpdateSettings(newVal);
+    setUpdate(newVal);
   };
 
   return (
@@ -70,7 +70,13 @@ export default function SettingsPage({navigation}: {navigation: any}) {
           navigation.navigate('Theme');
         }}
         icon={false}
-        secondaryText=""
+      />
+      <ListItem
+        text={translations.CHANGE_FONTSIZE}
+        onPress={() => {
+          navigation.navigate('Fontsize');
+        }}
+        icon={false}
       />
       <ListItemCheckBox
         text={translations.AUTOMATIC_UPDATE}

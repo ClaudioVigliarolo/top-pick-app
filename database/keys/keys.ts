@@ -1,5 +1,6 @@
 export default {
   CARDS_THEME: '@cards_theme',
+  FONTSIZE: '@fontsize',
   LANGUAGE_KEY: '@lang',
   RECENT_SEARCH_KEY: '@recent_search',
   THEME_KEY: '@theme',

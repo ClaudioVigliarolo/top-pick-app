@@ -15,12 +15,11 @@ import {
   Switch,
   List,
 } from 'native-base';
-import AsyncStorage from '@react-native-community/async-storage';
 import Animated from 'react-native-reanimated';
-import {getColor} from '../constants/Themes';
-import keys from '../../database/keys/keys';
+import {getColor, Theme} from '../constants/theme/Themes';
 import translations from '../context/translations';
 import styles from '../styles/styles';
+import {setStorageTheme} from '../utils/utils';
 
 const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
   const {theme, setTheme} = React.useContext(ThemeContext);
@@ -31,11 +30,9 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
   });
 
   const changeTheme = async () => {
-    try {
-      const newTheme = theme == 'light' ? 'dark' : 'light';
-      setTheme(newTheme);
-      await AsyncStorage.setItem(keys.THEME_KEY, newTheme);
-    } catch (e) {}
+    const newTheme = theme == Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
+    setTheme(newTheme);
+    await setStorageTheme(newTheme);
   };
 
   return (
@@ -52,7 +49,7 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
       <Content>
         <DrawerContentScrollView {...props}>
           <Animated.View style={{transform: [{translateX}]}}>
-            <DrawerItemList {...props} />
+            <DrawerItemList {...(props as any)} />
           </Animated.View>
         </DrawerContentScrollView>
         <List>
@@ -87,7 +84,7 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
         ]}>
         <TouchableWithoutFeedback
           onPress={() => Linking.openURL('market://details?id=com.topick')}>
-          <Text style={[styles.CustomDrawerfooterText]}>
+          <Text style={styles.CustomDrawerfooterText}>
             {translations.LEAVE_RATING}
           </Text>
         </TouchableWithoutFeedback>

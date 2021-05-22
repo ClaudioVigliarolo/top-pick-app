@@ -1,17 +1,16 @@
 import * as React from 'react';
 import {View} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
-import AsyncStorage from '@react-native-community/async-storage';
 import SearchBar from '../components/search/SearchBar';
-import {getColor} from '../constants/Themes';
+import {getColor} from '../constants/theme/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {Lang, Topic} from '../interfaces/Interfaces';
 import CardItem from '../components/lists/CardItem';
 import ButtonsSearch from '../components/buttons/ButtonsSearch';
-import keys from '../../database/keys/keys';
 import {getPopularTopics, searchByTopic} from '../utils/sql';
-import CONSTANTS from '../constants/App';
+import CONSTANTS from '../constants/app/App';
 import styles from '../styles/styles';
+import {readStorageRecents, saveStorageRecent} from '../utils/utils';
 
 const SearchPage = ({navigation}: {navigation: any}) => {
   const [text, setText] = React.useState('');
@@ -60,35 +59,23 @@ const SearchPage = ({navigation}: {navigation: any}) => {
   };
 
   const saveRecents = async (newRecentsArray: Topic[]) => {
-    try {
-      await AsyncStorage.setItem(
-        keys.RECENT_SEARCH_KEY + translations.LANG,
-        JSON.stringify(newRecentsArray),
-      );
-    } catch (error) {}
+    await saveStorageRecent(newRecentsArray, translations.LANG as Lang);
   };
 
   const getRecents = async () => {
-    console.log('calling get rec', translations.LANG);
-    try {
-      const retrievedArray = await AsyncStorage.getItem(
-        keys.RECENT_SEARCH_KEY + translations.LANG,
+    const retrievedArray = await readStorageRecents(translations.LANG as Lang);
+    if (retrievedArray !== null) {
+      // We have data!!
+      const recentsArray: Topic[] = JSON.parse(retrievedArray).map(
+        (el: Topic) => {
+          if (el.lang === translations.LANG) return el;
+        },
       );
-      if (retrievedArray !== null) {
-        // We have data!!
-        const recentsArray: Topic[] = JSON.parse(retrievedArray).map(
-          (el: Topic) => {
-            if (el.lang === translations.LANG) return el;
-          },
-        );
-        const newRecents =
-          recentsArray.length > CONSTANTS.MAX_RECENTS
-            ? recentsArray.slice(0, CONSTANTS.MAX_RECENTS)
-            : recentsArray;
-        setRecents(newRecents.filter((e) => e));
-      }
-    } catch (error) {
-      // Error retrieving data
+      const newRecents =
+        recentsArray.length > CONSTANTS.MAX_RECENTS
+          ? recentsArray.slice(0, CONSTANTS.MAX_RECENTS)
+          : recentsArray;
+      setRecents(newRecents.filter((e) => e));
     }
   };
 

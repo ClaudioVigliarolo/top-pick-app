@@ -1,9 +1,9 @@
 import React from 'react';
 import {Header, Item, Input, Button, Text} from 'native-base';
 import {ThemeContext} from '../../context/ThemeContext';
-import {getColor} from '../../constants/Themes';
+import {getColor} from '../../constants/theme/Themes';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
-import Dimensions from '../../constants/Dimensions';
+import Dimensions from '../../constants/theme/Dimensions';
 import IconAdd from 'react-native-vector-icons/Ionicons';
 
 const MIN_QUESTION_LEN = 5;
