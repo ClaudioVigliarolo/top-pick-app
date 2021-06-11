@@ -57,7 +57,7 @@ export default function SettingsPage({navigation}: {navigation: any}) {
         backgroundColor: getColor(theme, 'primaryBackground'),
       }}>
       <ListItem
-        text={translations.SELECT_LANGUAGE}
+        text={translations.LANGUAGE}
         onPress={() => {
           navigation.navigate('Language');
         }}
@@ -65,14 +65,14 @@ export default function SettingsPage({navigation}: {navigation: any}) {
       />
 
       <ListItem
-        text={translations.CHANGE_THEME}
+        text={translations.CARD_THEME}
         onPress={() => {
           navigation.navigate('Theme');
         }}
         icon={false}
       />
       <ListItem
-        text={translations.CHANGE_FONTSIZE}
+        text={translations.FONTSIZE}
         onPress={() => {
           navigation.navigate('Fontsize');
         }}

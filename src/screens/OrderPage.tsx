@@ -1,5 +1,5 @@
-import React from 'react';
-import {View, Platform, PermissionsAndroid} from 'react-native';
+import React, {useCallback} from 'react';
+import {View, Platform, PermissionsAndroid, Alert} from 'react-native';
 import {Lang, Question, Topic} from '../interfaces/Interfaces';
 import {getColor} from '../constants/theme/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
@@ -7,9 +7,11 @@ import FileViewer from 'react-native-file-viewer';
 import BottomButton from '../components/buttons/BottomButtons';
 import {ThemeContext} from '../context/ThemeContext';
 import ListItemDrag from '../components/lists/ListItemDrag';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+import DraggableFlatList, {
+  RenderItemParams,
+} from 'react-native-draggable-flatlist';
 import ButtonsDownToUp from '../components/buttons/ButtonsDownToUp';
-import AddBar from '../components/custom/AddBar';
+import AddBar from '../components/bars/AddBar';
 import RNHTMLtoPDF, {Pdf} from 'react-native-html-to-pdf';
 import EditOverlay from '../components/custom/EditOverlay';
 import {hashCode} from '../utils/utils';
@@ -94,18 +96,13 @@ export default function OrderPage({
     index,
     drag,
     isActive,
-  }: {
-    item: Question;
-    index: number;
-    drag: any;
-    isActive: boolean;
-  }) => {
+  }: RenderItemParams<Question>) => {
     return (
       <ListItemDrag
         onEdit={onEdit}
         onRemove={onRemove}
         onDrag={drag}
-        number={index + 1}
+        number={(index as number) + 1}
         text={item.title}
         isActive={isActive}
         liked={item.liked}
@@ -215,7 +212,7 @@ export default function OrderPage({
         goPresentation();
         break;
       case translations.CLOSE:
-        actionSheet.current.hide();
+      // actionSheet.current.hide();
       default:
         break;
     }

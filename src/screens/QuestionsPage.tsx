@@ -6,7 +6,7 @@ import {LocalizationContext} from '../context/LocalizationContext';
 import {getColor} from '../constants/theme/Themes';
 import ListItem from '../components/lists/ListItemCheckbox';
 import BottomButton from '../components/buttons/BottomButtons';
-import SearchBar from '../components/search/SearchBar';
+import SearchBar from '../components/bars/SearchBar';
 import Dimensions from '../constants/theme/Dimensions';
 import {getQuestionsByTopic, getRelatedTopics} from '../utils/sql';
 import styles from '../styles/styles';

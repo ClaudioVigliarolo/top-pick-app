@@ -1,16 +1,13 @@
 import React from 'react';
-import {Alert} from 'react-native';
 import StatusModal from '../components/modals/StatusModal';
 import {Lang} from '../interfaces/Interfaces';
 import {checkUpdates, updateTopics} from '../utils/api';
 import {
   getDifferentLang,
-  getLastUpdate,
   isAutomaticUpdate,
   isConnected,
   isFirstUpdate,
   isStorageUpdated,
-  onTopicsUpdate,
   setFirstUpdate,
   setStorageIsUpdated,
   setUsedLanguage,
@@ -37,9 +34,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   const [isRequiredUpdate, setRequiredUpdate] = React.useState<boolean>(false);
   const [isCheckingUpdates, setCheckUpdates] = React.useState<boolean>(true);
 
-  const {translations, setAppLanguage, appLanguage} = React.useContext(
-    LocalizationContext,
-  );
+  const {translations, setAppLanguage} = React.useContext(LocalizationContext);
 
   React.useEffect(() => {
     (async () => {
@@ -48,7 +43,6 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     })();
 
     (async () => {
-      //se c'è internet => fai check e verifica
       await onCheckUpdates();
     })();
   }, []);
@@ -84,6 +78,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
       setAppLanguage(
         getDifferentLang(currLang, translations.getAvailableLanguages()),
       );
+      //trick for reloading loaded component's questions
       setTimeout(() => {
         setAppLanguage(currLang);
       }, 300);

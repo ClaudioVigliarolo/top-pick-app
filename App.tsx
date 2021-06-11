@@ -11,15 +11,13 @@ import {
   isFirstLaunch as hasAppLaunched,
   setFirstLaunch as setAppFirstLaunch,
 } from './src/utils/utils';
-// 0: loading, 1: already launched, 2: firstLaunch
+
 const App = () => {
   const [isFirstLaunch, setFirstLaunch] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     (async () => {
       setFirstLaunch(await hasAppLaunched());
-    })();
-    (async () => {
       await RNBootSplash.hide({fade: true});
     })();
   }, []);

@@ -5,6 +5,7 @@ export enum Theme {
 
 interface Colors {
   type: string;
+  white: string;
   primaryOrange: string;
   lightGrey: string;
   secondaryIcon: string;
@@ -28,6 +29,7 @@ interface Colors {
 
 const light: Colors = {
   type: 'light',
+  white: '#fff',
   primaryOrange: '#FF851B',
   lightGrey: '#C0C0C0',
   secondaryIcon: 'white',
@@ -51,6 +53,7 @@ const light: Colors = {
 
 const dark: Colors = {
   type: 'dark',
+  white: '#fff',
   lightGrey: '#C0C0C0',
   drawerGrey: '#787878',
   primaryOrange: '#f4691e',

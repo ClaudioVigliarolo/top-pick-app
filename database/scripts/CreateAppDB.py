@@ -36,6 +36,7 @@ curs.execute('DROP TABLE IF EXISTS topics')
 curs.execute('DROP TABLE IF EXISTS related')
 curs.execute('DROP TABLE IF EXISTS topic_categories')
 curs.execute('DROP TABLE IF EXISTS questions')
+curs.execute('DROP TABLE IF EXISTS version')
 
 
 # create required tables
@@ -54,11 +55,13 @@ curs.execute('''CREATE TABLE "questions" (
     "id" INTEGER PRIMARY KEY,
 	"topic_id" INTEGER REFERENCES "topics" ("id"),
 	"title"	TEXT,
+    "n" INTEGER NOT NULL DEFAULT 0,
 	"liked"	NUMERIC DEFAULT 0,
 	"user_modified" NUMERIC DEFAULT 0,
     "lang" VARCHAR(2) NOT NULL
 )''')
 
+#
 
 # create topic_categories table
 curs.execute('''CREATE TABLE "topic_categories" (
@@ -80,6 +83,16 @@ curs.execute('''CREATE TABLE "related" (
 	"dest_ref_id" INTEGER NOT NULL,
     "lang" VARCHAR(2) NOT NULL
 )''')
+
+
+# create related topic table
+curs.execute('''CREATE TABLE "version" ( 
+    "version" INTEGER NOT NULL
+)''')
+
+
+curs.execute('insert into version (version) values (?)', (2,))
+
 
 # close communication with the PostgreSQL database server
 curs.close()

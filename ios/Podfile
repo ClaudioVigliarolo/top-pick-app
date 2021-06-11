@@ -9,21 +9,29 @@ target 'MyApp' do
   use_react_native!(:path => config["reactNativePath"])
 
   pod 'RNFileViewer', :path => '../node_modules/react-native-file-viewer'
-
+  
+  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
+  
+  use_flipper!({ 'Flipper-Folly' => '2.5.3', 'Flipper' => '0.87.0', 'Flipper-RSocket' => '1.3.1' })
+   post_install do |installer|
+     flipper_post_install(installer)
+   end
+  
   target 'MyAppTests' do
     inherit! :complete
     # Pods for testing
   end
-
+  
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
-  use_flipper!
-  post_install do |installer|
-    flipper_post_install(installer)
-  end
+  # use_flipper!({ 'Flipper-Folly' => '2.3.0' }) # update this part
+  # post_install do |installer|
+  #  flipper_post_install(installer)
+  # end
 end
+
 
 target 'MyApp-tvOS' do
   # Pods for MyApp-tvOS

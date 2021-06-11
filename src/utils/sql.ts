@@ -9,17 +9,127 @@ import {
   Updates,
   Lang,
 } from '../interfaces/Interfaces';
+import dbUpgrade from '../../database/updates/db-upgrade.json';
 
 const SQL_MAX_TUPLES = 900;
+
 const DB = SQLite.openDatabase(
   {
     name: 'db.db',
     location: 'default',
     createFromLocation: 1,
   },
-  () => {},
+  async () => {
+    const version = await getDBVersion();
+    const currVersion = dbUpgrade.versions[0].version;
+    if (version < currVersion) {
+      //Call upgrade scripts
+      upgradeFrom(version, currVersion);
+    }
+  },
   () => {},
 );
+
+export const upgradeFrom = async (prevVersion: number, currVersion: number) => {
+  let statements: string[] = [];
+
+  dbUpgrade.versions.forEach((v) => {
+    if (v.version > prevVersion) {
+      statements.push(...v.statements);
+    }
+  });
+
+  statements.push(
+    `UPDATE "version" SET version = ${currVersion} WHERE "version" = ${prevVersion};`,
+  );
+
+  await Promise.all(
+    statements.map(async (statement: string) => {
+      await updateVersion(statement);
+    }),
+  );
+};
+
+const getDBVersion = () => {
+  return new Promise<number>((resolve, reject) => {
+    DB.transaction((tx) => {
+      tx.executeSql(
+        `SELECT * FROM version;`,
+        [],
+        async (tx, results) => {
+          let version = results.rows.item(0);
+          if (!version) {
+            //create default version
+            await createVersionTable();
+          }
+          version = version ? version : 1;
+          resolve(version);
+        },
+        async (_tx, e) => {
+          await createVersionTable();
+          console.log(e);
+          resolve(1);
+        },
+      );
+    });
+  });
+};
+
+const createVersionTable = async () => {
+  return new Promise<void>(async (resolve, reject) => {
+    await DB.transaction((tx) => {
+      tx.executeSql(
+        'CREATE TABLE "version" ("version" INTEGER NOT NULL)',
+        [],
+        async (tx, results) => {
+          await addDefaultVersion();
+          resolve();
+        },
+        async (_tx, e) => {
+          console.log(e);
+          reject();
+        },
+      );
+    });
+  });
+};
+
+const updateVersion = async (statement: string) => {
+  return new Promise<void>(async (resolve, reject) => {
+    await DB.transaction((tx) => {
+      tx.executeSql(
+        statement,
+        [],
+        async (tx, results) => {
+          console.log('updated db');
+          resolve();
+        },
+        async (_tx, e) => {
+          console.log(e);
+          reject();
+        },
+      );
+    });
+  });
+};
+
+const addDefaultVersion = async () => {
+  return new Promise<void>(async (resolve, reject) => {
+    await DB.transaction((tx) => {
+      tx.executeSql(
+        'insert into "version" VALUES (1)',
+        [],
+        (tx, results) => {
+          resolve();
+        },
+        (_tx, e) => {
+          console.log(e);
+          reject();
+        },
+      );
+    });
+  });
+};
 
 export const generateDB = async (
   data: Updates,
@@ -27,7 +137,6 @@ export const generateDB = async (
 ): Promise<boolean> => {
   console.log('start generate');
   try {
-    console.log('dd', data.categories);
     //delete all categories
     await DB.transaction((tx) => {
       tx.executeSql(`delete from categories where lang = "${LANG}"`);
@@ -123,11 +232,11 @@ const bulkInsertQuestions = async (questions: Question[], LANG: string) => {
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       questions.forEach((el: Question, i: number) => {
-        bigqery += '(?,?,?,?)';
-        parameters.push(el.id, el.topic_id, el.title, LANG);
+        bigqery += '(?,?,?,?,?)';
+        parameters.push(el.id, el.topic_id, el.title, el.n as number, LANG);
         if (parameters.length == SQL_MAX_TUPLES || i == questions.length - 1) {
           tx.executeSql(
-            'INSERT INTO questions  (id, topic_id,title,lang) VALUES ' +
+            'INSERT INTO questions  (id, topic_id, title, n, lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -238,10 +347,8 @@ const bulkInsertCategories = async (categories: Category[], LANG: string) => {
   return new Promise<void>(async (resolve, reject) => {
     console.log('sstart');
     await DB.transaction((tx) => {
-      console.log('tex', categories);
       categories.forEach((el: Category, i: number) => {
         bigqery += '(?,?,?,?)';
-        console.log('ff', el);
         parameters.push(el.id, el.ref_id, el.title, LANG);
         console.log('pp', parameters);
         if (parameters.length == SQL_MAX_TUPLES || i == categories.length - 1) {
@@ -272,7 +379,9 @@ export const getQuestionsByTopic = (id: number): Promise<Question[]> => {
     DB.transaction((tx) => {
       tx.executeSql(
         `SELECT * from questions
-         WHERE topic_id = "${id}";`,
+         WHERE topic_id = "${id}"
+         ORDER BY n ASC;
+         `,
         [],
         (tx, results) => {
           const rows = results.rows;
@@ -281,6 +390,7 @@ export const getQuestionsByTopic = (id: number): Promise<Question[]> => {
             const item = rows.item(i);
             items.push({...item});
           }
+          console.log('uovaaa', items);
           resolve(items);
         },
         (_tx, e) => {
@@ -441,13 +551,14 @@ export const getCategories = async (lang: Lang): Promise<Category[]> => {
     DB.transaction((tx) => {
       tx.executeSql(
         ` SELECT c2.title, c2.id,  count(*) as counter
-        FROM topic_categories c1,  categories c2 
-        WHERE c1.lang = "${lang}" AND c2.lang = "${lang}" AND c2.id = (
-        SELECT c3.id
-        FROM categories c3
-        WHERE  c3.id = c1.category_id
+          FROM topic_categories c1,  categories c2 
+          WHERE c1.lang = "${lang}" AND c2.lang = "${lang}" AND c2.id = (
+          SELECT c3.id
+          FROM categories c3
+          WHERE  c3.id = c1.category_id
       )
         GROUP BY c1.category_id
+        ORDER BY c2.title ASC  
     `,
         [],
         (tx, results) => {

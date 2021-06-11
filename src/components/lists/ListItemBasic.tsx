@@ -26,6 +26,8 @@ const CustomListItem = ({
     <ListItem
       style={styles.ListItemcontainer}
       onPress={onPress}
+      activeOpacity={0.4}
+      underlayColor="transparent"
       noBorder={true}>
       <Text
         style={[

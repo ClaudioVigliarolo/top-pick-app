@@ -9,7 +9,7 @@ export default {
   tabHeight: 50,
   iconMedSmall: 20,
   iconSmall: 17,
-  bottomButtonsHeight: 60,
+  bottomButtonsHeight: 70,
   SCREEN_WIDTH: Dimensions.get('window').width,
   SCREEN_HEIGHT: Dimensions.get('window').height,
   MODAL_WIDTH: 280,

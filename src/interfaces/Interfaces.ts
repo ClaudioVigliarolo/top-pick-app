@@ -40,6 +40,7 @@ export interface Question {
   liked?: boolean;
   isUserModified?: boolean;
   selected?: boolean;
+  n?: number;
 }
 
 export interface Language {

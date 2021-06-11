@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   PixelRatio,
+  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -104,7 +105,7 @@ const StartSlides = ({onDone}: {onDone(): void}) => {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
-              alignItems: 'center',
+              marginTop: Platform.OS === 'ios' ? 30 : 0,
             }}>
             <Text
               style={{
@@ -137,6 +138,7 @@ const StartSlides = ({onDone}: {onDone(): void}) => {
           }}>
           <View style={{width, height}}>
             <Image
+              fadeDuration={5}
               resizeMode="center"
               source={require('../assets/images/0.png')}
               style={styles.imageStyle}

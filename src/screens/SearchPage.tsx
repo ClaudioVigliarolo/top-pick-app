@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {View} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
-import SearchBar from '../components/search/SearchBar';
+import SearchBar from '../components/bars/SearchBar';
 import {getColor} from '../constants/theme/Themes';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {Lang, Topic} from '../interfaces/Interfaces';
@@ -40,20 +40,13 @@ const SearchPage = ({navigation}: {navigation: any}) => {
   };
 
   const onChangeRecents = async (newSearchTopic: Topic) => {
-    let newRecents: Topic[] = recents;
-    //check if contained, if so don't insert and put it to front
-    if (newRecents.includes(newSearchTopic)) {
-      newRecents = recents.filter((el) => el.title != newSearchTopic.title);
-      newRecents.unshift(newSearchTopic);
-    } else if (recents.length < CONSTANTS.MAX_RECENTS) {
-      newRecents.unshift(newSearchTopic);
-    } else {
-      //const newRecents = recents.splice(0, MAX_RECENTS - 1);
-      newRecents.map((r) => console.log(r.title));
-      newRecents.unshift(newSearchTopic);
-      newRecents = newRecents.slice(0, CONSTANTS.MAX_RECENTS);
-      newRecents.map((r) => console.log(r.title));
-    }
+    let newRecentsTemp: Topic[] = recents;
+    //add item to the top of the list
+    newRecentsTemp.unshift(newSearchTopic);
+    const newRecents = [...new Set(newRecentsTemp)].slice(
+      0,
+      CONSTANTS.MAX_RECENTS,
+    );
     setRecents([...newRecents]);
     saveRecents(newRecents);
   };
@@ -92,7 +85,8 @@ const SearchPage = ({navigation}: {navigation: any}) => {
   };
 
   return (
-    <React.Fragment>
+    <View
+      style={{flex: 1, backgroundColor: getColor(theme, 'primaryBackground')}}>
       <SearchBar
         setText={(val: string) => {
           setText(val);
@@ -102,8 +96,8 @@ const SearchPage = ({navigation}: {navigation: any}) => {
         placeholder={translations.SEARCH_A_TOPIC}
         automatic={true}
       />
-      <View>
-        {text == '' &&
+      <View style={{minHeight: 200}}>
+        {!text &&
           recents.map((recent: Topic, i) => (
             <CardItem
               key={i}
@@ -117,7 +111,7 @@ const SearchPage = ({navigation}: {navigation: any}) => {
               }}
             />
           ))}
-        {text != '' &&
+        {text !== '' &&
           items.map((item: Topic, i) => (
             <CardItem
               key={i}
@@ -132,14 +126,8 @@ const SearchPage = ({navigation}: {navigation: any}) => {
             />
           ))}
       </View>
-      <View
-        style={[
-          styles.DefaultContainer,
-          {
-            backgroundColor: getColor(theme, 'primaryBackground'),
-          },
-        ]}>
-        <View style={{height: '50%', marginTop: '20%'}}>
+      <View style={[styles.DefaultContainer, {}]}>
+        <View style={{height: '50%', marginTop: '10%'}}>
           <ButtonsSearch
             buttons={popular}
             header={translations.POPULAR_SEARCHES}
@@ -151,7 +139,7 @@ const SearchPage = ({navigation}: {navigation: any}) => {
           />
         </View>
       </View>
-    </React.Fragment>
+    </View>
   );
 };
 

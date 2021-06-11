@@ -9,7 +9,6 @@ import {getCategories} from '../utils/sql';
 import styles from '../styles/styles';
 
 export default function CategoryList({navigation}: {navigation: any}) {
-  const [defaultCategory, setDefaultCategory] = React.useState<Category>();
   const [categories, setCategories] = React.useState<Category[]>([]);
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
@@ -21,22 +20,9 @@ export default function CategoryList({navigation}: {navigation: any}) {
         translations.LANG as Lang,
       );
       setCategories([...categories]);
-
-      //get default category
     })();
   }, [translations.LANG]);
 
-  /* {categories.length >0 &&
-     <ListItem
-          icon={true}
-          secondaryText={item.counter}
-          text={item.title}
-          onPress={() =>
-            navigation.navigate('Topics', {
-              category: item,
-            })
-          }
-           />}*/
   return (
     <ScrollView
       style={[

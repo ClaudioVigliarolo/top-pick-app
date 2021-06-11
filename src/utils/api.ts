@@ -57,8 +57,11 @@ export const addReport = async (
 export const checkUpdates = async (lang: Lang): Promise<boolean> => {
   try {
     const response = await axios.get(
-      `${HOSTNAME}/topick/check_updates/${await getLastUpdate(lang)}/${lang}`,
+      `${HOSTNAME}/updates/check/${await getLastUpdate(lang)}/${lang}`,
     );
+
+    //    console.log('armandooooooo');
+    // console.log(response.data);
 
     if (!response) {
       throw new Error('got null response');

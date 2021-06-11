@@ -5,7 +5,9 @@ import {Text} from 'native-base';
 import {Lang, Question} from '../interfaces/Interfaces';
 import {getColor} from '../constants/theme/Themes';
 import ListItemDrag from '../components/lists/ListItemDrag';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+import DraggableFlatList, {
+  RenderItemParams,
+} from 'react-native-draggable-flatlist';
 import {ThemeContext} from '../context/ThemeContext';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {getFavourites, toggleLike} from '../utils/sql';
@@ -13,13 +15,17 @@ import styles from '../styles/styles';
 import {getFontSize} from '../constants/theme/Fonts';
 
 export default function CategoryList({navigation}: {navigation: any}) {
+  const [loading, setLoading] = React.useState<boolean>(true);
   const [items, setItems] = React.useState<Question[]>([]);
   const isFocused = useIsFocused();
   const {translations} = React.useContext(LocalizationContext);
 
   const {theme, fontsize} = React.useContext(ThemeContext);
   React.useEffect(() => {
-    getItems();
+    (async () => {
+      await getItems();
+      setLoading(false);
+    })();
   }, [isFocused]);
 
   const getItems = async () => {
@@ -46,12 +52,7 @@ export default function CategoryList({navigation}: {navigation: any}) {
     index,
     drag,
     isActive,
-  }: {
-    item: Question;
-    index: number;
-    drag: any;
-    isActive: boolean;
-  }) => {
+  }: RenderItemParams<Question>) => {
     return (
       <ListItemDrag
         onRemove={onRemove}
@@ -73,7 +74,7 @@ export default function CategoryList({navigation}: {navigation: any}) {
         styles.DefaultContainerCenter,
         {backgroundColor: getColor(theme, 'primaryBackground')},
       ]}>
-      {items.length == 0 && (
+      {items.length == 0 && !loading && (
         <Text
           style={[
             styles.FavouritesPageText,

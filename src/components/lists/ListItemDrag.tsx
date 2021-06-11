@@ -2,7 +2,12 @@ import * as React from 'react';
 import {ListItem, Text} from 'native-base';
 import Clipboard from '@react-native-community/clipboard';
 import {ThemeContext} from '../../context/ThemeContext';
-import {View, TouchableWithoutFeedback, TouchableOpacity} from 'react-native';
+import {
+  View,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import {getColor} from '../../constants/theme/Themes';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LikeIcon from 'react-native-vector-icons/AntDesign';
@@ -35,7 +40,7 @@ const CustomListItem = (props: CustomListItemProps) => {
   };
 
   return (
-    <View>
+    <>
       <ListItem
         onPress={toggleModal}
         noIndent={true}
@@ -74,7 +79,10 @@ const CustomListItem = (props: CustomListItemProps) => {
             color={getColor(theme, 'primaryOrange')}
             size={Dimensions.iconMedSmall}
             onPress={() => props.onToggleLike(props.id)}
-            style={{marginRight: 5}}
+            style={{
+              marginRight: 10,
+              marginLeft: Platform.OS === 'ios' ? 10 : 0,
+            }}
           />
           <TouchableWithoutFeedback onPressIn={props.onDrag}>
             <Icon
@@ -85,81 +93,7 @@ const CustomListItem = (props: CustomListItemProps) => {
           </TouchableWithoutFeedback>
         </View>
       </ListItem>
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Modal isVisible={isModalVisible}>
-          <TouchableOpacity
-            style={styles.ListItemDragmodalContainer}
-            activeOpacity={1}
-            onPressOut={() => {
-              setModalVisible(false);
-            }}>
-            <TouchableOpacity style={styles.ListItemDragmodalItemContainer}>
-              <TouchableOpacity
-                style={styles.ListItemDragmodalItem}
-                onPress={() => {
-                  toggleModal();
-                  Clipboard.setString(props.text);
-                }}>
-                <Text style={styles.ListItemDragmodalText}>
-                  {translations.COPY}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.ListItemDragmodalItem}
-                onPress={() => {
-                  toggleModal();
-                  props.onEdit && props.onEdit(props.id, props.text);
-                }}>
-                <Text style={styles.ListItemDragmodalText}>
-                  {translations.EDIT}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.ListItemDragmodalItem}
-                onPress={() => {
-                  toggleModal();
-                  props.onToggleLike(props.id);
-                }}>
-                <Text style={styles.ListItemDragmodalText}>
-                  {props.liked
-                    ? translations.REMOVE_FAVOURITE
-                    : translations.ADD_FAVOURITE}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.ListItemDragmodalItem}
-                onPress={() => {
-                  toggleModal();
-                  props.onRemove(props.id);
-                }}>
-                <Text style={styles.ListItemDragmodalText}>
-                  {translations.REMOVE}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.ListItemDragmodalItem}
-                onPress={toggleModal}>
-                <Text style={styles.ListItemDragmodalText}>
-                  {translations.CLOSE}
-                </Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </Modal>
-      </View>
-    </View>
+    </>
   );
 };
 

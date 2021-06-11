@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity, Platform} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
 import MenuIcon from 'react-native-vector-icons/MaterialIcons';
@@ -27,6 +27,7 @@ import ThemePage from '../screens/SettingsCardthemePage';
 import translations from '../context/translations';
 import StatusModal from '../components/modals/StatusModal';
 import {Lang} from '../interfaces/Interfaces';
+import {staticFontSizes} from '../constants/theme/Fonts';
 
 const Stack = createStackNavigator();
 
@@ -220,7 +221,7 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
         name="Language"
         component={SelectLanguagePage}
         options={{
-          title: translations.SELECT_LANGUAGE,
+          title: translations.LANGUAGE,
           headerTintColor: getColor(theme, 'headerPrimary'),
 
           headerStyle: {
@@ -239,7 +240,7 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
         name="Theme"
         component={ThemePage}
         options={{
-          title: translations.CHANGE_THEME,
+          title: translations.CARD_THEME,
           headerTintColor: getColor(theme, 'headerPrimary'),
 
           headerStyle: {
@@ -258,7 +259,7 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
         name="Fontsize"
         component={SelectFontsize}
         options={{
-          title: translations.CHANGE_FONTSIZE,
+          title: translations.FONTSIZE,
           headerTintColor: getColor(theme, 'headerPrimary'),
 
           headerStyle: {
@@ -386,7 +387,8 @@ const HomeStack = ({navigation}: {navigation: any}) => {
           },
 
           headerTitleStyle: {
-            fontWeight: '100',
+            fontSize: staticFontSizes.fontMed,
+            fontWeight: Platform.OS == 'ios' ? '500' : '100',
           },
         }}
       />

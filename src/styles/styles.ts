@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import Dimensions from '../constants/theme/Dimensions';
 import {staticFontSizes} from '../constants/theme/Fonts';
 
@@ -75,6 +75,7 @@ export default StyleSheet.create({
     marginLeft: 20,
     fontSize: staticFontSizes.fontSmaller,
     textTransform: 'uppercase',
+    fontWeight: Platform.OS == 'ios' ? '500' : '300',
   },
 
   CustomDrawerFooterContainer: {
@@ -133,7 +134,7 @@ export default StyleSheet.create({
   },
   ListItemDragmodalText: {
     alignSelf: 'baseline',
-    fontWeight: '100',
+    fontWeight: Platform.OS == 'ios' ? '500' : '100',
     textTransform: 'capitalize',
   },
   ListItemDragmodalContainer: {
@@ -206,7 +207,7 @@ export default StyleSheet.create({
   CustomButtonbuttonText: {
     color: '#fff',
     textAlign: 'center',
-    fontWeight: '900',
+    fontWeight: Platform.OS === 'ios' ? '500' : '900',
     textTransform: 'uppercase',
   },
 
@@ -264,7 +265,7 @@ export default StyleSheet.create({
   },
   Slidertitle: {
     textAlign: 'center',
-    fontWeight: '100',
+    fontWeight: Platform.OS == 'ios' ? '500' : '100',
     marginTop: '2%',
     textTransform: 'uppercase',
     color: '#fff',

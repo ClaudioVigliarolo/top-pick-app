@@ -22,6 +22,7 @@ const ButtonsSection = (props: ButtonsSectionProps) => {
           styles.ButtonsSearchHeader,
           {
             fontSize: getFontSize(fontsize, 'fontMed'),
+            color: getColor(theme, 'primaryText'),
           },
         ]}>
         {props.header}

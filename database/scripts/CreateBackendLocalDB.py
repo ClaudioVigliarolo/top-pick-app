@@ -1,7 +1,7 @@
+#!/usr/bin/python
 # usage: python CreateDB.py
 # example usage: python CreateBackendLocalDB.py --languages en it
 # We insert the data from /data/PREFIX/ to the db
-#!/usr/bin/python
 import time
 import sys
 import os

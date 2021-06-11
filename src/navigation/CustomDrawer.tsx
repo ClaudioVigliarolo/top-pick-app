@@ -1,5 +1,11 @@
 import * as React from 'react';
-import {Text, View, Linking, TouchableWithoutFeedback} from 'react-native';
+import {
+  Text,
+  View,
+  Linking,
+  TouchableWithoutFeedback,
+  Platform,
+} from 'react-native';
 import {ThemeContext} from '../context/ThemeContext';
 import {
   DrawerContentScrollView,
@@ -48,7 +54,11 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
       </Header>
       <Content>
         <DrawerContentScrollView {...props}>
-          <Animated.View style={{transform: [{translateX}]}}>
+          <Animated.View
+            style={{
+              transform: [{translateX}],
+              marginTop: Platform.OS === 'ios' ? -20 : 0,
+            }}>
             <DrawerItemList {...(props as any)} />
           </Animated.View>
         </DrawerContentScrollView>

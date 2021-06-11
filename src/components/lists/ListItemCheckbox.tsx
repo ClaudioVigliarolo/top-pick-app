@@ -6,7 +6,6 @@ import {getColor} from '../../constants/theme/Themes';
 import CheckBox from '@react-native-community/checkbox';
 import Modal from 'react-native-modal';
 import Clipboard from '@react-native-community/clipboard';
-import Dimensions from '../../constants/theme/Dimensions';
 import translations from '../../context/translations';
 import {addReport} from '../../utils/api';
 import {Report} from '../../interfaces/Interfaces';
@@ -71,6 +70,10 @@ const ListItemCheckBox = ({
             true: getColor(theme, 'primaryOrange'),
             false: getColor(theme, 'lightGray'),
           }}
+          onFillColor={getColor(theme, 'primaryOrange')}
+          onTintColor={getColor(theme, 'checkOrange')}
+          tintColor={getColor(theme, 'lightGray')}
+          onCheckColor={getColor(theme, 'white')}
           value={value}
           onValueChange={(newValue: boolean) => onValChange(newValue)}
         />
