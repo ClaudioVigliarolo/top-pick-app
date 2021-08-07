@@ -66,3 +66,8 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+
+#personal
+/creators
+/temp

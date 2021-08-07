@@ -14,6 +14,7 @@ interface Colors {
   drawerGrey: string;
   darkerOrange: string;
   lighterOrange: string;
+  sectionHeader: string;
   lighterGray: string;
   lightGray: string;
   checkOrange: string;
@@ -38,6 +39,7 @@ const light: Colors = {
   drawerGrey: '#787878',
   darkerOrange: '#f4511e',
   lighterOrange: 'orange',
+  sectionHeader: 'orange',
   lighterGray: '#e0e0e0',
   lightGray: '#c4c4c4',
   checkOrange: '#ffc757',
@@ -59,6 +61,7 @@ const dark: Colors = {
   primaryOrange: '#f4691e',
   searchIconColor: '#f4511e',
   secondaryIcon: '#f4511e',
+  sectionHeader: 'orange',
   primaryText: '#eee',
   darkerOrange: '#f4511e',
   lighterOrange: 'orange',
@@ -67,11 +70,11 @@ const dark: Colors = {
   checkOrange: '#ffc757',
   primaryBackground: 'black',
   headerPrimary: '#f4511e',
-  primaryHeaderBackground: '#1F1F1F',
+  primaryHeaderBackground: '#141414',
   barExternalColor: 'black',
-  barColor: '#1F1F1F',
+  barColor: '#141414', //#1F1F1F
   barTextColor: '#eee',
-  bottomButtonsBackground: '#1F1F1F',
+  bottomButtonsBackground: '#141414',
   lineColor: 'rgba(196, 196, 196,0.4)',
 };
 

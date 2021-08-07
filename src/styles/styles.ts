@@ -393,4 +393,20 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+
+  sectionListContainer: {
+    flex: 1,
+    paddingTop: 10,
+    marginHorizontal: 16,
+    width: '100%',
+  },
+
+  sectionListHeader: {
+    padding: 4,
+    borderRadius: 3,
+    paddingLeft: 10,
+    textTransform: 'uppercase',
+    color: '#fff',
+    width: '85%',
+  },
 });

@@ -2,11 +2,7 @@ import * as React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {TabNavigator} from './BottomMenu';
 import {ThemeContext} from '../context/ThemeContext';
-import {
-  CategoriesStack,
-  FavouritesStack,
-  SettingsStack,
-} from './StackNavigator';
+import {LibraryStack, FavouritesStack, SettingsStack} from './StackNavigator';
 import {LocalizationContext} from '../context/LocalizationContext';
 import {getColor} from '../constants/theme/Themes';
 import IconHome from 'react-native-vector-icons/Entypo';
@@ -45,9 +41,12 @@ const DrawerNavigator = ({navigation}: {navigation: any}) => {
       />
 
       <Drawer.Screen
-        name="Categories"
+        name="Library"
         options={{
-          drawerLabel: translations.CATEGORIES,
+          drawerLabel: translations.LIBRARY,
+          headerTitleStyle: {
+            textTransform: 'uppercase',
+          },
           drawerIcon: () => (
             <IconCategory
               name="list"
@@ -56,7 +55,7 @@ const DrawerNavigator = ({navigation}: {navigation: any}) => {
             />
           ),
         }}
-        component={CategoriesStack}
+        component={LibraryStack}
       />
 
       <Drawer.Screen

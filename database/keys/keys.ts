@@ -11,4 +11,5 @@ export default {
   CURRENT_DB: '@current_db',
   SETTINGS_UPDATE: '@settings_update',
   USED_LANGUAGES: '@used_languages',
+  TOPICS_NUMBER: '@topic_number',
 };

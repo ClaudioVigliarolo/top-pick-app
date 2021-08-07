@@ -1,6 +1,17 @@
+const APP_ID = {
+  appID: 'com.topick',
+  appName: 'TopPick',
+};
+
 export default {
   MAX_RECENTS: 3,
   MAX_POPULAR: 6,
   INITIALS_TOPICS_LOADED: 10,
   NEW_TOPICS_LOADED: 10,
+  APP_ID,
+  CHUNK_RECENT_TOPIC: 10,
+  RECENT_LOADED_N: 100,
+  CHUNK_ALL_TOPIC: 10,
+  CHUNK_TOPIC: 30,
+  LAZY_LOAD_TIMEOUT: 100,
 };

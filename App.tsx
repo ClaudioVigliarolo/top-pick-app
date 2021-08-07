@@ -4,7 +4,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {ThemeProvider} from './src/context/ThemeContext';
 import Navigation from './src/navigation';
 import RNBootSplash from 'react-native-bootsplash';
-import StartSlides from './src/startSlides/StartSlider';
+import StartSlides from './src/screens/start/StartPage';
 import {LocalizationProvider} from './src/context/LocalizationContext';
 import {StatusProvider} from './src/context/StatusContext';
 import {

@@ -3,12 +3,14 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'MyApp' do
+target 'TopPick' do
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
 
   pod 'RNFileViewer', :path => '../node_modules/react-native-file-viewer'
+  
+  pod 'react-native-version-check', :path => '../node_modules/react-native-version-check'
   
   pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
   
@@ -17,7 +19,7 @@ target 'MyApp' do
      flipper_post_install(installer)
    end
   
-  target 'MyAppTests' do
+  target 'TopPickTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -33,10 +35,10 @@ target 'MyApp' do
 end
 
 
-target 'MyApp-tvOS' do
-  # Pods for MyApp-tvOS
+target 'TopPick-tvOS' do
+  # Pods for TopPick-tvOS
 
-  target 'MyApp-tvOSTests' do
+  target 'TopPick-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

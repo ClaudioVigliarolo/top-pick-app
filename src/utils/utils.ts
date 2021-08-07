@@ -272,6 +272,29 @@ export const saveStoragCardtheme = async (theme: string): Promise<void> => {
   } catch (error) {}
 };
 
+export const saveTopicsTableNumber = async (
+  n: number,
+  lang: Lang,
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.TOPICS_NUMBER + lang, n.toString());
+  } catch (error) {}
+};
+
+export const getTopicsTableNumber = async (lang: Lang): Promise<number> => {
+  try {
+    const n = await AsyncStorage.getItem(keys.TOPICS_NUMBER + lang);
+    if (n === null) {
+      return 100;
+    } else {
+      return parseInt(n);
+    }
+  } catch (e) {
+    console.log('Failed to fetch the data from storage');
+    return 100;
+  }
+};
+
 export const readStorageCardtheme = async (): Promise<keyof CardTemplates> => {
   try {
     const cardTheme = await AsyncStorage.getItem(keys.CARDS_THEME);

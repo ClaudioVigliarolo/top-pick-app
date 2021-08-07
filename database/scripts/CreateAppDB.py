@@ -1,5 +1,5 @@
 # usage: python CreateDB.py
-# example usage: python CreateAppDB.py --languages EN IT
+# example usage: python CreateAppDB.py
 # We insert the data from /data/PREFIX/ to the db
 #!/usr/bin/python
 import time
@@ -25,7 +25,7 @@ args = parser.parse_args()
 # Connect to an existing database
 #conn = connect('../../db/current.db')
 conn = connect(
-    '/Users/claudio/Desktop/top-pick/android/app/src/main/assets/www/db.db')
+    '/Users/claudio/Documents/_PROJECTS/top-pick/android/app/src/main/assets/www/db.db')
 
 curs = conn.cursor()
 
@@ -47,7 +47,7 @@ curs.execute('''CREATE TABLE "categories"
 
 # create topics table
 curs.execute('''CREATE TABLE topics
-             ( "id" INTEGER NOT NULL,  "ref_id" INTEGER NOT NULL, "title" TEXT NOT NULL, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL,  PRIMARY KEY("id"))''')
+             ( "id" INTEGER NOT NULL,  "ref_id" INTEGER NOT NULL, "title" TEXT NOT NULL, "timestamp" DATETIME DEFAULT CURRENT_TIMESTAMP, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL,  PRIMARY KEY("id"))''')
 
 
 # create questions table
@@ -89,6 +89,11 @@ curs.execute('''CREATE TABLE "related" (
 curs.execute('''CREATE TABLE "version" ( 
     "version" INTEGER NOT NULL
 )''')
+
+# create related topic table
+curs.execute('''CREATE INDEX topics_by_id ON topics (id);''')
+
+curs.execute('''CREATE INDEX topics_by_timestamp ON topics (timestamp);''')
 
 
 curs.execute('insert into version (version) values (?)', (2,))

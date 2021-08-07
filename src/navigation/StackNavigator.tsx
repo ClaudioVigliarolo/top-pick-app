@@ -2,32 +2,35 @@ import * as React from 'react';
 import {View, TouchableOpacity, Platform} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
-import MenuIcon from 'react-native-vector-icons/MaterialIcons';
+import IconMenu from 'react-native-vector-icons/MaterialIcons';
 import IconUpdate from 'react-native-vector-icons/Ionicons';
 import IconChecked from 'react-native-vector-icons/Ionicons';
+import IconOptions from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Spinner} from 'native-base';
-import HomePage from '../screens/HomePage';
-import CategoriesPage from '../screens/CategoriesPage';
+import HomePage from '../screens/home/HomePage';
+import Library from '../screens/library/LibraryPage';
 import {ThemeContext} from '../context/ThemeContext';
-import TopicsPage from '../screens/TopicsPage';
-import QuestionsPage from '../screens/QuestionsPage';
-import OrderPage from '../screens/OrderPage';
+import QuestionsPage from '../screens/detail/QuestionsPage';
+import OrderPage from '../screens/detail/OrderPage';
 import {LocalizationContext} from '../context/LocalizationContext';
-import FavouritesPage from '../screens/FavouritesPage';
-import SearchPage from '../screens/SearchPage';
-import PresentationPage from '../screens/PresentationPage';
+import FavouritesPage from '../screens/user/FavouritesPage';
+import SearchPage from '../screens/home/SearchPage';
+import PresentationPage from '../screens/detail/PresentationPage';
 import {getColor} from '../constants/theme/Themes';
 import Dimensions from '../constants/theme/Dimensions';
-import SettingsPage from '../screens/SettingsPage';
+import SettingsPage from '../screens/settings/SettingsPage';
 import {StatusContext} from '../context/StatusContext';
 import {onTopicsUpdate} from '../utils/utils';
-import SelectLanguagePage from '../screens/SettingsLanguagePage';
-import SelectFontsize from '../screens/SettingsFontsizePage';
-import ThemePage from '../screens/SettingsCardthemePage';
+import SelectLanguagePage from '../screens/settings/SettingsLanguagePage';
+import SelectFontsize from '../screens/settings/SettingsFontsizePage';
+import ThemePage from '../screens/settings/SettingsCardthemePage';
 import translations from '../context/translations';
 import StatusModal from '../components/modals/StatusModal';
 import {Lang} from '../interfaces/Interfaces';
 import {staticFontSizes} from '../constants/theme/Fonts';
+import LibraryDetail from '../screens/library/LibraryTopic';
+import CustomDropDown from '../components/modals/CustomDropDown';
+import TopicsAddedModal from '../components/modals/TopicsAddedModal';
 
 const Stack = createStackNavigator();
 
@@ -42,7 +45,7 @@ const NavigationDrawerStructure = (props: any) => {
   return (
     <View style={{flexDirection: 'row'}}>
       <TouchableOpacity onPress={() => toggleDrawer()}>
-        <MenuIcon
+        <IconMenu
           name="menu"
           color={getColor(theme, 'headerPrimary')}
           size={Dimensions.iconMed}
@@ -64,8 +67,6 @@ interface BackStructureProps {
 
 const BackStructure = (props: BackStructureProps) => {
   const {theme} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
-
   return (
     <View style={{flexDirection: 'row'}}>
       <TouchableOpacity
@@ -88,28 +89,50 @@ const BackStructure = (props: BackStructureProps) => {
   );
 };
 
-const CategoriesStack = ({
-  route,
-  navigation,
-}: {
-  route: any;
-  navigation: any;
-}) => {
+const OptionsStructure = () => {
+  const {theme} = React.useContext(ThemeContext);
+  const [show, setShow] = React.useState<boolean>(false);
+  return (
+    <>
+      <IconOptions
+        onPress={() => {
+          setShow(true);
+        }}
+        name="dots-vertical"
+        color={getColor(theme, 'secondaryIcon')}
+        size={28}
+        style={{marginRight: 5}}
+      />
+      {show && (
+        <CustomDropDown
+          open={show}
+          onClose={() => {
+            setShow(false);
+          }}
+        />
+      )}
+    </>
+  );
+};
+
+const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
 
   return (
-    <Stack.Navigator initialRouteName="CategoriesScreen">
+    <Stack.Navigator initialRouteName="LibraryScreen">
       <Stack.Screen
-        name="CategoriesScreen"
-        component={CategoriesPage}
+        name="LibraryScreen"
+        component={Library}
         options={{
-          title: translations.CATEGORIES,
+          title: translations.LIBRARY,
           headerTintColor: getColor(theme, 'headerPrimary'),
 
           headerLeft: () => (
             <BackStructure destination={null} navigation={navigation} />
           ),
+          headerRight: () => <OptionsStructure />,
+
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },
@@ -122,7 +145,7 @@ const CategoriesStack = ({
 
       <Stack.Screen
         name="Topics"
-        component={TopicsPage}
+        component={LibraryDetail}
         options={{
           title: 'Topics',
           headerTintColor: getColor(theme, 'headerPrimary'),
@@ -132,7 +155,7 @@ const CategoriesStack = ({
           },
           headerLeft: () => (
             <BackStructure
-              destination="CategoriesScreen"
+              destination="LibraryScreen"
               navigation={navigation}
             />
           ),
@@ -278,30 +301,33 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
 };
 
 const renderConnectivityIcon = (
-  isLoadingContent: boolean,
+  isLoadingContentUpdates: boolean,
   isUpdated: boolean,
   iconColor: string,
   setLoadingContent: (val: boolean) => void,
   setUpdatedContent: (val: boolean) => void,
   setUpdatedAlert: (val: boolean) => void,
 ): any => {
-  if (isLoadingContent) {
+  if (isLoadingContentUpdates) {
     return <Spinner color="white" size="small" style={{marginRight: 20}} />;
   }
 
   if (isUpdated) {
     return (
-      <IconChecked
-        name="checkmark-done"
-        color={iconColor}
-        onPress={() => {
-          setUpdatedAlert(true);
-        }}
-        size={Dimensions.iconMed}
-        style={{
-          marginRight: 20,
-        }}
-      />
+      <>
+        <TopicsAddedModal open={true} n={10} />
+        <IconChecked
+          name="checkmark-done"
+          color={iconColor}
+          onPress={() => {
+            setUpdatedAlert(true);
+          }}
+          size={Dimensions.iconMed}
+          style={{
+            marginRight: 20,
+          }}
+        />
+      </>
     );
   } else {
     return (
@@ -325,13 +351,13 @@ const renderConnectivityIcon = (
 };
 
 const getAppTitle = (
-  isCheckingUpdates: boolean,
-  isLoadingContent: boolean,
+  isCheckingContentUpdates: boolean,
+  isLoadingContentUpdates: boolean,
 ): string => {
-  if (isCheckingUpdates) {
+  if (isCheckingContentUpdates) {
     return translations.CHECK_UPDATES;
   }
-  if (isLoadingContent) {
+  if (isLoadingContentUpdates) {
     return translations.UPDATING_TOPICS;
   } else {
     return translations.TOP_PICK;
@@ -341,11 +367,11 @@ const getAppTitle = (
 const HomeStack = ({navigation}: {navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
   const {
-    isLoadingContent,
+    isLoadingContentUpdates,
     setLoadingContent,
-    isUpdatedContent,
+    isUpdateContentRequired,
     setUpdatedContent,
-    isCheckingUpdates,
+    isCheckingContentUpdates,
   } = React.useContext(StatusContext);
 
   const [isUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
@@ -357,13 +383,13 @@ const HomeStack = ({navigation}: {navigation: any}) => {
         component={HomePage}
         options={{
           headerTitleAlign: 'center',
-          title: getAppTitle(isCheckingUpdates, isLoadingContent),
+          title: getAppTitle(isCheckingContentUpdates, isLoadingContentUpdates),
           headerTintColor: getColor(theme, 'headerPrimary'),
           headerRight: () => (
             <View>
               {renderConnectivityIcon(
-                isLoadingContent || isCheckingUpdates,
-                isUpdatedContent,
+                isLoadingContentUpdates || isCheckingContentUpdates,
+                isUpdateContentRequired,
                 getColor(theme, 'secondaryIcon'),
                 setLoadingContent,
                 setUpdatedContent,
@@ -488,7 +514,7 @@ const QuestionsStack = ({navigation}: {navigation: any}) => {
 
 export {
   HomeStack,
-  CategoriesStack,
+  LibraryStack,
   FavouritesStack,
   SearchStack,
   QuestionsStack,

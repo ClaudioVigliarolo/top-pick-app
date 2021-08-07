@@ -1,4 +1,6 @@
-rootProject.name = 'MyApp'
+rootProject.name = 'TopPick'
+include ':react-native-version-check'
+project(':react-native-version-check').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-version-check/android')
 include ':react-native-file-viewer'
 project(':react-native-file-viewer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-file-viewer/android')
 include ':react-native-file-viewer'

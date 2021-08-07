@@ -1,4 +1,6 @@
 import React from 'react';
+import {Linking, Platform} from 'react-native';
+import VersionCheck from 'react-native-version-check';
 import StatusModal from '../components/modals/StatusModal';
 import {Lang} from '../interfaces/Interfaces';
 import {checkUpdates, updateTopics} from '../utils/api';
@@ -18,36 +20,60 @@ import {LocalizationContext} from './LocalizationContext';
     it can be either up to date with the server, loading or not up to date
 */
 export const StatusContext = React.createContext({
-  isLoadingContent: false,
-  isUpdatedContent: false,
-  isCheckingUpdates: true,
-  isRequiredUpdate: false,
+  isLoadingContentUpdates: false,
+  isUpdateContentRequired: false,
+  isCheckingContentUpdates: true,
   setLoadingContent: (value: boolean) => {},
   setUpdatedContent: (value: boolean) => {},
-  setRequiredUpdate: (value: boolean) => {},
-  onCheckUpdates: () => {},
+  onCheckContentUpdates: () => {},
 });
 
 export const StatusProvider = ({children}: {children: React.ReactNode}) => {
-  const [isLoadingContent, setLoadingContent] = React.useState<boolean>(false);
-  const [isUpdatedContent, setUpdatedContent] = React.useState<boolean>(false);
-  const [isRequiredUpdate, setRequiredUpdate] = React.useState<boolean>(false);
-  const [isCheckingUpdates, setCheckUpdates] = React.useState<boolean>(true);
+  const [isLoadingContentUpdates, setLoadingContent] = React.useState<boolean>(
+    false,
+  );
+  const [isRequiredAppUpdate, setRequiredAppUpdate] = React.useState<boolean>(
+    false,
+  );
+
+  const [isUpdateContentRequired, setUpdatedContent] = React.useState<boolean>(
+    false,
+  );
+
+  const [
+    isRequiredContentUpdate,
+    setRequiredContentUpdate,
+  ] = React.useState<boolean>(false);
+  const [isCheckingContentUpdates, setCheckUpdates] = React.useState<boolean>(
+    true,
+  );
 
   const {translations, setAppLanguage} = React.useContext(LocalizationContext);
 
   React.useEffect(() => {
     (async () => {
       if (await isFirstUpdate()) handleFirstUpdate();
+      //check app is updated
+      if (!(await onCheckAppUpdates())) {
+        //check content
+        await onCheckContentUpdates();
+        //check app is used for the first time
+      }
       return () => {};
-    })();
-
-    (async () => {
-      await onCheckUpdates();
     })();
   }, []);
 
-  const onCheckUpdates = async () => {
+  const onCheckAppUpdates = async () => {
+    //check if there app in store is up to date
+    //if not set update required
+    const res = await VersionCheck.needUpdate();
+    console.log('Myrrr', res);
+    const isNeeded = res && res.isNeeded;
+    setRequiredAppUpdate(isNeeded);
+    return isNeeded;
+  };
+
+  const onCheckContentUpdates = async () => {
     if (await isConnected()) {
       const isUpdated = await checkUpdates(translations.LANG as Lang);
       setUpdatedContent(isUpdated);
@@ -81,11 +107,11 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
       //trick for reloading loaded component's questions
       setTimeout(() => {
         setAppLanguage(currLang);
-      }, 300);
-      setRequiredUpdate(false);
+      }, 250);
+      setRequiredContentUpdate(false);
       setFirstUpdate();
     } else {
-      setRequiredUpdate(true);
+      setRequiredContentUpdate(true);
     }
   };
   const onSetLoadingContent = (newVal: boolean) => {
@@ -96,25 +122,41 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     setUpdatedContent(newVal);
   };
 
-  const onSetRequiredUpdate = (newVal: boolean) => {
-    setRequiredUpdate(newVal);
+  const openStore = async () => {
+    if (Platform.OS == 'ios') {
+      const url = await VersionCheck.getAppStoreUrl();
+      Linking.openURL(url);
+    } else {
+      const url = await VersionCheck.getPlayStoreUrl();
+      Linking.openURL(url);
+    }
   };
 
   return (
     <StatusContext.Provider
       value={{
-        isLoadingContent,
-        isUpdatedContent,
-        isCheckingUpdates,
-        isRequiredUpdate,
-        onCheckUpdates,
+        isLoadingContentUpdates,
+        isUpdateContentRequired,
+        isCheckingContentUpdates,
+        onCheckContentUpdates,
         setLoadingContent: onSetLoadingContent,
         setUpdatedContent: onSetUpdatedContent,
-        setRequiredUpdate: onSetRequiredUpdate,
       }}>
       {children}
+
       <StatusModal
-        show={isLoadingContent}
+        show={isRequiredAppUpdate}
+        title={translations.UPDATE_APP_REQUIRED_TITLE}
+        closeOnTouchOutside={false}
+        showConfirmButton={true}
+        showCancelButton={false}
+        confirmText="update app"
+        onConfirmPressed={openStore}
+        message={translations.UPDATE_APP_REQUIRED_MESSAGE}
+      />
+
+      <StatusModal
+        show={isLoadingContentUpdates}
         showProgress={true}
         title={translations.UPDATING_QUESTIONS}
         closeOnTouchOutside={false}
@@ -123,17 +165,17 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
       />
 
       <StatusModal
-        show={isRequiredUpdate}
+        show={isRequiredContentUpdate}
         showProgress={false}
-        title={translations.UPDATE_REQUIRED_TITLE}
+        title={translations.UPDATE_CONTENT_REQUIRED_TITLE}
         closeOnTouchOutside={false}
         showConfirmButton={true}
         confirmText={translations.DOWNLOAD}
         onConfirmPressed={() => {
-          setRequiredUpdate(false);
+          setRequiredContentUpdate(false);
           handleFirstUpdate();
         }}
-        message={translations.UPDATE_REQUIRED_MESSAGE}
+        message={translations.UPDATE_CONTENT_REQUIRED_MESSAGE}
       />
     </StatusContext.Provider>
   );

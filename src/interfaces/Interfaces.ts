@@ -2,11 +2,11 @@ import {FontDimension} from '../constants/theme/Fonts';
 
 export interface Topic {
   id: number;
-  ref_id: number;
+  ref_id?: number;
   title: string;
-  source: string;
-  timestamp: string;
-  lang: string;
+  source?: string;
+  timestamp?: string;
+  lang?: string;
 }
 
 export interface Category {
@@ -79,4 +79,14 @@ export interface Report {
 export interface FontsizeOption {
   title: string;
   value: FontDimension;
+}
+
+export interface TabButton {
+  children: React.ReactNode;
+  heading: string;
+}
+
+export interface Section {
+  title: string;
+  data: Topic[];
 }

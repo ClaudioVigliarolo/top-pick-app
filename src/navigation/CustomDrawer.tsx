@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   Platform,
 } from 'react-native';
+import VersionCheck from 'react-native-version-check';
 import {ThemeContext} from '../context/ThemeContext';
 import {
   DrawerContentScrollView,
@@ -39,6 +40,16 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
     const newTheme = theme == Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
     setTheme(newTheme);
     await setStorageTheme(newTheme);
+  };
+
+  const openStore = async () => {
+    if (Platform.OS === 'ios') {
+      Linking.openURL(
+        'https://apps.apple.com/us/app/top-pick-find-great-topics/id1571806777',
+      );
+    } else {
+      Linking.openURL('market://details?id=com.topick');
+    }
   };
 
   return (
@@ -93,7 +104,9 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
           {backgroundColor: getColor(theme, 'lighterOrange')},
         ]}>
         <TouchableWithoutFeedback
-          onPress={() => Linking.openURL('market://details?id=com.topick')}>
+          onPress={() => {
+            openStore();
+          }}>
           <Text style={styles.CustomDrawerfooterText}>
             {translations.LEAVE_RATING}
           </Text>
