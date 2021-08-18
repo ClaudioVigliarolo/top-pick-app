@@ -60,6 +60,7 @@ export default class TopicsSectionList extends React.PureComponent<
       <SafeAreaView style={styles.sectionListContainer}>
         <SectionList
           initialNumToRender={20}
+          keyExtractor={(item) => item.id + ''}
           sections={this.props.items}
           stickySectionHeadersEnabled={true}
           ref={this.props.sectionListRef}

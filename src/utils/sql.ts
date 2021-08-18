@@ -8,11 +8,13 @@ import {
   Related,
   Updates,
   Lang,
+  TopicLevel,
+  TopicType,
 } from '../interfaces/Interfaces';
 import dbUpgrade from '../../database/updates/db-upgrade.json';
 import {saveTopicsTableNumber} from './utils';
 
-const SQL_MAX_TUPLES = 900;
+const SQL_MAX_TUPLES = 800;
 
 const DB = SQLite.openDatabase(
   {
@@ -22,9 +24,12 @@ const DB = SQLite.openDatabase(
   },
   async () => {
     const version = await getDBVersion();
+    console.log('my verrrRRR', version);
     const currVersion = dbUpgrade.versions[0].version;
+    console.log('cccc', currVersion);
     if (version < currVersion) {
       //Call upgrade scripts
+      console.log('callllin!!');
       upgradeFrom(version, currVersion);
     }
   },
@@ -39,15 +44,14 @@ export const upgradeFrom = async (prevVersion: number, currVersion: number) => {
       statements.push(...v.statements);
     }
   });
-
-  statements.push(
-    `UPDATE "version" SET version = ${currVersion} WHERE "version" = ${prevVersion};`,
-  );
-
   await Promise.all(
     statements.map(async (statement: string) => {
       await updateVersion(statement);
     }),
+  );
+
+  statements.push(
+    `UPDATE "version" SET version = ${currVersion} WHERE "version" = ${prevVersion};`,
   );
 };
 
@@ -63,7 +67,7 @@ const getDBVersion = () => {
             //create default version
             await createVersionTable();
           }
-          version = version ? version : 1;
+          version = version.version ? version.version : 1;
           resolve(version);
         },
         async (_tx, e) => {
@@ -191,6 +195,7 @@ export const generateDB = async (
 
     //save configurational parameters to speed up the db interactions
     saveTopicsTableNumber(data.topics.length, LANG);
+
     return true;
   } catch (e) {
     console.log(e);
@@ -204,18 +209,20 @@ const bulkInsertTopics = async (topics: Topic[], LANG: Lang) => {
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       topics.forEach((el: Topic, i: number) => {
-        bigqery += '(?,?,?,?,?,?)';
+        bigqery += '(?,?,?,?,?,?,?,?)';
         parameters.push(
           el.id,
           el.ref_id as number,
           el.title,
           el.source as string,
           el.timestamp as string,
+          el.type as TopicType,
+          el.level as TopicLevel,
           LANG,
         );
         if (parameters.length == SQL_MAX_TUPLES || i == topics.length - 1) {
           tx.executeSql(
-            'INSERT INTO topics  (id, ref_id, title, source, timestamp, lang) VALUES ' +
+            'INSERT INTO topics  (id, ref_id, title, source, timestamp, type, level, lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -554,6 +561,34 @@ export const getTopicByCategory = (
   });
 };
 
+export const getAllDialogs = (lang: Lang): Promise<Topic[]> => {
+  return new Promise<Topic[]>((resolve, reject) => {
+    DB.transaction((tx) => {
+      tx.executeSql(
+        `SELECT title,id
+          FROM topics
+          WHERE type=${TopicType.DIALOG} 
+          ORDER BY LOWER(title)
+          `,
+        [],
+        (tx, results) => {
+          const rows = results.rows;
+          const items: Topic[] = [];
+          for (let i = 0; i < rows.length; i++) {
+            const item = rows.item(i);
+            items.push({...item});
+          }
+          resolve(items);
+        },
+        (_tx, e) => {
+          console.log(e);
+          reject([]);
+        },
+      );
+    });
+  });
+};
+
 export const getAllTopics = (lang: Lang): Promise<Topic[]> => {
   return new Promise<Topic[]>((resolve, reject) => {
     DB.transaction((tx) => {
@@ -561,6 +596,38 @@ export const getAllTopics = (lang: Lang): Promise<Topic[]> => {
         `SELECT title,id
           FROM topics
           WHERE lang="${lang}" 
+          ORDER BY LOWER(title)
+          `,
+        [],
+        (tx, results) => {
+          const rows = results.rows;
+          const items: Topic[] = [];
+          for (let i = 0; i < rows.length; i++) {
+            const item = rows.item(i);
+            items.push({...item});
+          }
+          resolve(items);
+        },
+        (_tx, e) => {
+          console.log(e);
+          reject([]);
+        },
+      );
+    });
+  });
+};
+
+export const getTopicsByLevel = (
+  lang: Lang,
+  level: TopicLevel,
+): Promise<Topic[]> => {
+  return new Promise<Topic[]>((resolve, reject) => {
+    DB.transaction((tx) => {
+      tx.executeSql(
+        `SELECT title,id
+          FROM topics
+          WHERE lang="${lang}" 
+          AND level = ${level} 
           ORDER BY LOWER(title)
           `,
         [],
@@ -607,6 +674,34 @@ export const getTopicsByLetter = (
         (_tx, e) => {
           console.log(e);
           reject([]);
+        },
+      );
+    });
+  });
+};
+
+export const getNewTopicsCounter = (
+  lang: Lang,
+  lastData: string,
+): Promise<number> => {
+  console.log('my last', lastData);
+  return new Promise<number>((resolve, reject) => {
+    DB.transaction((tx) => {
+      tx.executeSql(
+        `SELECT COUNT (*) as counter
+          FROM topics
+          WHERE lang="${lang}" AND timestamp >= "${lastData}"
+          `,
+        [],
+        (tx, results) => {
+          console.log('my res', results);
+          const rows = results.rows;
+          const counter = rows.item(0).counter;
+          resolve(counter);
+        },
+        (_tx, e) => {
+          console.log(e);
+          reject(0);
         },
       );
     });

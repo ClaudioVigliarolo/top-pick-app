@@ -7,6 +7,8 @@ export interface Topic {
   source?: string;
   timestamp?: string;
   lang?: string;
+  type?: TopicType;
+  level?: TopicLevel;
 }
 
 export interface Category {
@@ -84,9 +86,21 @@ export interface FontsizeOption {
 export interface TabButton {
   children: React.ReactNode;
   heading: string;
+  id: number;
 }
 
 export interface Section {
   title: string;
   data: Topic[];
+}
+
+export enum TopicLevel {
+  EASY,
+  MEDIUM,
+  HARD,
+}
+
+export enum TopicType {
+  TOPIC,
+  DIALOG,
 }

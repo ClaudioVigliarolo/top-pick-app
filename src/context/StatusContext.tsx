@@ -2,7 +2,7 @@ import React from 'react';
 import {Linking, Platform} from 'react-native';
 import VersionCheck from 'react-native-version-check';
 import StatusModal from '../components/modals/StatusModal';
-import {Lang} from '../interfaces/Interfaces';
+import {Lang, Topic} from '../interfaces/Interfaces';
 import {checkUpdates, updateTopics} from '../utils/api';
 import {
   getDifferentLang,
@@ -19,9 +19,10 @@ import {LocalizationContext} from './LocalizationContext';
     this context is used to notify the app about his state 
     it can be either up to date with the server, loading or not up to date
 */
+
 export const StatusContext = React.createContext({
   isLoadingContentUpdates: false,
-  isUpdateContentRequired: false,
+  isContentUpdated: false,
   isCheckingContentUpdates: true,
   setLoadingContent: (value: boolean) => {},
   setUpdatedContent: (value: boolean) => {},
@@ -36,9 +37,9 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     false,
   );
 
-  const [isUpdateContentRequired, setUpdatedContent] = React.useState<boolean>(
-    false,
-  );
+  const [isContentUpdated, setUpdatedContent] = React.useState<boolean>(true);
+
+  const [newTopics, setNewTopics] = React.useState<Topic[]>([]);
 
   const [
     isRequiredContentUpdate,
@@ -86,7 +87,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
         setUpdatedContent(hasUpdated);
       }
     } else {
-      setUpdatedContent(await isStorageUpdated());
+      setUpdatedContent(true); //(await isStorageUpdated()
       //se non c'è internet => prendi il valore da update
     }
     setCheckUpdates(false);
@@ -122,6 +123,10 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     setUpdatedContent(newVal);
   };
 
+  const onSetNewTopics = (topics: Topic[]) => {
+    setNewTopics(topics);
+  };
+
   const openStore = async () => {
     if (Platform.OS == 'ios') {
       const url = await VersionCheck.getAppStoreUrl();
@@ -136,7 +141,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     <StatusContext.Provider
       value={{
         isLoadingContentUpdates,
-        isUpdateContentRequired,
+        isContentUpdated,
         isCheckingContentUpdates,
         onCheckContentUpdates,
         setLoadingContent: onSetLoadingContent,

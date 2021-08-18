@@ -1,99 +1,84 @@
-import React, {useRef, useEffect} from 'react';
-import {useNavigation} from '@react-navigation/native';
+// Modal.js
+import React from 'react';
 import {
-  Alert,
-  Animated,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Modal,
+  View,
+  TouchableOpacity,
   Linking,
   Text,
-  TouchableHighlight,
-  View,
+  Alert,
 } from 'react-native';
-import {
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from 'react-native-gesture-handler';
 
-const FadeInView = (props: any) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
-  React.useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      duration: 300,
-    }).start();
-  }, [fadeAnim]);
-
-  return (
-    <Animated.View // Special animatable View
-      style={{
-        ...props.style,
-        opacity: fadeAnim, // Bind opacity to animated value
-      }}>
-      {props.children}
-    </Animated.View>
-  );
-};
-
-// You can then use your `FadeInView` in place of a `View` in your components:
-const CustomDropDown = ({
-  open,
-  onClose,
-}: {
-  open: boolean;
+interface CustomDropDownProps {
   onClose: () => void;
-}) => {
-  const navigation = useNavigation();
+  open: boolean;
+}
+const CustomDropDown = (props: CustomDropDownProps) => {
   return (
-    <View
-      style={{
-        position: 'absolute',
-        top: 10,
-        right: 3,
-        width: 1000,
-        height: 1000,
-        // backgroundColor: 'blue',
-      }}
-      pointerEvents={'auto'}>
-      <TouchableWithoutFeedback
-        onPress={(e) => {
-          onClose();
-        }}
-        style={{
-          height: '100%',
-          width: '100%',
-        }}>
-        <FadeInView
-          style={{
-            position: 'absolute',
-            top: 10,
-            right: 3,
-            zIndex: 100,
-            width: 180,
-            borderRadius: 3,
-            backgroundColor: 'white',
-            elevation: 5,
-            shadowColor: '#000',
-            shadowOffset: {width: 0, height: 1},
-            shadowOpacity: 0.8,
-            shadowRadius: 1,
-          }}>
-          <View style={{padding: 15, flex: 1, width: '100%', height: 50}}>
-            <TouchableOpacity
-              style={{
-                height: '100%',
-                width: '100%',
-              }}
-              onPress={() => {
-                Linking.openURL(
-                  "mailto:topick@tech-center.com?subject=Have feedback? Have Bugs to report? We'd love to hear it.",
-                );
-              }}>
-              <Text>Report a problem</Text>
-            </TouchableOpacity>
-          </View>
-        </FadeInView>
-      </TouchableWithoutFeedback>
+    <View>
+      <Modal
+        visible={props.open}
+        transparent={true}
+        onRequestClose={props.onClose}
+        animationType="fade">
+        <TouchableWithoutFeedback onPress={props.onClose}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
+        {/*here starts the content */}
+        <View style={styles.modalContent}>
+          <TouchableOpacity onPress={() => {}}>
+            <View style={styles.modalContentItem}>
+              <Text>Help</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
+/*
+<TouchableOpacity
+    onPress={() =>
+      Linking.openURL(
+        "mailto:topick@tech-center.com?subject=Have feedback? Have Bugs to report? We'd love to hear it.",
+      )
+    }>
+    <View style={styles.modalContentItem}>
+      <Text>Report a problem</Text>
+    </View>
+  </TouchableOpacity>
+  */
 export default CustomDropDown;
+const styles = StyleSheet.create({
+  modalContent: {
+    position: 'absolute',
+    right: -5,
+    top: 3,
+    width: 200,
+    borderRadius: 4,
+    elevation: 5,
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+  },
+  modalContentItem: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 15,
+    height: 50,
+    borderBottomColor: '#eee',
+    borderBottomWidth: 0.4,
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+  },
+});

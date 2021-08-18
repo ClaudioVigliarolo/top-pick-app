@@ -3,10 +3,7 @@ import {View, TouchableOpacity, Platform} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
 import IconMenu from 'react-native-vector-icons/MaterialIcons';
-import IconUpdate from 'react-native-vector-icons/Ionicons';
-import IconChecked from 'react-native-vector-icons/Ionicons';
 import IconOptions from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Spinner} from 'native-base';
 import HomePage from '../screens/home/HomePage';
 import Library from '../screens/library/LibraryPage';
 import {ThemeContext} from '../context/ThemeContext';
@@ -20,17 +17,15 @@ import {getColor} from '../constants/theme/Themes';
 import Dimensions from '../constants/theme/Dimensions';
 import SettingsPage from '../screens/settings/SettingsPage';
 import {StatusContext} from '../context/StatusContext';
-import {onTopicsUpdate} from '../utils/utils';
 import SelectLanguagePage from '../screens/settings/SettingsLanguagePage';
 import SelectFontsize from '../screens/settings/SettingsFontsizePage';
 import ThemePage from '../screens/settings/SettingsCardthemePage';
 import translations from '../context/translations';
 import StatusModal from '../components/modals/StatusModal';
-import {Lang} from '../interfaces/Interfaces';
 import {staticFontSizes} from '../constants/theme/Fonts';
 import LibraryDetail from '../screens/library/LibraryTopic';
 import CustomDropDown from '../components/modals/CustomDropDown';
-import TopicsAddedModal from '../components/modals/TopicsAddedModal';
+import StatusBar from '../components/bars/StatusBar';
 
 const Stack = createStackNavigator();
 
@@ -91,23 +86,23 @@ const BackStructure = (props: BackStructureProps) => {
 
 const OptionsStructure = () => {
   const {theme} = React.useContext(ThemeContext);
-  const [show, setShow] = React.useState<boolean>(false);
+  const [open, setOpen] = React.useState<boolean>(false);
   return (
     <>
       <IconOptions
         onPress={() => {
-          setShow(true);
+          setOpen(true);
         }}
         name="dots-vertical"
         color={getColor(theme, 'secondaryIcon')}
         size={28}
         style={{marginRight: 5}}
       />
-      {show && (
+      {open && (
         <CustomDropDown
-          open={show}
+          open={open}
           onClose={() => {
-            setShow(false);
+            setOpen(false);
           }}
         />
       )}
@@ -127,7 +122,6 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
         options={{
           title: translations.LIBRARY,
           headerTintColor: getColor(theme, 'headerPrimary'),
-
           headerLeft: () => (
             <BackStructure destination={null} navigation={navigation} />
           ),
@@ -139,6 +133,8 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
 
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
         }}
       />
@@ -161,6 +157,8 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
           ),
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
         }}
       />
@@ -196,12 +194,15 @@ const FavouritesStack = ({navigation}: {navigation: any}) => {
           headerLeft: () => (
             <BackStructure destination={null} navigation={navigation} />
           ),
+          headerRight: () => <OptionsStructure />,
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },
 
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
         }}
       />
@@ -236,6 +237,8 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
 
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
         }}
       />
@@ -252,6 +255,8 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
           },
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
           headerLeft: () => (
             <BackStructure destination="Settings" navigation={navigation} />
@@ -271,6 +276,8 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
           },
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
           headerLeft: () => (
             <BackStructure destination="Settings" navigation={navigation} />
@@ -290,6 +297,8 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
           },
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
           headerLeft: () => (
             <BackStructure destination="Settings" navigation={navigation} />
@@ -298,56 +307,6 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
       />
     </Stack.Navigator>
   );
-};
-
-const renderConnectivityIcon = (
-  isLoadingContentUpdates: boolean,
-  isUpdated: boolean,
-  iconColor: string,
-  setLoadingContent: (val: boolean) => void,
-  setUpdatedContent: (val: boolean) => void,
-  setUpdatedAlert: (val: boolean) => void,
-): any => {
-  if (isLoadingContentUpdates) {
-    return <Spinner color="white" size="small" style={{marginRight: 20}} />;
-  }
-
-  if (isUpdated) {
-    return (
-      <>
-        <TopicsAddedModal open={true} n={10} />
-        <IconChecked
-          name="checkmark-done"
-          color={iconColor}
-          onPress={() => {
-            setUpdatedAlert(true);
-          }}
-          size={Dimensions.iconMed}
-          style={{
-            marginRight: 20,
-          }}
-        />
-      </>
-    );
-  } else {
-    return (
-      <IconUpdate
-        name="reload"
-        color={iconColor}
-        onPress={() =>
-          onTopicsUpdate(
-            translations.LANG as Lang,
-            setLoadingContent,
-            setUpdatedContent,
-          )
-        }
-        size={Dimensions.iconMedSmall}
-        style={{
-          marginRight: 20,
-        }}
-      />
-    );
-  }
 };
 
 const getAppTitle = (
@@ -366,14 +325,9 @@ const getAppTitle = (
 
 const HomeStack = ({navigation}: {navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
-  const {
-    isLoadingContentUpdates,
-    setLoadingContent,
-    isUpdateContentRequired,
-    setUpdatedContent,
-    isCheckingContentUpdates,
-  } = React.useContext(StatusContext);
-
+  const {isCheckingContentUpdates, isLoadingContentUpdates} = React.useContext(
+    StatusContext,
+  );
   const [isUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
   const {translations} = React.useContext(LocalizationContext);
   return (
@@ -387,22 +341,7 @@ const HomeStack = ({navigation}: {navigation: any}) => {
           headerTintColor: getColor(theme, 'headerPrimary'),
           headerRight: () => (
             <View>
-              {renderConnectivityIcon(
-                isLoadingContentUpdates || isCheckingContentUpdates,
-                isUpdateContentRequired,
-                getColor(theme, 'secondaryIcon'),
-                setLoadingContent,
-                setUpdatedContent,
-                setUpdatedAlert,
-              )}
-
-              <StatusModal
-                show={isUpdatedAlert}
-                title={translations.TOP_PICK}
-                message={translations.TOPICS_SYNCRONIZED}
-                closeOnTouchOutside={true}
-                onDismiss={() => setUpdatedAlert(false)}
-              />
+              <StatusBar />
             </View>
           ),
           headerLeft: () => (
@@ -469,12 +408,16 @@ const QuestionsStack = ({navigation}: {navigation: any}) => {
           headerLeft: () => (
             <BackStructure navigation={navigation} destination={null} />
           ),
+          headerRight: () => <OptionsStructure />,
+
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },
 
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
         }}
       />
@@ -491,12 +434,15 @@ const QuestionsStack = ({navigation}: {navigation: any}) => {
               navigation={navigation}
             />
           ),
+          headerRight: () => <OptionsStructure />,
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },
 
           headerTitleStyle: {
             fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
           },
         }}
       />

@@ -17,10 +17,12 @@ export default function LibraryDetail({
     {
       heading: translations.TOPICS,
       children: <TopicsPage navigation={navigation} route={route} />,
+      id: 1,
     },
     {
       heading: translations.DIALOGS,
       children: <DialogPage navigation={navigation} route={route} />,
+      id: 2,
     },
   ];
 

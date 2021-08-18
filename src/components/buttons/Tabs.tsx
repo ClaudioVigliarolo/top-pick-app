@@ -32,13 +32,15 @@ export default function TabButtons({tabs, initialPage = 0}: TabButtonsProps) {
     <Tabs
       renderTabBar={renderScrollableTab}
       initialPage={initialPage}
+      scrollWithoutAnimation={true}
+      // onChangeTab={() => console.log('changed!')}
       tabBarUnderlineStyle={{
         backgroundColor: getColor(theme, 'primaryOrange'),
         height: 2,
       }}>
-      {tabs.map((tab, i) => (
+      {tabs.map((tab) => (
         <Tab
-          key={i}
+          key={tab.id}
           heading={tab.heading}
           tabStyle={{backgroundColor: getColor(theme, 'primaryBackground')}}
           textStyle={{color: getColor(theme, 'primaryOrange')}}
