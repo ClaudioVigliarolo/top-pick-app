@@ -6,29 +6,33 @@ import {
   Modal,
   View,
   TouchableOpacity,
-  Linking,
   Text,
-  Alert,
 } from 'react-native';
+import {HelpContext} from '../../context/HelpContext';
 
 interface CustomDropDownProps {
   onClose: () => void;
   open: boolean;
 }
-const CustomDropDown = (props: CustomDropDownProps) => {
+const CustomDropDown = ({onClose, open}: CustomDropDownProps) => {
+  const {setHelp} = React.useContext(HelpContext);
   return (
     <View>
       <Modal
-        visible={props.open}
+        visible={open}
         transparent={true}
-        onRequestClose={props.onClose}
+        onRequestClose={onClose}
         animationType="fade">
-        <TouchableWithoutFeedback onPress={props.onClose}>
+        <TouchableWithoutFeedback onPress={onClose}>
           <View style={styles.modalOverlay} />
         </TouchableWithoutFeedback>
         {/*here starts the content */}
         <View style={styles.modalContent}>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity
+            onPress={() => {
+              setHelp(true);
+              onClose();
+            }}>
             <View style={styles.modalContentItem}>
               <Text>Help</Text>
             </View>

@@ -47,7 +47,8 @@ curs.execute('''CREATE TABLE "categories"
 
 # create topics table
 curs.execute('''CREATE TABLE topics
-             ( "id" INTEGER NOT NULL,  "ref_id" INTEGER NOT NULL, "title" TEXT NOT NULL, "timestamp" DATETIME DEFAULT CURRENT_TIMESTAMP, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL,  PRIMARY KEY("id"))''')
+	
+             ( "id" INTEGER NOT NULL,  "ref_id" INTEGER NOT NULL, "title" TEXT NOT NULL, "timestamp" DATETIME DEFAULT CURRENT_TIMESTAMP, "type"	NUMERIC DEFAULT 0,  "level" NUMERIC DEFAULT 1, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL,  PRIMARY KEY("id"))''')
 
 
 # create questions table

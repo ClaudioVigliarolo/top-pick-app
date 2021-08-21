@@ -21,7 +21,6 @@ import SelectLanguagePage from '../screens/settings/SettingsLanguagePage';
 import SelectFontsize from '../screens/settings/SettingsFontsizePage';
 import ThemePage from '../screens/settings/SettingsCardthemePage';
 import translations from '../context/translations';
-import StatusModal from '../components/modals/StatusModal';
 import {staticFontSizes} from '../constants/theme/Fonts';
 import LibraryDetail from '../screens/library/LibraryTopic';
 import CustomDropDown from '../components/modals/CustomDropDown';

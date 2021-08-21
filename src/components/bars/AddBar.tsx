@@ -19,15 +19,18 @@ const MIN_QUESTION_LEN = 5;
 
 const SearchBar = ({placeholder, setText, text, onAdd}: SearchBarProps) => {
   const {theme} = React.useContext(ThemeContext);
+
+  const onAddCheck = () => {
+    if (text.length < MIN_QUESTION_LEN) return false;
+    onAdd();
+    setText('');
+  };
+
   return (
     <Bar
       LeftIcon={
         <IconAdd
-          onPress={() => {
-            if (text.length < MIN_QUESTION_LEN) return false;
-            onAdd();
-            setText('');
-          }}
+          onPress={onAddCheck}
           name="add"
           size={Dimensions.iconMed}
           style={{paddingLeft: 10}}
@@ -44,6 +47,7 @@ const SearchBar = ({placeholder, setText, text, onAdd}: SearchBarProps) => {
         />
       }
       automatic={true}
+      onSubmitEditing={onAddCheck}
       setText={setText}
       placeholder={placeholder}
       text={text}

@@ -6,7 +6,6 @@ import {
   TouchableWithoutFeedback,
   Platform,
 } from 'react-native';
-import VersionCheck from 'react-native-version-check';
 import {ThemeContext} from '../context/ThemeContext';
 import {
   DrawerContentScrollView,

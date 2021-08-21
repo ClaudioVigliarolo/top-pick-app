@@ -42,7 +42,7 @@ export default function CategoryList({navigation}: {navigation: any}) {
     setItems(newItems.slice());
   };
 
-  const onDislike = (id: number) => {
+  const onToggleLike = (id: number) => {
     toggleLike(id, false);
     getItems();
   };
@@ -55,13 +55,13 @@ export default function CategoryList({navigation}: {navigation: any}) {
   }: RenderItemParams<Question>) => {
     return (
       <ListItemDrag
-        onRemove={onRemove}
+        onRemove={() => onRemove(item.id)}
         onDrag={drag}
         text={item.title}
         isActive={isActive}
         liked={item.liked}
         id={item.id}
-        onToggleLike={onDislike}
+        onToggleLike={() => onToggleLike(item.id)}
         backgroundColor={getColor(theme, 'primaryBackground')}
         opacity={isActive ? 0.6 : 1}
       />

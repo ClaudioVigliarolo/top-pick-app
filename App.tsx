@@ -7,6 +7,7 @@ import RNBootSplash from 'react-native-bootsplash';
 import StartSlides from './src/screens/start/StartPage';
 import {LocalizationProvider} from './src/context/LocalizationContext';
 import {StatusProvider} from './src/context/StatusContext';
+import {HelpProvider} from './src/context/HelpContext';
 import {
   isFirstLaunch as hasAppLaunched,
   setFirstLaunch as setAppFirstLaunch,
@@ -26,20 +27,22 @@ const App = () => {
     <ThemeProvider>
       <StatusBar barStyle="light-content" backgroundColor="black" />
       <LocalizationProvider>
-        <SafeAreaProvider>
-          {isFirstLaunch ? (
-            <StartSlides
-              onDone={() => {
-                setFirstLaunch(false);
-                setAppFirstLaunch();
-              }}
-            />
-          ) : (
-            <StatusProvider>
-              <Navigation />
-            </StatusProvider>
-          )}
-        </SafeAreaProvider>
+        <HelpProvider>
+          <SafeAreaProvider>
+            {isFirstLaunch ? (
+              <StartSlides
+                onDone={() => {
+                  setFirstLaunch(false);
+                  setAppFirstLaunch();
+                }}
+              />
+            ) : (
+              <StatusProvider>
+                <Navigation />
+              </StatusProvider>
+            )}
+          </SafeAreaProvider>
+        </HelpProvider>
       </LocalizationProvider>
     </ThemeProvider>
   );

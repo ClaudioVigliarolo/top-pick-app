@@ -99,6 +99,14 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  ListItemDragHelpcontainer: {
+    height: 200,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'blue',
+  },
+
   ListItemDragtextContainer: {
     flex: 9,
     flexDirection: 'row',
@@ -146,6 +154,12 @@ export default StyleSheet.create({
   ListItemcontainer: {
     width: '100%',
     position: 'relative',
+  },
+  ListItemHelpcontainer: {
+    width: '90%',
+    position: 'relative',
+    flex: 1,
+    justifyContent: 'space-between',
   },
   ListItemCheckBoxmodalItem: {
     justifyContent: 'flex-start',

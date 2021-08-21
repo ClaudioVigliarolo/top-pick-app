@@ -1,9 +1,8 @@
 import * as React from 'react';
-import {Text, View, StyleSheet, TextInput} from 'react-native';
+import {Text, View, TextInput} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
-import Dimensions from '../../constants/theme/Dimensions';
 import styles from '../../styles/styles';
 import {getFontSize} from '../../constants/theme/Fonts';
 
@@ -15,11 +14,17 @@ interface EditOverlayProps {
   onClose(): any;
 }
 
-const EditOverlay = (props: EditOverlayProps) => {
+const EditOverlay = ({
+  isVisible,
+  onChangeText,
+  onClose,
+  onSubmit,
+  text,
+}: EditOverlayProps) => {
   const {theme, fontsize} = React.useContext(ThemeContext);
   return (
     <React.Fragment>
-      {props.isVisible && (
+      {isVisible && (
         <View
           style={[
             styles.EditOverlaycontainer,
@@ -27,7 +32,7 @@ const EditOverlay = (props: EditOverlayProps) => {
           ]}>
           <AntDesign
             name="close"
-            onPress={props.onClose}
+            onPress={onClose}
             size={35}
             style={styles.EditOverlayCloseIcon}
           />
@@ -47,12 +52,16 @@ const EditOverlay = (props: EditOverlayProps) => {
               {backgroundColor: getColor(theme, 'primaryBackground')},
             ]}>
             <TextInput
-              style={styles.EditOverlaytextInput}
+              style={[
+                styles.EditOverlaytextInput,
+                {color: getColor(theme, 'primaryText')},
+              ]}
+              blurOnSubmit={true}
               multiline={true}
-              value={props.text}
-              onSubmitEditing={props.onSubmit}
+              value={text}
+              onSubmitEditing={onSubmit}
               autoFocus={true}
-              onChangeText={props.onChangeText}
+              onChangeText={onChangeText}
             />
           </View>
         </View>

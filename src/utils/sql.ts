@@ -873,13 +873,14 @@ export const addQuestion = (
   id: number,
   topicId: number,
   questionText: string,
+  n: number,
   lang: Lang,
 ): Promise<boolean> => {
   return new Promise<boolean>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
         `INSERT INTO "questions"
-        VALUES (${id}, "${topicId}", "${questionText}", 0, 1, "${lang}")`,
+        VALUES (${id}, "${topicId}", "${questionText}", ${n},   0, 1, "${lang}")`,
         [],
         (tx, results) => {
           resolve(true);

@@ -11,6 +11,7 @@ interface SearchBarProps {
   automatic: boolean;
   LeftIcon: React.ReactNode;
   RightIcon: React.ReactNode;
+  onSubmitEditing?: () => void;
 }
 
 const SearchBar = ({
@@ -20,6 +21,7 @@ const SearchBar = ({
   automatic,
   placeholder,
   setText,
+  onSubmitEditing,
 }: SearchBarProps) => {
   const {theme} = React.useContext(ThemeContext);
   Platform;
@@ -39,6 +41,8 @@ const SearchBar = ({
           <Input
             autoFocus={automatic}
             onChangeText={setText}
+            blurOnSubmit={true}
+            onSubmitEditing={onSubmitEditing}
             placeholder={placeholder}
             value={text}
             style={{color: getColor(theme, 'barTextColor')}}

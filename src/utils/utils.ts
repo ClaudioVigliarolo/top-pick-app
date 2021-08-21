@@ -1,7 +1,7 @@
 import DeviceInfo from 'react-native-device-info';
 import NetInfo from '@react-native-community/netinfo';
 import {updateTopics} from './api';
-import {Lang, Topic} from '../interfaces/Interfaces';
+import {Lang, Topic, TopicLevel} from '../interfaces/Interfaces';
 import AsyncStorage from '@react-native-community/async-storage';
 import keys from '../../database/keys/keys';
 import {FontDimension} from '../constants/theme/Fonts';
@@ -390,5 +390,31 @@ export const getStoredLanguage = async (): Promise<string> => {
   } catch (e) {
     console.log('Failed to fetch date from storage');
     return NO_LANGUAGE;
+  }
+};
+
+export const getTopicLevelLabel = (level: TopicLevel | undefined): string => {
+  switch (level) {
+    case TopicLevel.EASY:
+      return 'Easy';
+    case TopicLevel.MEDIUM:
+      return 'Medium';
+    case TopicLevel.HARD:
+      return 'Hard';
+    default:
+      return '';
+  }
+};
+
+export const getTopicLevelColor = (level: TopicLevel | undefined): string => {
+  switch (level) {
+    case TopicLevel.EASY:
+      return 'green';
+    case TopicLevel.MEDIUM:
+      return 'orange';
+    case TopicLevel.HARD:
+      return 'orangered';
+    default:
+      return 'black';
   }
 };

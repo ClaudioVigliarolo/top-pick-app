@@ -1,5 +1,11 @@
-import React, {useCallback} from 'react';
-import {View, Platform, PermissionsAndroid, Alert} from 'react-native';
+import React from 'react';
+import {
+  View,
+  Platform,
+  PermissionsAndroid,
+  Text,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Lang, Question, Topic} from '../../interfaces/Interfaces';
 import {getColor} from '../../constants/theme/Themes';
 import {LocalizationContext} from '../../context/LocalizationContext';
@@ -10,14 +16,88 @@ import ListItemDrag from '../../components/lists/ListItemDrag';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
+import {copilot, CopilotStep, walkthroughable} from 'react-native-copilot';
 import ButtonsDownToUp from '../../components/buttons/ButtonsDownToUp';
 import AddBar from '../../components/bars/AddBar';
 import RNHTMLtoPDF, {Pdf} from 'react-native-html-to-pdf';
 import EditOverlay from '../../components/overlays/EditOverlay';
 import {hashCode} from '../../utils/utils';
 import {addQuestion, toggleLike, updateQuestion} from '../../utils/sql';
+import CONSTANTS from '../../constants/app/App';
+import translations from '../../context/translations';
+import {HelpContext} from '../../context/HelpContext';
+import {ListItem as ListItemBase} from 'native-base';
+import {getFontSize} from '../../constants/theme/Fonts';
+import styles from '../../styles/styles';
+import DragIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import LikeIcon from 'react-native-vector-icons/AntDesign';
+import Dimensions from '../../constants/theme/Dimensions';
+const AddBarWrapper = (props: any) => (
+  <View {...props.copilot}>
+    <AddBar
+      placeholder={translations.ADD_YOUR_QUESTION}
+      setText={props.text}
+      text={props.text}
+      onAdd={props.onQuestionAdd}
+    />
+  </View>
+);
 
-const getQuestionHtml = (items: Question[], title: string, lang: Lang) => {
+const ListItemWrapper = () => {
+  const {theme, fontsize} = React.useContext(ThemeContext);
+  return (
+    <ListItemBase
+      noIndent={true}
+      noBorder={true}
+      style={[styles.ListItemDragcontainer, {backgroundColor: 'yellow'}]}>
+      <View>
+        <Text
+          style={{
+            color: getColor(theme, 'primaryText'),
+            textAlignVertical: 'center',
+            fontWeight: 'bold',
+            fontSize: getFontSize(fontsize, 'fontSmall'),
+          }}>
+          19
+        </Text>
+      </View>
+      <TouchableWithoutFeedback>
+        <View style={{alignSelf: 'flex-start'}}>
+          <Text
+            style={{
+              color: getColor(theme, 'primaryText'),
+              textAlignVertical: 'center',
+              textAlign: 'left',
+              fontSize: getFontSize(fontsize, 'fontSmall'),
+            }}>
+            cia
+          </Text>
+        </View>
+      </TouchableWithoutFeedback>
+      <View style={styles.ListItemDragiconContainer}>
+        <LikeIcon
+          name={true ? 'heart' : 'hearto'}
+          color={getColor(theme, 'primaryOrange')}
+          size={Dimensions.iconMedSmall}
+          onPress={() => {}}
+          style={{
+            marginRight: 10,
+            marginLeft: Platform.OS === 'ios' ? 10 : 0,
+          }}
+        />
+        <TouchableWithoutFeedback onPressIn={() => {}}>
+          <DragIcon
+            name="drag"
+            color={getColor(theme, 'lightGray')}
+            size={Dimensions.iconMed}
+          />
+        </TouchableWithoutFeedback>
+      </View>
+    </ListItemBase>
+  );
+};
+
+const getQuestionHtml = (questions: Question[], title: string, lang: Lang) => {
   const htmlContent = `
   <!DOCTYPE html>
   <html lang=${lang}>
@@ -43,7 +123,7 @@ const getQuestionHtml = (items: Question[], title: string, lang: Lang) => {
         <h3 style="text-transform: uppercase" >${title}</h3>
         <div style="margin-top:50px">
           <ol>
-            ${items
+            ${questions
               .map((item: Question) => ' <li>' + item.title + '</li>')
               .join('\n')}
           </ol> 
@@ -54,35 +134,47 @@ const getQuestionHtml = (items: Question[], title: string, lang: Lang) => {
   return htmlContent;
 };
 
-export default function OrderPage({
-  route,
-  navigation,
-}: {
+interface OrderPageProps {
+  copilotEvents: any;
+  start: any;
   route: any;
   navigation: any;
-}) {
-  const {
-    questions,
-    topic,
-  }: {questions: Question[]; topic: Topic} = route.params;
+}
+function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
+  const {topic}: {topic: Topic} = route.params;
   const [questionText, setQuestionText] = React.useState('');
   const [questionId, setQuestionId] = React.useState<number>(-1);
-  const [items, setItems] = React.useState<Question[]>([]);
+  const [questions, setQuestions] = React.useState<Question[]>([]);
   const [isMenuOptionShown, showMenuOption] = React.useState<boolean>(false);
   const [isEditing, setEditing] = React.useState<boolean>(false);
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
+  const {setHelp, isHelp, setCurrentStep} = React.useContext(HelpContext);
   let actionSheet = React.useRef<any>();
 
   React.useEffect(() => {
-    setItems(questions);
-  }, [questions]);
+    setQuestions(route.params.questions);
+  }, [route.params.questions]);
+
+  React.useEffect(() => {
+    copilotEvents.on('stop', () => {
+      setHelp(false);
+    });
+
+    copilotEvents.on('stepChange', (step: any) => setCurrentStep(step.order));
+
+    if (isHelp) {
+      //setting a function to handle the step change event
+      //To start the step by step Walk through
+      start();
+    }
+  }, [isHelp]);
 
   const onRemove = (id: number) => {
-    const newItems = [...items];
-    const index = newItems.findIndex((item) => item.id == id);
-    if (index != -1) newItems.splice(index, 1);
-    setItems(newItems.slice());
+    const newQuestions = [...questions];
+    const index = newQuestions.findIndex((item) => item.id == id);
+    if (index != -1) newQuestions.splice(index, 1);
+    setQuestions(newQuestions.slice());
   };
 
   const onEdit = (id: number, newText: string) => {
@@ -99,14 +191,14 @@ export default function OrderPage({
   }: RenderItemParams<Question>) => {
     return (
       <ListItemDrag
-        onEdit={onEdit}
-        onRemove={onRemove}
+        onEdit={() => onEdit(item.id, item.title)}
+        onRemove={() => onRemove(item.id)}
         onDrag={drag}
         number={(index as number) + 1}
         text={item.title}
         isActive={isActive}
         liked={item.liked}
-        onToggleLike={onToggleLike}
+        onToggleLike={() => onToggleLike(item.id)}
         id={item.id}
         backgroundColor={getColor(theme, 'primaryBackground')}
         opacity={isActive ? 0.7 : 1}
@@ -115,22 +207,29 @@ export default function OrderPage({
   };
 
   const onEditFinish = (editedQuestion: string, questionId: number) => {
-    const newItems = [...items];
-    const index = newItems.findIndex((item) => item.id == questionId);
+    const newQuestions = [...questions];
+    const index = newQuestions.findIndex((item) => item.id == questionId);
     if (index != -1) {
-      newItems[index].title = editedQuestion;
+      newQuestions[index].title = editedQuestion;
       //update question in db
       if (updateQuestion(questionId, editedQuestion)) {
-        setItems(newItems.slice());
+        setQuestions(newQuestions.slice());
       }
     }
   };
 
   //, user_modified = ${newVal ? 1 : 0}
-  const onQuestionAdd = () => {
+  const onQuestionAdd = async () => {
     const id = hashCode(questionText);
-
-    if (addQuestion(id, topic.id, questionText, translations.LANG as Lang)) {
+    if (
+      await addQuestion(
+        id,
+        topic.id,
+        questionText,
+        CONSTANTS.USER_QUESTION_PRIORITY_N,
+        translations.LANG as Lang,
+      )
+    ) {
       const newQuestionItem: Question = {
         id,
         topic_id: topic.id,
@@ -138,8 +237,7 @@ export default function OrderPage({
         selected: false,
         title: questionText,
       };
-      const newArray = [newQuestionItem].concat(items);
-      setItems(newArray.slice());
+      setQuestions((oldQuestions) => [newQuestionItem, ...oldQuestions]);
     }
   };
 
@@ -178,12 +276,12 @@ export default function OrderPage({
   };
 
   const onToggleLike = (id: number) => {
-    let itemsCopy = [...items];
-    const index = items.findIndex((item) => item.id == id);
-    const newVal = !items[index].liked;
+    let itemsCopy = [...questions];
+    const index = questions.findIndex((item) => item.id == id);
+    const newVal = !questions[index].liked;
     if (toggleLike(id, newVal)) {
-      items[index].liked = newVal;
-      setItems(itemsCopy.slice());
+      questions[index].liked = newVal;
+      setQuestions(itemsCopy.slice());
     }
   };
 
@@ -195,7 +293,7 @@ export default function OrderPage({
 
   const goPresentation = (): void => {
     navigation.navigate('Presentation', {
-      questions: items,
+      questions: questions,
       topic,
     });
   };
@@ -204,7 +302,7 @@ export default function OrderPage({
     switch (functionName) {
       case translations.EXPORT_TO_PDF:
         createPDF(
-          getQuestionHtml(items, topic.title, translations.LANG as Lang),
+          getQuestionHtml(questions, topic.title, translations.LANG as Lang),
         );
         break;
 
@@ -227,17 +325,19 @@ export default function OrderPage({
         justifyContent: 'center',
         backgroundColor: getColor(theme, 'primaryBackground'),
       }}>
-      <AddBar
-        placeholder={translations.ADD_YOUR_QUESTION}
-        setText={setQuestionText}
-        text={questionText}
-        onAdd={onQuestionAdd}
-      />
+      <CopilotStep text="You can add new questions here" order={1} name="one">
+        <AddBarWrapper
+          text={questionText}
+          setText={setQuestionText}
+          topic={topic}
+        />
+      </CopilotStep>
+      {true && <ListItemWrapper />}
       <DraggableFlatList
-        data={items}
+        data={questions}
         renderItem={renderItem}
         keyExtractor={(item, index) => `draggable-item-${item.id}`}
-        onDragEnd={({data}) => setItems(data)}
+        onDragEnd={({data}) => setQuestions(data)}
       />
       {/*showMenuOption(true)*/}
       <BottomButton
@@ -279,3 +379,12 @@ export default function OrderPage({
     </View>
   );
 }
+
+export default copilot({
+  animated: true, // Can be true or false
+  verticalOffset: 30, // <= this worked
+  overlay: 'svg', // Can be either view or svg
+  // color: 'orange',
+  //borderRadius: 5,
+  //arrowColor: 'red',
+})(OrderPage as any);

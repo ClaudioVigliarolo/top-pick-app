@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import {getColor} from '../../constants/theme/Themes';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import DragIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LikeIcon from 'react-native-vector-icons/AntDesign';
 import Dimensions from '../../constants/theme/Dimensions';
 import Modal from 'react-native-modal';
@@ -25,13 +25,25 @@ interface CustomListItemProps {
   liked: boolean | undefined;
   opacity: number;
   onDrag?(): void;
-  onToggleLike(id: number): void;
-  onRemove(id: number): void;
-  onEdit?(id: number, text: string): void;
+  onToggleLike(): void;
+  onRemove(): void;
+  onEdit?(): void;
   number?: number;
 }
 
-const CustomListItem = (props: CustomListItemProps) => {
+const CustomListItem = ({
+  backgroundColor,
+  id,
+  isActive,
+  liked,
+  onRemove,
+  onToggleLike,
+  opacity,
+  number,
+  text,
+  onDrag,
+  onEdit,
+}: CustomListItemProps) => {
   const {theme, fontsize} = React.useContext(ThemeContext);
   const [isModalVisible, setModalVisible] = React.useState(false);
 
@@ -42,13 +54,9 @@ const CustomListItem = (props: CustomListItemProps) => {
   return (
     <>
       <ListItem
-        onPress={toggleModal}
         noIndent={true}
         noBorder={true}
-        style={[
-          styles.ListItemDragcontainer,
-          {backgroundColor: props.backgroundColor, opacity: props.opacity},
-        ]}>
+        style={[styles.ListItemDragcontainer]}>
         <View style={[styles.ListItemDragnumberContainer]}>
           <Text
             style={{
@@ -57,35 +65,37 @@ const CustomListItem = (props: CustomListItemProps) => {
               fontWeight: 'bold',
               fontSize: getFontSize(fontsize, 'fontSmall'),
             }}>
-            {props.number}
+            {number}
           </Text>
         </View>
 
-        <View style={styles.ListItemDragtextContainer}>
-          <Text
-            style={{
-              color: getColor(theme, 'primaryText'),
-              textAlignVertical: 'center',
-              marginRight: 'auto',
-              fontSize: getFontSize(fontsize, 'fontSmall'),
-            }}>
-            {props.text.replace(/^\s+/g, '')}
-          </Text>
-        </View>
+        <TouchableWithoutFeedback onPress={toggleModal}>
+          <View style={styles.ListItemDragtextContainer}>
+            <Text
+              style={{
+                color: getColor(theme, 'primaryText'),
+                textAlignVertical: 'center',
+                marginRight: 'auto',
+                fontSize: getFontSize(fontsize, 'fontSmall'),
+              }}>
+              {text.replace(/^\s+/g, '')}
+            </Text>
+          </View>
+        </TouchableWithoutFeedback>
 
         <View style={styles.ListItemDragiconContainer}>
           <LikeIcon
-            name={props.liked ? 'heart' : 'hearto'}
+            name={liked ? 'heart' : 'hearto'}
             color={getColor(theme, 'primaryOrange')}
             size={Dimensions.iconMedSmall}
-            onPress={() => props.onToggleLike(props.id)}
+            onPress={onToggleLike}
             style={{
               marginRight: 10,
               marginLeft: Platform.OS === 'ios' ? 10 : 0,
             }}
           />
-          <TouchableWithoutFeedback onPressIn={props.onDrag}>
-            <Icon
+          <TouchableWithoutFeedback onPressIn={onDrag}>
+            <DragIcon
               name="drag"
               color={getColor(theme, 'lightGray')}
               size={Dimensions.iconMed}
@@ -93,6 +103,55 @@ const CustomListItem = (props: CustomListItemProps) => {
           </TouchableWithoutFeedback>
         </View>
       </ListItem>
+
+      <Modal isVisible={isModalVisible}>
+        <TouchableOpacity
+          style={styles.ListItemCheckBoxmodalContainer}
+          activeOpacity={1}
+          onPressOut={() => {
+            setModalVisible(false);
+          }}>
+          <TouchableOpacity style={styles.ListItemCheckBoxmodalItemContainer}>
+            <TouchableOpacity
+              style={styles.ListItemCheckBoxmodalItem}
+              onPress={() => {
+                toggleModal();
+                Clipboard.setString(text);
+              }}>
+              <Text style={styles.ListItemCheckBoxmodalText}>
+                {translations.COPY}
+              </Text>
+            </TouchableOpacity>
+            {onEdit && (
+              <TouchableOpacity
+                style={styles.ListItemCheckBoxmodalItem}
+                onPress={() => {
+                  onEdit();
+                  toggleModal();
+                }}>
+                <Text style={styles.ListItemCheckBoxmodalText}>
+                  {translations.EDIT}
+                </Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.ListItemCheckBoxmodalItem}
+              onPress={() => {
+                onToggleLike();
+                toggleModal();
+              }}>
+              <Text style={styles.ListItemCheckBoxmodalText}>like</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.ListItemCheckBoxmodalItem}
+              onPress={toggleModal}>
+              <Text style={styles.ListItemCheckBoxmodalText}>
+                {translations.CLOSE}
+              </Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </>
   );
 };

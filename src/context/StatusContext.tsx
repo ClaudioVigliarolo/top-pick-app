@@ -39,8 +39,6 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
 
   const [isContentUpdated, setUpdatedContent] = React.useState<boolean>(true);
 
-  const [newTopics, setNewTopics] = React.useState<Topic[]>([]);
-
   const [
     isRequiredContentUpdate,
     setRequiredContentUpdate,
@@ -121,10 +119,6 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
 
   const onSetUpdatedContent = (newVal: boolean) => {
     setUpdatedContent(newVal);
-  };
-
-  const onSetNewTopics = (topics: Topic[]) => {
-    setNewTopics(topics);
   };
 
   const openStore = async () => {
