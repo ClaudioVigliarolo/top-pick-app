@@ -8,20 +8,23 @@ import {getFontSize} from '../../constants/theme/Fonts';
 
 interface EditOverlayProps {
   isVisible: boolean;
-  text: string;
-  onChangeText: any;
-  onSubmit: any;
-  onClose(): any;
+  onSubmit: (newText: string) => void;
+  onClose: () => void;
+  initialText: string;
 }
 
 const EditOverlay = ({
   isVisible,
-  onChangeText,
   onClose,
   onSubmit,
-  text,
+  initialText,
 }: EditOverlayProps) => {
+  const [text, setText] = React.useState('');
   const {theme, fontsize} = React.useContext(ThemeContext);
+
+  React.useEffect(() => {
+    setText(initialText);
+  }, [initialText]);
   return (
     <React.Fragment>
       {isVisible && (
@@ -59,9 +62,9 @@ const EditOverlay = ({
               blurOnSubmit={true}
               multiline={true}
               value={text}
-              onSubmitEditing={onSubmit}
+              onSubmitEditing={() => text && onSubmit(text)}
               autoFocus={true}
-              onChangeText={onChangeText}
+              onChangeText={(text) => setText(text)}
             />
           </View>
         </View>

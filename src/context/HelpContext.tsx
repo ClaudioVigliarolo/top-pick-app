@@ -1,17 +1,18 @@
 import React from 'react';
+import {HelpScreen} from '../interfaces/Interfaces';
 
 export const HelpContext = React.createContext({
-  isHelp: false,
-  setHelp: (value: boolean) => {},
+  help: HelpScreen.NO_SCREEN,
+  setHelp: (value: HelpScreen) => {},
   setCurrentStep: (value: number) => {},
   currentStep: 0,
 });
 
 export const HelpProvider = ({children}: {children: React.ReactNode}) => {
-  const [isHelp, setHelp] = React.useState<boolean>(false);
+  const [help, setHelp] = React.useState<HelpScreen>(HelpScreen.NO_SCREEN);
   const [currentStep, setCurrentStep] = React.useState<number>(0);
 
-  const onSetHelp = (newVal: boolean) => {
+  const onSetHelp = (newVal: HelpScreen) => {
     setHelp(newVal);
   };
 
@@ -21,7 +22,7 @@ export const HelpProvider = ({children}: {children: React.ReactNode}) => {
   return (
     <HelpContext.Provider
       value={{
-        isHelp,
+        help,
         setHelp: onSetHelp,
         currentStep,
         setCurrentStep: onSetCurrentStep,

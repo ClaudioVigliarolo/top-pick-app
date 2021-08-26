@@ -89,7 +89,7 @@ class Item extends React.PureComponent<any, any> {
     return (
       <ListItemBasic
         text={this.props.topic.title}
-        icon={false}
+        icon={true}
         onPress={() => this.goQuestions(this.props.topic)}
       />
     );

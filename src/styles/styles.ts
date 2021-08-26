@@ -4,7 +4,7 @@ import {staticFontSizes} from '../constants/theme/Fonts';
 
 export default StyleSheet.create({
   buttomButtonsContainer: {
-    height: Dimensions.bottomButtonsHeight,
+    height: Dimensions.ButtonQuestionsHeight,
     width: '100%',
     borderTopWidth: 2,
     padding: 10,
@@ -17,7 +17,7 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
 
-  bottomButtonsText: {
+  ButtonQuestionsText: {
     textAlign: 'center',
   },
 
@@ -97,36 +97,38 @@ export default StyleSheet.create({
     width: '100%',
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    // backgroundColor: 'red',
+    position: 'relative',
   },
   ListItemDragHelpcontainer: {
-    height: 200,
     flex: 1,
+    height: 200,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'blue',
   },
 
   ListItemDragtextContainer: {
-    flex: 9,
+    flex: 7,
     flexDirection: 'row',
     height: '100%',
-    padding: 0,
+    // backgroundColor: 'violet',
     textAlign: 'left',
+    paddingLeft: 8,
+    paddingRight: 8,
   },
   ListItemDragnumberContainer: {
-    margin: 0,
-    flex: 1,
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-    marginLeft: -15,
+    position: 'absolute',
+    left: 10,
+    //backgroundColor: 'green',
   },
 
-  ListItemDragiconContainer: {
+  ListItemDragIconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flex: 2,
+    flex: 1,
+    // backgroundColor: 'orange',
   },
 
   ListItemDragmodalItem: {
@@ -152,11 +154,11 @@ export default StyleSheet.create({
   },
 
   ListItemcontainer: {
-    width: '100%',
+    flex: 1,
     position: 'relative',
   },
   ListItemHelpcontainer: {
-    width: '90%',
+    width: '95%',
     position: 'relative',
     flex: 1,
     justifyContent: 'space-between',

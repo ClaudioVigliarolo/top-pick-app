@@ -18,7 +18,7 @@ import {Lang, Question, Topic} from '../../interfaces/Interfaces';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import {getColor} from '../../constants/theme/Themes';
 import ListItem from '../../components/lists/ListItemCheckbox';
-import BottomButton from '../../components/buttons/BottomButtons';
+import BottomButton from '../../components/buttons/QuestionsButton';
 import SearchBar from '../../components/bars/SearchBar';
 import Dimensions from '../../constants/theme/Dimensions';
 import {

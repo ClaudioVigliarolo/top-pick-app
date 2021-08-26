@@ -9,12 +9,14 @@ import {
   Text,
 } from 'react-native';
 import {HelpContext} from '../../context/HelpContext';
+import {HelpScreen} from '../../interfaces/Interfaces';
 
 interface CustomDropDownProps {
   onClose: () => void;
   open: boolean;
+  screen: HelpScreen;
 }
-const CustomDropDown = ({onClose, open}: CustomDropDownProps) => {
+const CustomDropDown = ({onClose, open, screen}: CustomDropDownProps) => {
   const {setHelp} = React.useContext(HelpContext);
   return (
     <View>
@@ -30,7 +32,7 @@ const CustomDropDown = ({onClose, open}: CustomDropDownProps) => {
         <View style={styles.modalContent}>
           <TouchableOpacity
             onPress={() => {
-              setHelp(true);
+              setHelp(screen);
               onClose();
             }}>
             <View style={styles.modalContentItem}>

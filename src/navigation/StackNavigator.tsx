@@ -7,10 +7,10 @@ import IconOptions from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomePage from '../screens/home/HomePage';
 import Library from '../screens/library/LibraryPage';
 import {ThemeContext} from '../context/ThemeContext';
-import QuestionsPage from '../screens/detail/QuestionsPage';
-import OrderPage from '../screens/detail/OrderPage';
+import QuestionsPage from '../screens/detail/QuestionsPage/Index';
+import OrderPage from '../screens/detail/OrderPage/Index';
 import {LocalizationContext} from '../context/LocalizationContext';
-import FavouritesPage from '../screens/user/FavouritesPage';
+import FavouritesPage from '../screens/user/FavouritesPage/Index';
 import SearchPage from '../screens/home/SearchPage';
 import PresentationPage from '../screens/detail/PresentationPage';
 import {getColor} from '../constants/theme/Themes';
@@ -25,6 +25,7 @@ import {staticFontSizes} from '../constants/theme/Fonts';
 import LibraryDetail from '../screens/library/LibraryTopic';
 import CustomDropDown from '../components/modals/CustomDropDown';
 import StatusBar from '../components/bars/StatusBar';
+import {HelpScreen} from '../interfaces/Interfaces';
 
 const Stack = createStackNavigator();
 
@@ -83,7 +84,7 @@ const BackStructure = (props: BackStructureProps) => {
   );
 };
 
-const OptionsStructure = () => {
+const OptionsStructure = ({screen}: {screen: HelpScreen}) => {
   const {theme} = React.useContext(ThemeContext);
   const [open, setOpen] = React.useState<boolean>(false);
   return (
@@ -100,6 +101,7 @@ const OptionsStructure = () => {
       {open && (
         <CustomDropDown
           open={open}
+          screen={screen}
           onClose={() => {
             setOpen(false);
           }}
@@ -124,7 +126,7 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
           headerLeft: () => (
             <BackStructure destination={null} navigation={navigation} />
           ),
-          headerRight: () => <OptionsStructure />,
+          headerRight: () => null,
 
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
@@ -193,7 +195,9 @@ const FavouritesStack = ({navigation}: {navigation: any}) => {
           headerLeft: () => (
             <BackStructure destination={null} navigation={navigation} />
           ),
-          headerRight: () => <OptionsStructure />,
+          headerRight: () => (
+            <OptionsStructure screen={HelpScreen.FAVOURITES_SCREEN} />
+          ),
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },
@@ -407,7 +411,9 @@ const QuestionsStack = ({navigation}: {navigation: any}) => {
           headerLeft: () => (
             <BackStructure navigation={navigation} destination={null} />
           ),
-          headerRight: () => <OptionsStructure />,
+          headerRight: () => (
+            <OptionsStructure screen={HelpScreen.QUESTIONS_SCREEN} />
+          ),
 
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
@@ -433,7 +439,9 @@ const QuestionsStack = ({navigation}: {navigation: any}) => {
               navigation={navigation}
             />
           ),
-          headerRight: () => <OptionsStructure />,
+          headerRight: () => (
+            <OptionsStructure screen={HelpScreen.ORDER_SCREEN} />
+          ),
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },

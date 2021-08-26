@@ -104,3 +104,10 @@ export enum TopicType {
   TOPIC,
   DIALOG,
 }
+
+export enum HelpScreen {
+  NO_SCREEN,
+  QUESTIONS_SCREEN,
+  ORDER_SCREEN,
+  FAVOURITES_SCREEN,
+}

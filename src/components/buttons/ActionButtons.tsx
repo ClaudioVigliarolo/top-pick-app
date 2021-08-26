@@ -15,7 +15,7 @@ interface ButtonsModalProps {
   actionSheet: any;
 }
 
-const BottomsDownToUp = (props: ButtonsModalProps) => {
+const ActionButtons = (props: ButtonsModalProps) => {
   const {theme} = React.useContext(ThemeContext);
   return (
     <ActionSheet
@@ -30,4 +30,4 @@ const BottomsDownToUp = (props: ButtonsModalProps) => {
     />
   );
 };
-export default BottomsDownToUp;
+export default ActionButtons;

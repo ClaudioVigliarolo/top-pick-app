@@ -24,7 +24,7 @@ interface Colors {
   barColor: string;
   barTextColor: string;
   barExternalColor: string;
-  bottomButtonsBackground: string;
+  ButtonQuestionsBackground: string;
   lineColor: string;
 }
 
@@ -49,7 +49,7 @@ const light: Colors = {
   barColor: '#fff',
   barTextColor: 'black',
   barExternalColor: '#FF851B',
-  bottomButtonsBackground: '#eee',
+  ButtonQuestionsBackground: '#eee',
   lineColor: 'rgba(196, 196, 196,0.4)',
 };
 
@@ -74,7 +74,7 @@ const dark: Colors = {
   barExternalColor: 'black',
   barColor: '#141414', //#1F1F1F
   barTextColor: '#eee',
-  bottomButtonsBackground: '#141414',
+  ButtonQuestionsBackground: '#141414',
   lineColor: 'rgba(196, 196, 196,0.4)',
 };
 

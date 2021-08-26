@@ -5,7 +5,7 @@ import {getColor} from '../../constants/theme/Themes';
 import CustomButton from './CustomButton';
 import styles from '../../styles/styles';
 import {getFontSize} from '../../constants/theme/Fonts';
-interface BottomButtonsProps {
+interface ButtonQuestionsProps {
   onPress: () => void;
   text: string;
   secondaryText?: string;
@@ -14,13 +14,13 @@ interface BottomButtonsProps {
   isTextEnabled: boolean;
 }
 
-interface BottomButtonsState {
+interface ButtonQuestionsState {
   isKeyboadVisible: boolean;
 }
 
-export default class BottomButtons extends React.Component<
-  BottomButtonsProps,
-  BottomButtonsState
+export default class ButtonQuestions extends React.Component<
+  ButtonQuestionsProps,
+  ButtonQuestionsState
 > {
   public keyboardDidShowListener: any;
   public keyboardDidHideListener: any;
@@ -65,7 +65,7 @@ export default class BottomButtons extends React.Component<
           {
             backgroundColor: getColor(
               this.context.theme,
-              'bottomButtonsBackground',
+              'ButtonQuestionsBackground',
             ),
           },
 
@@ -87,7 +87,7 @@ export default class BottomButtons extends React.Component<
             }}>
             <NativeText
               style={[
-                styles.bottomButtonsText,
+                styles.ButtonQuestionsText,
 
                 {
                   color: getColor(this.context.theme, 'primaryOrange'),

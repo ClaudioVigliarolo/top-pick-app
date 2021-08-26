@@ -1,120 +1,26 @@
 import * as React from 'react';
+import {View, ScrollView, Text, TouchableOpacity} from 'react-native';
+import {copilot} from 'react-native-copilot';
+import {ThemeContext} from '../../../context/ThemeContext';
 import {
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from 'react-native';
-import {copilot, CopilotStep, walkthroughable} from 'react-native-copilot';
-import {ThemeContext} from '../../context/ThemeContext';
-import {Lang, Question, Topic} from '../../interfaces/Interfaces';
-import {LocalizationContext} from '../../context/LocalizationContext';
-import {getColor} from '../../constants/theme/Themes';
-import ListItem from '../../components/lists/ListItemCheckbox';
-import CheckBox from '@react-native-community/checkbox';
-
-import {ListItem as ListItemBase} from 'native-base';
-import BottomButton from '../../components/buttons/BottomButtons';
-import SearchBar from '../../components/bars/SearchBar';
-import Dimensions from '../../constants/theme/Dimensions';
+  HelpScreen,
+  Lang,
+  Question,
+  Topic,
+} from '../../../interfaces/Interfaces';
+import {LocalizationContext} from '../../../context/LocalizationContext';
+import {getColor} from '../../../constants/theme/Themes';
+import ListItem from '../../../components/lists/ListItemCheckbox';
 import {
   getQuestionsByTopic,
   getRelatedTopics,
   getTopicById,
-} from '../../utils/sql';
-import styles from '../../styles/styles';
-import {getFontSize} from '../../constants/theme/Fonts';
-import {getTopicLevelColor, getTopicLevelLabel} from '../../utils/utils';
-import {HelpContext} from '../../context/HelpContext';
-import translations from '../../context/translations';
-import {Right} from 'native-base';
-
-const WalkthroughableText = walkthroughable(Text);
-const WalkthroughableView = walkthroughable(View);
-
-const SearchBarWrapper = (props: any) => (
-  <View {...props.copilot}>
-    <SearchBar
-      setText={(val: string) => {
-        props.setFilter(val);
-      }}
-      text={props.filter}
-      placeholder={translations.SEARCH_IN + ' ' + props.topic.title}
-      automatic={false}
-    />
-  </View>
-);
-
-const ListItemWrapper = () => {
-  const {theme, fontsize} = React.useContext(ThemeContext);
-  const {currentStep} = React.useContext(HelpContext);
-
-  return (
-    <ListItemBase style={styles.ListItemHelpcontainer} noBorder={true}>
-      <CopilotStep
-        text="Press the question to copy the text"
-        order={2}
-        name="two">
-        <WalkthroughableView style={styles.ListItemCheckBoxtextContainer}>
-          <Text
-            style={{
-              color: getColor(theme, 'primaryText'),
-              fontSize: getFontSize(fontsize, 'fontSmall'),
-            }}>
-            "I am a beautiful question"
-          </Text>
-        </WalkthroughableView>
-      </CopilotStep>
-      <CopilotStep
-        text="Press the checkbox to select the question"
-        order={3}
-        name="three">
-        <WalkthroughableView>
-          <CheckBox
-            tintColors={{
-              true: getColor(theme, 'primaryOrange'),
-              false: getColor(theme, 'lightGray'),
-            }}
-            onFillColor={getColor(theme, 'primaryOrange')}
-            onTintColor={getColor(theme, 'checkOrange')}
-            tintColor={getColor(theme, 'lightGray')}
-            onCheckColor={getColor(theme, 'white')}
-            value={currentStep > 2}
-            onValueChange={() => {}}
-          />
-        </WalkthroughableView>
-      </CopilotStep>
-    </ListItemBase>
-  );
-};
-
-const BottomButtonWrapper = ({
-  copilot,
-  counter,
-  isHelp,
-  onSubmit,
-}: {
-  copilot?: Object;
-  counter: number;
-  isHelp: boolean;
-  onSubmit: any;
-}) => (
-  <View
-    {...copilot}
-    style={{
-      maxHeight: counter > 0 || isHelp ? Dimensions.bottomButtonsHeight : 0,
-    }}>
-    <BottomButton
-      onPress={onSubmit}
-      text={translations.NEXT}
-      isTextEnabled={counter > 0 || isHelp}
-      secondaryText={translations.SELECTED + ' ' + counter}
-      isButtonEnabled={counter > 0 || isHelp}
-      visible={counter > 0 || isHelp}
-    />
-  </View>
-);
+} from '../../../utils/sql';
+import styles from '../../../styles/styles';
+import {getFontSize} from '../../../constants/theme/Fonts';
+import {getTopicLevelColor, getTopicLevelLabel} from '../../../utils/utils';
+import {HelpContext} from '../../../context/HelpContext';
+import {ListItemHelp, ButtonQuestionsHelp, SearchBarHelp} from './Help';
 
 interface QuestionsPageProps {
   copilotEvents: any;
@@ -140,8 +46,8 @@ function QuestionsPage({
   const {theme, fontsize} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
   const {id, title}: {id: number; title: string} = route.params;
-  const {setHelp, isHelp, setCurrentStep} = React.useContext(HelpContext);
-
+  const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
+  let isHelp = help === HelpScreen.QUESTIONS_SCREEN;
   React.useEffect(() => {
     (async () => {
       setTopic({
@@ -169,7 +75,7 @@ function QuestionsPage({
 
   React.useEffect(() => {
     copilotEvents.on('stop', () => {
-      setHelp(false);
+      setHelp(HelpScreen.NO_SCREEN);
     });
 
     copilotEvents.on('stepChange', (step: any) => setCurrentStep(step.order));
@@ -192,7 +98,7 @@ function QuestionsPage({
     });
   };
 
-  const onValChange = (index: number): void => {
+  const onSelect = (index: number): void => {
     let questionsCopy = [...questions];
     questionsCopy[index]['selected'] = !questionsCopy[index]['selected'];
     questionsCopy[index]['selected']
@@ -203,13 +109,7 @@ function QuestionsPage({
 
   return (
     <React.Fragment>
-      <CopilotStep
-        text="You can filter the questions here"
-        order={1}
-        name="one">
-        <SearchBarWrapper filter={filter} setFilter={setFilter} topic={topic} />
-      </CopilotStep>
-
+      <SearchBarHelp filter={filter} setFilter={setFilter} topic={topic} />
       <ScrollView
         style={[
           styles.DefaultContainer,
@@ -303,33 +203,26 @@ function QuestionsPage({
           </View>
         </View>
 
-        {isHelp && <ListItemWrapper />}
+        {isHelp && <ListItemHelp />}
         {questions.map((item: Question, i) => {
           if (item.title.toLowerCase().includes(filter.toLowerCase())) {
             return (
               <ListItem
                 key={i}
-                editable={true}
                 text={item.title}
                 id={item.id}
-                topic={topic.title}
-                onValChange={(newVal: boolean) => onValChange(i)}
-                value={item.selected ? true : false}
+                onSelect={(newVal: boolean) => onSelect(i)}
+                selected={item.selected ? true : false}
               />
             );
           }
         })}
       </ScrollView>
-      <CopilotStep
-        text="When you selected the questions you like, move on to the next section"
-        order={4}
-        name="four">
-        <BottomButtonWrapper
-          counter={counter}
-          isHelp={isHelp}
-          onSubmit={onSubmit}
-        />
-      </CopilotStep>
+      <ButtonQuestionsHelp
+        counter={counter}
+        isHelp={isHelp}
+        onSubmit={onSubmit}
+      />
     </React.Fragment>
   );
 }
