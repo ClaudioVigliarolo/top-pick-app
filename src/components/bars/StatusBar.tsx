@@ -10,7 +10,7 @@ import {Lang} from '../../interfaces/Interfaces';
 import translations from '../../context/translations';
 import {getLastUpdate, onTopicsUpdate} from '../../utils/utils';
 import Dimensions from '../../constants/theme/Dimensions';
-import TopicsAddedModal from '../modals/NewTopicsModal';
+import TopicsAddedModal from '../modals/TopicsAddedModal';
 import StatusModal from '../modals/StatusModal';
 import {getNewTopicsCounter} from '../../utils/sql';
 import CONSTANTS from '../../constants/app/App';
@@ -39,16 +39,16 @@ export default function StatusBar() {
       if (isFirstRender) {
         setFirstRender(false);
       } else {
-        console.log('in ELSE');
-        //SE si passa da isLoadingContentUpdates => false && isContentUpdated => true
         if (isContentUpdated) {
-          console.log('CALLLLLLL!!');
           const newTopicsCounter = await getNewTopicsCounter(
             translations.LANG as Lang,
             lastUpdate,
           );
           if (newTopicsCounter) {
             setNewTopicsCounter(newTopicsCounter);
+            setTimeout(() => {
+              setNewTopicsCounter(0);
+            }, CONSTANTS.NEW_TOPICS_MODAL_TIMEOUT);
           }
         }
       }
@@ -99,8 +99,6 @@ export default function StatusBar() {
       );
     }
   };
-
-  console.log('VALUEEE', isLoadingContentUpdates);
   return (
     <View>
       {renderConnectivityIcon()}

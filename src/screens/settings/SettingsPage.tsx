@@ -1,9 +1,8 @@
 import * as React from 'react';
-import {View} from 'react-native';
+import {ScrollView} from 'react-native';
 import {getColor} from '../../constants/theme/Themes';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import {ThemeContext} from '../../context/ThemeContext';
-import SQLite from 'react-native-sqlite-storage';
 import ListItem from '../../components/lists/ListItemBasic';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import ListItemCheckBox from '../../components/lists/ListItemCheckbox';
@@ -12,6 +11,8 @@ import {
   isAutomaticUpdate,
   saveStorageUpdateSettings,
 } from '../../utils/utils';
+import {resetDB} from '../../utils/sql';
+import styles from '../../styles/styles';
 
 export default function SettingsPage({navigation}: {navigation: any}) {
   const [isAlert, setAlert] = React.useState<boolean>(false);
@@ -31,31 +32,17 @@ export default function SettingsPage({navigation}: {navigation: any}) {
     setAlert(true);
   };
 
-  const resetDB = async (): Promise<void> => {
-    SQLite.deleteDatabase(
-      {name: 'db.db', location: 'default'},
-      () => {
-        console.log('second db deleted');
-      },
-      () => {
-        console.log('ERROR');
-      },
-    );
-    await clearStorage();
-  };
-
   const setUpdateSettings = async (newVal: boolean) => {
     await saveStorageUpdateSettings(newVal);
     setUpdate(newVal);
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: getColor(theme, 'primaryBackground'),
-      }}>
+    <ScrollView
+      style={[
+        styles.DefaultContainer,
+        {backgroundColor: getColor(theme, 'primaryBackground')},
+      ]}>
       <ListItem
         text={translations.LANGUAGE}
         onPress={() => {
@@ -80,10 +67,9 @@ export default function SettingsPage({navigation}: {navigation: any}) {
       />
       <ListItemCheckBox
         text={translations.AUTOMATIC_UPDATE}
-        value={isUpdate}
-        editable={false}
-        id={0}
-        onValChange={(newVal: boolean) => setUpdateSettings(newVal)}
+        selected={isUpdate}
+        modal={false}
+        onSelect={(newVal: boolean) => setUpdateSettings(newVal)}
       />
 
       <ListItem text="Reset To Default" onPress={showAlert} icon={false} />
@@ -111,6 +97,6 @@ export default function SettingsPage({navigation}: {navigation: any}) {
           }}
         />
       )}
-    </View>
+    </ScrollView>
   );
 }

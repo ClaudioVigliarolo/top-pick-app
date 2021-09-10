@@ -25,8 +25,7 @@ args = parser.parse_args()
 # Connect to an existing database
 #conn = connect('../../db/current.db')
 conn = connect(
-    '/Users/claudio/Documents/_PROJECTS/top-pick/android/app/src/main/assets/www/db.db')
-
+    '/Users/claudio/Documents/Personal/Projects/top-pick/App/android/app/src/main/assets/www/db.db')
 curs = conn.cursor()
 
 
@@ -37,6 +36,7 @@ curs.execute('DROP TABLE IF EXISTS related')
 curs.execute('DROP TABLE IF EXISTS topic_categories')
 curs.execute('DROP TABLE IF EXISTS questions')
 curs.execute('DROP TABLE IF EXISTS version')
+curs.execute('DROP TABLE IF EXISTS favourite_questions')
 
 
 # create required tables
@@ -48,7 +48,7 @@ curs.execute('''CREATE TABLE "categories"
 # create topics table
 curs.execute('''CREATE TABLE topics
 	
-             ( "id" INTEGER NOT NULL,  "ref_id" INTEGER NOT NULL, "title" TEXT NOT NULL, "timestamp" DATETIME DEFAULT CURRENT_TIMESTAMP, "type"	NUMERIC DEFAULT 0,  "level" NUMERIC DEFAULT 1, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL,  PRIMARY KEY("id"))''')
+             ( "id" INTEGER NOT NULL,  "ref_id" INTEGER NOT NULL, "title" TEXT NOT NULL, "timestamp" DATETIME DEFAULT CURRENT_TIMESTAMP, "type"	NUMERIC DEFAULT 0,  "level" NUMERIC DEFAULT 1, "lang" VARCHAR(2) NOT NULL, "source" TEXT NOT NULL, "user_modified" NUMERIC DEFAULT 0, PRIMARY KEY("id"))''')
 
 
 # create questions table
@@ -62,7 +62,15 @@ curs.execute('''CREATE TABLE "questions" (
     "lang" VARCHAR(2) NOT NULL
 )''')
 
-#
+
+# create favourite questions table
+curs.execute('''CREATE TABLE "favourite_questions" (
+    "id" INTEGER PRIMARY KEY,
+	"topic_id" INTEGER REFERENCES "topics" ("id"),
+	"title"	TEXT,
+    "lang" VARCHAR(2) NOT NULL
+)''')
+
 
 # create topic_categories table
 curs.execute('''CREATE TABLE "topic_categories" (

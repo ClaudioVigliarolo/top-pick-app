@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, ScrollView} from 'react-native';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import ListeItemCheck from '../../components/lists/ListeItemCheck';
 import styles from '../../styles/styles';
@@ -31,7 +31,7 @@ export default function SelectThemePage() {
   };
 
   return (
-    <View style={styles.DefaultContainer}>
+    <ScrollView style={styles.DefaultContainer}>
       {defaultFontSizeOptions.map((theme: FontsizeOption, index) => (
         <View key={index}>
           <ListeItemCheck
@@ -41,6 +41,6 @@ export default function SelectThemePage() {
           />
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }

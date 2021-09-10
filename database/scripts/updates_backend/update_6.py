@@ -1,5 +1,5 @@
-# usage: python update_4.py
-# example usage: python update_4.py
+# usage: python update_6.py
+# example usage: python update_6.py
 # description: we add a column for order in questions' topics
 #!/usr/bin/python
 import time
@@ -30,20 +30,13 @@ print(languages)
 
 # Connect to an existing database
 try:
+    print(DB_URL)
     url = up.urlparse(DB_URL)
     conn = psycopg2.connect(database=url.path[1:],
                             user=url.username,
                             password=url.password,
                             host=url.hostname,
                             port=url.port)
-
-    '''
-    conn = psycopg2.connect(user="claudio",
-                            password="gennaio",
-                            host="127.0.0.1",
-                            port="5432",
-                            database="dev")
-     '''
     # Create a cursor to perform database operations
     curs = conn.cursor()
     # Print PostgreSQL details
@@ -53,7 +46,7 @@ except (Exception) as error:
     print("Error while connecting to PostgreSQL", error)
 
 
-update_query = """ALTER TABLE questions ADD COLUMN n INTEGER NOT NULL DEFAULT 0; """
+update_query = """ALTER TABLE USER_STATS ADD COLUMN n INTEGER NOT NULL DEFAULT 1; """
 
 curs.execute(update_query)
 

@@ -115,6 +115,13 @@ const translations = {
     UPDATE_APP_REQUIRED_TITLE: 'Aggiornamento App',
     UPDATE_APP_REQUIRED_MESSAGE:
       "La versione che stai utilizzando non è più supportata. Aggiorna l'app",
+    TODAY: 'Oggi',
+    YESTERDAY: 'Ieri',
+    LAST_WEEK: 'Settimana scorsa',
+    LAST_MONTH: 'Mese scorso',
+    LAST_THREE_MONTHS: 'Tre mesi fa',
+    LAST_YEAR: 'Anno scorso',
+    MORE_THAN_YEAR: 'Più di un anno',
   },
   en: {
     TOP_PICK: 'TOP Pick',
@@ -208,6 +215,13 @@ const translations = {
     UPDATE_APP_REQUIRED_TITLE: 'Update Required',
     UPDATE_APP_REQUIRED_MESSAGE:
       'The version you are using is no longer supported. Please update the App',
+    TODAY: 'Today',
+    YESTERDAY: 'Yesterday',
+    LAST_WEEK: 'Last Week',
+    LAST_MONTH: 'Last Month',
+    LAST_THREE_MONTHS: 'Last Three Months',
+    LAST_YEAR: 'Last Year',
+    MORE_THAN_YEAR: 'More Than a Year',
   },
 
   fr: {
@@ -303,6 +317,13 @@ const translations = {
     UPDATE_APP_REQUIRED_TITLE: 'mise à jour',
     UPDATE_APP_REQUIRED_MESSAGE:
       "La version que vous utilisez n'est plus prise en charge. Il est nécessaire de mettre à jour l'application",
+    TODAY: "Aujourd'hui",
+    YESTERDAY: 'Hier',
+    LAST_WEEK: 'Semaine dernière',
+    LAST_MONTH: 'Mois dernier',
+    LAST_THREE_MONTHS: 'Il y a trois mois',
+    LAST_YEAR: 'Année dernière',
+    MORE_THAN_YEAR: "Plus d'un an",
   },
 
   es: {
@@ -398,6 +419,13 @@ const translations = {
     UPDATE_APP_REQUIRED_TITLE: 'mise à jour',
     UPDATE_APP_REQUIRED_MESSAGE:
       'La versión que estás usando ya no es compatible. Hace falta actualizar la aplicación',
+    TODAY: 'Hoy',
+    YESTERDAY: 'Ayer',
+    LAST_WEEK: 'Semana pasada',
+    LAST_MONTH: 'Mes pasado',
+    LAST_THREE_MONTHS: 'Hace tres meses',
+    LAST_YEAR: 'Año pasado',
+    MORE_THAN_YEAR: 'Más de un año',
   },
 };
 

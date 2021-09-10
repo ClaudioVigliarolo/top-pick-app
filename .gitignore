@@ -68,6 +68,7 @@ buck-out/
 /ios/Pods/
 
 
-#personal
+#custom
 /creators
 /temp
+/src/config/

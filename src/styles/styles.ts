@@ -421,7 +421,7 @@ export default StyleSheet.create({
     padding: 4,
     borderRadius: 3,
     paddingLeft: 10,
-    textTransform: 'uppercase',
+    textTransform: 'capitalize',
     color: '#fff',
     width: '85%',
   },

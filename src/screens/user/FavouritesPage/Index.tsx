@@ -20,14 +20,12 @@ import {ListItemHelp} from './Help';
 interface FavouritesPageProps {
   copilotEvents: any;
   start: any;
-  route: any;
   navigation: any;
 }
 
 function FavouritesPage({
   copilotEvents,
   navigation,
-  route,
   start,
 }: FavouritesPageProps) {
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -57,9 +55,7 @@ function FavouritesPage({
   }, [isHelp]);
 
   const getItems = async () => {
-    const questions: Question[] = await getFavourites(
-      translations.LANG as Lang,
-    );
+    const questions: Question[] = await getFavourites();
     setItems([...questions]);
   };
 
@@ -95,7 +91,7 @@ function FavouritesPage({
         {backgroundColor: getColor(theme, 'primaryBackground')},
       ]}>
       {isHelp && <ListItemHelp />}
-      {items.length == 0 && !loading && (
+      {items.length == 0 && !loading && !isHelp && (
         <Text
           style={[
             styles.FavouritesPageText,

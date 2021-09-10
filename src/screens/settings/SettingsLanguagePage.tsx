@@ -1,6 +1,6 @@
 import React from 'react';
 import {ThemeContext} from '../../context/ThemeContext';
-import {View} from 'react-native';
+import {View, ScrollView} from 'react-native';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import ListeItemCheck from '../../components/lists/ListeItemCheck';
 import {StatusContext} from '../../context/StatusContext';
@@ -56,7 +56,7 @@ export default function SelectLanguagePage() {
   };
 
   return (
-    <View style={styles.DefaultContainer}>
+    <ScrollView style={styles.DefaultContainer}>
       {defaultLanguages.map((language, index) => (
         <View key={index}>
           <ListeItemCheck
@@ -86,6 +86,6 @@ export default function SelectLanguagePage() {
           />
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }

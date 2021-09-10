@@ -210,8 +210,7 @@ function QuestionsPage({
               <ListItem
                 key={i}
                 text={item.title}
-                id={item.id}
-                onSelect={(newVal: boolean) => onSelect(i)}
+                onSelect={() => onSelect(i)}
                 selected={item.selected ? true : false}
               />
             );

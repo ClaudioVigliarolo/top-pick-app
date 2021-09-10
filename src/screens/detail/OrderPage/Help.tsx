@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, Text, TouchableWithoutFeedback, Platform} from 'react-native';
+import {View, Text, Platform} from 'react-native';
 import {CopilotStep, walkthroughable} from 'react-native-copilot';
 import {ThemeContext} from '../../../context/ThemeContext';
 import {getColor} from '../../../constants/theme/Themes';

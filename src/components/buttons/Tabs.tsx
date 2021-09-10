@@ -25,15 +25,11 @@ const renderScrollableTab = (props: any) => {
 
 export default function TabButtons({tabs, initialPage = 0}: TabButtonsProps) {
   const {theme} = React.useContext(ThemeContext);
-  console.log('uu', getColor(theme, 'primaryBackground'));
-  const a = 'white';
-  console.log('iermo', a);
   return (
     <Tabs
       renderTabBar={renderScrollableTab}
       initialPage={initialPage}
       scrollWithoutAnimation={true}
-      // onChangeTab={() => console.log('changed!')}
       tabBarUnderlineStyle={{
         backgroundColor: getColor(theme, 'primaryOrange'),
         height: 2,

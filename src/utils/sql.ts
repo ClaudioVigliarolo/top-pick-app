@@ -12,7 +12,7 @@ import {
   TopicType,
 } from '../interfaces/Interfaces';
 import dbUpgrade from '../../database/updates/db-upgrade.json';
-import {saveTopicsTableNumber} from './utils';
+import {clearStorage, saveTopicsTableNumber} from './utils';
 
 const SQL_MAX_TUPLES = 800;
 
@@ -24,17 +24,27 @@ const DB = SQLite.openDatabase(
   },
   async () => {
     const version = await getDBVersion();
-    console.log('my verrrRRR', version);
     const currVersion = dbUpgrade.versions[0].version;
-    console.log('cccc', currVersion);
     if (version < currVersion) {
       //Call upgrade scripts
-      console.log('callllin!!');
       upgradeFrom(version, currVersion);
     }
   },
   () => {},
 );
+
+export const resetDB = async (): Promise<void> => {
+  SQLite.deleteDatabase(
+    {name: 'db.db', location: 'default'},
+    () => {
+      console.log('second db deleted');
+    },
+    () => {
+      console.log('ERROR');
+    },
+  );
+  await clearStorage();
+};
 
 export const upgradeFrom = async (prevVersion: number, currVersion: number) => {
   let statements: string[] = [];
@@ -156,7 +166,9 @@ export const generateDB = async (
 
     //delete all topics
     await DB.transaction((tx) => {
-      tx.executeSql(`delete from topics where lang = "${LANG}"`);
+      tx.executeSql(
+        `delete from topics WHERE user_modified IN (0) AND lang = "${LANG}"`,
+      );
     });
 
     console.log('3');
@@ -172,7 +184,7 @@ export const generateDB = async (
     console.log('4');
 
     //insert new category topics table
-    await bulkInsertTopicCategorys(data.topic_categories, LANG);
+    await bulkInsertTopicCategories(data.topic_categories, LANG);
 
     //delete related table
     await DB.transaction((tx) => {
@@ -215,14 +227,14 @@ const bulkInsertTopics = async (topics: Topic[], LANG: Lang) => {
           el.ref_id as number,
           el.title,
           el.source as string,
-          el.timestamp as string,
+          (el.timestamp as Date).toString(),
           el.type as TopicType,
           el.level as TopicLevel,
           LANG,
         );
         if (parameters.length == SQL_MAX_TUPLES || i == topics.length - 1) {
           tx.executeSql(
-            'INSERT INTO topics  (id, ref_id, title, source, timestamp, type, level, lang) VALUES ' +
+            'INSERT OR IGNORE INTO topics  (id, ref_id, title, source, timestamp, type, level, lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -254,7 +266,7 @@ const bulkInsertQuestions = async (questions: Question[], LANG: Lang) => {
         parameters.push(el.id, el.topic_id, el.title, el.n as number, LANG);
         if (parameters.length == SQL_MAX_TUPLES || i == questions.length - 1) {
           tx.executeSql(
-            'INSERT INTO questions  (id, topic_id, title, n, lang) VALUES ' +
+            'INSERT OR IGNORE INTO questions  (id, topic_id, title, n, lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -315,7 +327,7 @@ const bulkInsertRelated = async (related: Related[], LANG: Lang) => {
   });
 };
 
-const bulkInsertTopicCategorys = async (
+const bulkInsertTopicCategories = async (
   topicCategories: TopicCategory[],
   LANG: Lang,
 ) => {
@@ -593,7 +605,7 @@ export const getAllTopics = (lang: Lang): Promise<Topic[]> => {
   return new Promise<Topic[]>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
-        `SELECT title,id
+        `SELECT title,id, user_modified
           FROM topics
           WHERE lang="${lang}" 
           ORDER BY LOWER(title)
@@ -708,19 +720,15 @@ export const getNewTopicsCounter = (
   });
 };
 
-export const getRecentTopics = (
-  lang: Lang,
-  from: number,
-  n: number,
-): Promise<Topic[]> => {
+export const getRecentTopics = (lang: Lang, n: number): Promise<Topic[]> => {
   return new Promise<Topic[]>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
-        `SELECT title,id
+        `SELECT title, timestamp, id
         FROM topics
         WHERE lang="${lang}" 
         ORDER BY timestamp DESC
-        LIMIT ${n} OFFSET ${from};
+        LIMIT ${n};
           `,
         [],
         (tx, results) => {
@@ -801,12 +809,12 @@ export const getCategories = async (lang: Lang): Promise<Category[]> => {
   });
 };
 
-export const getFavourites = (lang: Lang): Promise<Question[]> => {
+export const getFavourites = (): Promise<Question[]> => {
   return new Promise<Question[]>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
         `SELECT * from questions
-        WHERE LANG = "${lang}"  AND liked = 1;`,
+        WHERE liked = 1;`,
         [],
         (tx, results) => {
           const rows = results.rows;
@@ -826,13 +834,14 @@ export const getFavourites = (lang: Lang): Promise<Question[]> => {
   });
 };
 
-export const toggleLike = (id: number, val: boolean): Promise<boolean> => {
+const setTopicModified = (id: number): Promise<boolean> => {
   return new Promise<boolean>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
-        `UPDATE "questions"
-        SET liked = ${val ? 1 : 0}
-        WHERE "id" = ${id}`,
+        `UPDATE "topics"
+        SET user_modified = 1
+        WHERE "id" = ${id}
+        `,
         [],
         (tx, results) => {
           resolve(true);
@@ -846,16 +855,44 @@ export const toggleLike = (id: number, val: boolean): Promise<boolean> => {
   });
 };
 
-export const updateQuestion = (
-  id: number,
+export const toggleLike = async (
+  questionId: number,
+  topicId: number,
+  val: boolean,
+): Promise<boolean> => {
+  await setTopicModified(topicId);
+  return new Promise<boolean>((resolve, reject) => {
+    DB.transaction((tx) => {
+      tx.executeSql(
+        `UPDATE "questions"
+         SET liked = ${val ? 1 : 0}, user_modified = 1
+         WHERE "id" = ${questionId}
+        `,
+        [],
+        (tx, results) => {
+          resolve(true);
+        },
+        (_tx, e) => {
+          console.log(e);
+          reject(false);
+        },
+      );
+    });
+  });
+};
+
+export const updateQuestion = async (
+  questionId: number,
+  topicId: number,
   editedQuestion: string,
 ): Promise<boolean> => {
+  await setTopicModified(topicId);
   return new Promise<boolean>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
         `UPDATE "questions"
         SET title = "${editedQuestion}" , user_modified = 1
-        WHERE "id" = ${id}`,
+        WHERE "id" = ${questionId}`,
         [],
         (tx, results) => {
           resolve(true);

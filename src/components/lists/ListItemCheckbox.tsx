@@ -17,14 +17,14 @@ interface ListItemCheckBoxProps {
   text: string;
   selected: boolean;
   onSelect: (newVal: boolean) => void;
-  id: number;
+  modal?: boolean;
 }
 
 const ListItemCheckBox = ({
   text,
   selected,
   onSelect,
-  id,
+  modal = true,
 }: ListItemCheckBoxProps) => {
   const {theme, fontsize} = React.useContext(ThemeContext);
   const [isModalVisible, setModalVisible] = React.useState(false);
@@ -33,7 +33,7 @@ const ListItemCheckBox = ({
     setModalVisible(false);
   };
   const openModal = () => {
-    setModalVisible(true);
+    if (modal) setModalVisible(true);
   };
 
   const onReport = async (reason: string, question_id: number) => {

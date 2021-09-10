@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {Alert, View} from 'react-native';
 import {
   HelpScreen,
   Lang,
@@ -90,23 +90,29 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
     );
   };
 
-  const onEditFinish = (editedQuestion: string, questionId: number) => {
+  const onEditFinish = async (editedQuestion: string, questionId: number) => {
     const newQuestions = [...questions];
     const index = newQuestions.findIndex((item) => item.id == questionId);
     if (index != -1) {
       newQuestions[index].title = editedQuestion;
       //update question in db
-      if (updateQuestion(questionId, editedQuestion)) {
+      if (
+        await updateQuestion(
+          questionId,
+          newQuestions[index].topic_id,
+          editedQuestion,
+        )
+      ) {
         setQuestions(newQuestions.slice());
       }
     }
   };
 
-  const onToggleLike = (id: number) => {
+  const onToggleLike = async (id: number) => {
     let itemsCopy = [...questions];
     const index = questions.findIndex((item) => item.id == id);
     const newVal = !questions[index].liked;
-    if (toggleLike(id, newVal)) {
+    if (await toggleLike(id, questions[index].topic_id, newVal)) {
       questions[index].liked = newVal;
       setQuestions(itemsCopy.slice());
     }

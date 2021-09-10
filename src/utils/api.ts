@@ -1,15 +1,14 @@
 import axios from 'axios';
+import {HOSTNAME} from '../config/config';
 import {JSONresponse, Lang, Report} from '../interfaces/Interfaces';
 import {generateDB} from './sql';
 import {getLastUpdate, getUserID, setLastUpdate} from './utils';
-
-const HOSTNAME = 'https://top-pick-api.herokuapp.com';
 export const updateTopics = async (lang: Lang): Promise<boolean> => {
   const id = getUserID();
   let hasUpdated = false;
   try {
     const response = await axios.get(
-      `${HOSTNAME}/updates/${id}/${await getLastUpdate(lang)}/${lang}`,
+      `${HOSTNAME}/updates/get/${id}/${await getLastUpdate(lang)}/${lang}`,
     );
     if (!response || !response.data) {
       throw new Error('got null response');
@@ -60,13 +59,9 @@ export const checkUpdates = async (lang: Lang): Promise<boolean> => {
       `${HOSTNAME}/updates/check/${await getLastUpdate(lang)}/${lang}`,
     );
 
-    //    console.log('armandooooooo');
-    // console.log(response.data);
-
     if (!response) {
       throw new Error('got null response');
     }
-
     const data: JSONresponse = response.data;
     return data.already_updated;
   } catch (err) {

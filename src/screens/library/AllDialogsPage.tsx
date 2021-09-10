@@ -6,7 +6,7 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import styles from '../../styles/styles';
 import {getAllDialogs} from '../../utils/sql';
-import {sectionTopicListSort} from '../../utils/sorting';
+import {alphabeticalSectionSort} from '../../utils/sorting';
 import CONSTANTS from '../../constants/app/App';
 import SectionList from '../../components/lists/SectionList';
 
@@ -20,7 +20,7 @@ export default function AllTopicsPage({navigation}: {navigation: any}) {
     (async () => {
       setTimeout(async () => {
         const topics = await getAllDialogs(translations.LANG as Lang);
-        const topicsSectionList = sectionTopicListSort(topics);
+        const topicsSectionList = alphabeticalSectionSort(topics);
         setData(topicsSectionList);
       }, CONSTANTS.LAZY_LOAD_TIMEOUT);
     })();

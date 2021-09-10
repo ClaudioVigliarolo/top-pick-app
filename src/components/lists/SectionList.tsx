@@ -28,6 +28,7 @@ export default class TopicsSectionList extends React.PureComponent<
 > {
   constructor(props: any) {
     super(props);
+    //@ts-ignore
     this.getItemLayout = sectionListGetItemLayout({
       // The height of the row with rowData at the given sectionIndex and rowIndex
       getItemHeight: (rowData, sectionIndex, rowIndex) =>

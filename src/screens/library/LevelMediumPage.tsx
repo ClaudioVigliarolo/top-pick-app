@@ -7,7 +7,7 @@ import {getColor} from '../../constants/theme/Themes';
 import CONSTANTS from '../../constants/app/App';
 import {getTopicsByLevel} from '../../utils/sql';
 import styles from '../../styles/styles';
-import {sectionTopicListSort} from '../../utils/sorting';
+import {alphabeticalSectionSort} from '../../utils/sorting';
 import SectionList from '../../components/lists/SectionList';
 
 export default function LevelMediumPage({navigation}: {navigation: any}) {
@@ -23,7 +23,7 @@ export default function LevelMediumPage({navigation}: {navigation: any}) {
           translations.LANG as Lang,
           TopicLevel.MEDIUM,
         );
-        const topicsSectionList = sectionTopicListSort(topics);
+        const topicsSectionList = alphabeticalSectionSort(topics);
         setData(topicsSectionList);
       }, CONSTANTS.LAZY_LOAD_TIMEOUT);
     })();

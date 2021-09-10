@@ -66,7 +66,6 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     //check if there app in store is up to date
     //if not set update required
     const res = await VersionCheck.needUpdate();
-    console.log('Myrrr', res);
     const isNeeded = res && res.isNeeded;
     setRequiredAppUpdate(isNeeded);
     return isNeeded;

@@ -47,7 +47,15 @@ const NewTopicsModal = ({open, n}: {open: boolean; n: number}) => {
             shadowOpacity: 0.8,
             shadowRadius: 1,
           }}>
-          <View style={{padding: 15, flex: 1, width: '100%', height: 80}}>
+          <View
+            style={{
+              flex: 1,
+              width: '100%',
+              minHeight: 80,
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'space-evenly',
+            }}>
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate('Library', {
@@ -57,11 +65,11 @@ const NewTopicsModal = ({open, n}: {open: boolean; n: number}) => {
                   },
                 })
               }>
-              <Text style={{color: 'white', fontSize: 20}}>+ {n} topics !</Text>
+              <Text style={{color: 'white', fontSize: 17}}>+ {n} topics !</Text>
               <Text
                 style={{
                   color: 'white',
-                  fontSize: 20,
+                  fontSize: 17,
                   textDecorationLine: 'underline',
                   textAlign: 'center',
                 }}>

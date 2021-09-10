@@ -5,7 +5,7 @@ export interface Topic {
   ref_id?: number;
   title: string;
   source?: string;
-  timestamp?: string;
+  timestamp?: Date;
   lang?: string;
   type?: TopicType;
   level?: TopicLevel;
