@@ -8,10 +8,8 @@ import Dimensions from '../../../constants/theme/Dimensions';
 import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
 import translations from '../../../context/translations';
-import AddBar from '../../../components/bars/AddBar';
 import DragIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LikeIcon from 'react-native-vector-icons/AntDesign';
-import ButtonQuestions from '../../../components/buttons/ButtonQuestions';
 
 const WalkthroughableView = walkthroughable(View);
 
@@ -49,7 +47,7 @@ export const ListItemHelp = () => {
       <WalkthroughableView
         style={[styles.ListItemDragIconContainer, {height: 40}]}>
         <CopilotStep
-          text="Click on the heart icon to remove the questions from your favourite questions "
+          text={translations.HELP_FAVOURITES_SCREEN_2}
           order={2}
           name="two">
           <WalkthroughableView>
@@ -67,7 +65,7 @@ export const ListItemHelp = () => {
         </CopilotStep>
 
         <CopilotStep
-          text="Drag the question here to arrange it in the order you prefer"
+          text={translations.HELP_FAVOURITES_SCREEN_3}
           order={3}
           name="three">
           <WalkthroughableView>
@@ -80,24 +78,5 @@ export const ListItemHelp = () => {
         </CopilotStep>
       </WalkthroughableView>
     </ListItemBase>
-  );
-};
-
-export const BottomButtonHelp = ({onPress}: {onPress: () => void}) => {
-  return (
-    <CopilotStep
-      text="When you are ready you can either show the questions in a visual form or export them to a pdf  "
-      order={5}
-      name="five">
-      <WalkthroughableView>
-        <ButtonQuestions
-          onPress={onPress}
-          text={translations.READY_TO_TALK}
-          isButtonEnabled={true}
-          isTextEnabled={false}
-          visible={true}
-        />
-      </WalkthroughableView>
-    </CopilotStep>
   );
 };

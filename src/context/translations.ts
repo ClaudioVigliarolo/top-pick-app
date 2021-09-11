@@ -122,6 +122,27 @@ const translations = {
     LAST_THREE_MONTHS: 'Tre mesi fa',
     LAST_YEAR: 'Anno scorso',
     MORE_THAN_YEAR: 'Più di un anno',
+
+    HELP_QUESTIONS_SCREEN_1: 'You can filter the questions here',
+    HELP_QUESTIONS_SCREEN_2: 'Press the question to copy the text',
+    HELP_QUESTIONS_SCREEN_3: 'Press the checkbox to select the question',
+    HELP_QUESTIONS_SCREEN_4:
+      'When you selected the questions you like, move on to the next section',
+
+    HELP_ORDER_SCREEN_1: 'You can add new questions here',
+    HELP_ORDER_SCREEN_2: 'Press the question to edit the text',
+    HELP_ORDER_SCREEN_3:
+      'Click on the heart icon to like the question. The question will be automatically added to your favourites questions ',
+    HELP_ORDER_SCREEN_4:
+      'Drag the question here to arrange it in the order you prefer',
+    HELP_ORDER_SCREEN_5:
+      'When you are ready you can either show the questions in a visual form or export them to a pdf',
+
+    HELP_FAVOURITES_SCREEN_1: 'Press the question to copy the text',
+    HELP_FAVOURITES_SCREEN_2:
+      'Click on the heart icon to remove the questions from your favourite questions',
+    HELP_FAVOURITES_SCREEN_3:
+      'Drag the question here to arrange it in the order you prefer',
   },
   en: {
     TOP_PICK: 'TOP Pick',
@@ -222,6 +243,27 @@ const translations = {
     LAST_THREE_MONTHS: 'Last Three Months',
     LAST_YEAR: 'Last Year',
     MORE_THAN_YEAR: 'More Than a Year',
+
+    HELP_QUESTIONS_SCREEN_1: 'You can filter the questions here',
+    HELP_QUESTIONS_SCREEN_2: 'Press the question to copy the text',
+    HELP_QUESTIONS_SCREEN_3: 'Press the checkbox to select the question',
+    HELP_QUESTIONS_SCREEN_4:
+      'When you selected the questions you like, move on to the next section',
+
+    HELP_ORDER_SCREEN_1: 'You can add new questions here',
+    HELP_ORDER_SCREEN_2: 'Press the question to edit the text',
+    HELP_ORDER_SCREEN_3:
+      'Click on the heart icon to like the question. The question will be automatically added to your favourites questions ',
+    HELP_ORDER_SCREEN_4:
+      'Drag the question here to arrange it in the order you prefer',
+    HELP_ORDER_SCREEN_5:
+      'When you are ready you can either show the questions in a visual form or export them to a pdf',
+
+    HELP_FAVOURITES_SCREEN_1: 'Press the question to copy the text',
+    HELP_FAVOURITES_SCREEN_2:
+      'Click on the heart icon to remove the questions from your favourite questions',
+    HELP_FAVOURITES_SCREEN_3:
+      'Drag the question here to arrange it in the order you prefer',
   },
 
   fr: {
@@ -324,6 +366,26 @@ const translations = {
     LAST_THREE_MONTHS: 'Il y a trois mois',
     LAST_YEAR: 'Année dernière',
     MORE_THAN_YEAR: "Plus d'un an",
+
+    HELP_QUESTIONS_SCREEN_1: 'You can filter the questions here',
+    HELP_QUESTIONS_SCREEN_2: 'Press the question to copy the text',
+    HELP_QUESTIONS_SCREEN_3: 'Press the checkbox to select the question',
+    HELP_QUESTIONS_SCREEN_4:
+      'When you selected the questions you like, move on to the next section',
+
+    HELP_ORDER_SCREEN_1: 'You can add new questions here',
+    HELP_ORDER_SCREEN_2: 'Press the question to edit the text',
+    HELP_ORDER_SCREEN_3:
+      'Click on the heart icon to like the question. The question will be automatically added to your favourites questions ',
+    HELP_ORDER_SCREEN_4:
+      'Drag the question here to arrange it in the order you prefer',
+    HELP_ORDER_SCREEN_5:
+      'When you are ready you can either show the questions in a visual form or export them to a pdf',
+    HELP_FAVOURITES_SCREEN_1: 'Press the question to copy the text',
+    HELP_FAVOURITES_SCREEN_2:
+      'Click on the heart icon to remove the questions from your favourite questions',
+    HELP_FAVOURITES_SCREEN_3:
+      'Drag the question here to arrange it in the order you prefer',
   },
 
   es: {
@@ -426,6 +488,27 @@ const translations = {
     LAST_THREE_MONTHS: 'Hace tres meses',
     LAST_YEAR: 'Año pasado',
     MORE_THAN_YEAR: 'Más de un año',
+
+    HELP_QUESTIONS_SCREEN_1: 'You can filter the questions here',
+    HELP_QUESTIONS_SCREEN_2: 'Press the question to copy the text',
+    HELP_QUESTIONS_SCREEN_3: 'Press the checkbox to select the question',
+    HELP_QUESTIONS_SCREEN_4:
+      'When you selected the questions you like, move on to the next section',
+
+    HELP_ORDER_SCREEN_1: 'You can add new questions here',
+    HELP_ORDER_SCREEN_2: 'Press the question to edit the text',
+    HELP_ORDER_SCREEN_3:
+      'Click on the heart icon to like the question. The question will be automatically added to your favourites questions ',
+    HELP_ORDER_SCREEN_4:
+      'Drag the question here to arrange it in the order you prefer',
+    HELP_ORDER_SCREEN_5:
+      'When you are ready you can either show the questions in a visual form or export them to a pdf',
+
+    HELP_FAVOURITES_SCREEN_1: 'Press the question to copy the text',
+    HELP_FAVOURITES_SCREEN_2:
+      'Click on the heart icon to remove the questions from your favourite questions',
+    HELP_FAVOURITES_SCREEN_3:
+      'Drag the question here to arrange it in the order you prefer',
   },
 };
 

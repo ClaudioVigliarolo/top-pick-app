@@ -6,7 +6,7 @@ import {
   SectionList,
   PixelRatio,
 } from 'react-native';
-import {Section, Topic} from '../../interfaces/Interfaces';
+import {TopicSection, Topic} from '../../interfaces/Interfaces';
 import ListItemBasic from './ListItemBasic';
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout';
 import styles from '../../styles/styles';
@@ -18,7 +18,7 @@ interface TopicsSectionListState {}
 
 interface TopicsSectionListProps {
   navigation: any;
-  items: Section[];
+  items: TopicSection[];
   sectionListRef: any;
 }
 

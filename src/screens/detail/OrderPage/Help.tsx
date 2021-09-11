@@ -16,7 +16,7 @@ import ButtonQuestions from '../../../components/buttons/ButtonQuestions';
 const WalkthroughableView = walkthroughable(View);
 
 export const AddBarHelp = ({onAdd}: {onAdd: (text: string) => void}) => (
-  <CopilotStep text="You can add new questions here" order={1} name="one">
+  <CopilotStep text={translations.HELP_ORDER_SCREEN_1} order={1} name="one">
     <WalkthroughableView>
       <AddBar onAdd={onAdd} />
     </WalkthroughableView>
@@ -48,10 +48,7 @@ export const ListItemHelp = () => {
         </Text>
       </View>
 
-      <CopilotStep
-        text="Press the question to edit the text"
-        order={2}
-        name="two">
+      <CopilotStep text={translations.HELP_ORDER_SCREEN_2} order={2} name="two">
         <WalkthroughableView
           style={[styles.ListItemDragtextContainer, {height: 40}]}>
           <Text
@@ -69,7 +66,7 @@ export const ListItemHelp = () => {
       <WalkthroughableView
         style={[styles.ListItemDragIconContainer, {height: 40}]}>
         <CopilotStep
-          text="Click on the heart icon to like the question. The question will be automatically added to your favourites questions "
+          text={translations.HELP_ORDER_SCREEN_3}
           order={3}
           name="three">
           <WalkthroughableView>
@@ -87,7 +84,7 @@ export const ListItemHelp = () => {
         </CopilotStep>
 
         <CopilotStep
-          text="Drag the question here to arrange it in the order you prefer"
+          text={translations.HELP_ORDER_SCREEN_4}
           order={4}
           name="four">
           <WalkthroughableView>
@@ -105,10 +102,7 @@ export const ListItemHelp = () => {
 
 export const BottomButtonHelp = ({onPress}: {onPress: () => void}) => {
   return (
-    <CopilotStep
-      text="When you are ready you can either show the questions in a visual form or export them to a pdf  "
-      order={5}
-      name="five">
+    <CopilotStep text={translations.HELP_ORDER_SCREEN_5} order={5} name="five">
       <WalkthroughableView>
         <ButtonQuestions
           onPress={onPress}

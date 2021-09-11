@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {copilot} from 'react-native-copilot';
 import {Text} from 'native-base';
-import {HelpScreen, Lang, Question} from '../../../interfaces/Interfaces';
+import {HelpScreen, Question} from '../../../interfaces/Interfaces';
 import {getColor} from '../../../constants/theme/Themes';
 import ListItemDrag from '../../../components/lists/ListItemDragFavourites';
 import DraggableFlatList, {
@@ -16,6 +16,7 @@ import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
 import {HelpContext} from '../../../context/HelpContext';
 import {ListItemHelp} from './Help';
+import {isFirstHelp, setFirstHelp} from '../../../utils/utils';
 
 interface FavouritesPageProps {
   copilotEvents: any;
@@ -34,7 +35,9 @@ function FavouritesPage({
   const {translations} = React.useContext(LocalizationContext);
 
   const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
-  let isHelp = help === HelpScreen.FAVOURITES_SCREEN;
+  const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
+    false,
+  );
 
   const {theme, fontsize} = React.useContext(ThemeContext);
   React.useEffect(() => {
@@ -45,14 +48,27 @@ function FavouritesPage({
   }, [isFocused]);
 
   React.useEffect(() => {
+    (async () => {
+      if (
+        help === HelpScreen.FAVOURITES_SCREEN ||
+        (await isFirstHelp(HelpScreen.FAVOURITES_SCREEN))
+      ) {
+        setCurrentPageHelp(true);
+      }
+    })();
+  }, [help]);
+
+  React.useEffect(() => {
     copilotEvents.on('stop', () => {
       setHelp(HelpScreen.NO_SCREEN);
+      setCurrentPageHelp(false);
+      setFirstHelp(HelpScreen.FAVOURITES_SCREEN);
     });
     copilotEvents.on('stepChange', (step: any) => setCurrentStep(step.order));
-    if (isHelp) {
+    if (isCurrentPageHelp) {
       start();
     }
-  }, [isHelp]);
+  }, [isCurrentPageHelp]);
 
   const getItems = async () => {
     const questions: Question[] = await getFavourites();
@@ -90,8 +106,8 @@ function FavouritesPage({
         styles.DefaultContainerCenter,
         {backgroundColor: getColor(theme, 'primaryBackground')},
       ]}>
-      {isHelp && <ListItemHelp />}
-      {items.length == 0 && !loading && !isHelp && (
+      {isCurrentPageHelp && <ListItemHelp />}
+      {items.length == 0 && !loading && !isCurrentPageHelp && (
         <Text
           style={[
             styles.FavouritesPageText,

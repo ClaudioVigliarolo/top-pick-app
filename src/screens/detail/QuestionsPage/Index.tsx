@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, ScrollView, Text, TouchableOpacity} from 'react-native';
+import {View, ScrollView, Text, TouchableOpacity, Alert} from 'react-native';
 import {copilot} from 'react-native-copilot';
 import {ThemeContext} from '../../../context/ThemeContext';
 import {
@@ -18,7 +18,12 @@ import {
 } from '../../../utils/sql';
 import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
-import {getTopicLevelColor, getTopicLevelLabel} from '../../../utils/utils';
+import {
+  getTopicLevelColor,
+  getTopicLevelLabel,
+  isFirstHelp,
+  setFirstHelp,
+} from '../../../utils/utils';
 import {HelpContext} from '../../../context/HelpContext';
 import {ListItemHelp, ButtonQuestionsHelp, SearchBarHelp} from './Help';
 
@@ -47,7 +52,11 @@ function QuestionsPage({
   const {translations} = React.useContext(LocalizationContext);
   const {id, title}: {id: number; title: string} = route.params;
   const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
-  let isHelp = help === HelpScreen.QUESTIONS_SCREEN;
+  const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
+    false,
+  );
+
+  //  let isCurrentPageHelp = help === HelpScreen.QUESTIONS_SCREEN || await isFirstHelp(HelpScreen.QUESTIONS_SCREEN);
   React.useEffect(() => {
     (async () => {
       setTopic({
@@ -74,18 +83,31 @@ function QuestionsPage({
   }, []);
 
   React.useEffect(() => {
+    (async () => {
+      if (
+        help === HelpScreen.QUESTIONS_SCREEN ||
+        (await isFirstHelp(HelpScreen.QUESTIONS_SCREEN))
+      ) {
+        setCurrentPageHelp(true);
+      }
+    })();
+  }, [help]);
+
+  React.useEffect(() => {
     copilotEvents.on('stop', () => {
       setHelp(HelpScreen.NO_SCREEN);
+      setCurrentPageHelp(false);
+      setFirstHelp(HelpScreen.QUESTIONS_SCREEN);
     });
 
     copilotEvents.on('stepChange', (step: any) => setCurrentStep(step.order));
 
-    if (isHelp) {
+    if (isCurrentPageHelp) {
       //setting a function to handle the step change event
       //To start the step by step Walk through
       start();
     }
-  }, [isHelp]);
+  }, [isCurrentPageHelp]);
 
   const onSubmit = (): void => {
     const newQuestions: Question[] = [];
@@ -203,7 +225,7 @@ function QuestionsPage({
           </View>
         </View>
 
-        {isHelp && <ListItemHelp />}
+        {isCurrentPageHelp && <ListItemHelp />}
         {questions.map((item: Question, i) => {
           if (item.title.toLowerCase().includes(filter.toLowerCase())) {
             return (
@@ -219,7 +241,7 @@ function QuestionsPage({
       </ScrollView>
       <ButtonQuestionsHelp
         counter={counter}
-        isHelp={isHelp}
+        isHelp={isCurrentPageHelp}
         onSubmit={onSubmit}
       />
     </React.Fragment>

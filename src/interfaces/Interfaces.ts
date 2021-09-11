@@ -89,7 +89,7 @@ export interface TabButton {
   id: number;
 }
 
-export interface Section {
+export interface TopicSection {
   title: string;
   data: Topic[];
 }

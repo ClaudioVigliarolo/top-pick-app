@@ -12,4 +12,5 @@ export default {
   SETTINGS_UPDATE: '@settings_update',
   USED_LANGUAGES: '@used_languages',
   TOPICS_NUMBER: '@topic_number',
+  FIRST_HELP: '@first_help',
 };

@@ -157,12 +157,6 @@ export default StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  ListItemHelpcontainer: {
-    width: '95%',
-    position: 'relative',
-    flex: 1,
-    justifyContent: 'space-between',
-  },
   ListItemCheckBoxmodalItem: {
     justifyContent: 'flex-start',
     padding: 10,

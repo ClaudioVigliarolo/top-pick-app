@@ -46,7 +46,7 @@ const ListItemCheckBox = ({
     addReport(newReport, translations.LANG);
   };
   return (
-    <ListItem style={styles.ListItemcontainer} noBorder={true}>
+    <ListItem style={[styles.ListItemcontainer]} noBorder={true}>
       <TouchableWithoutFeedback onPress={openModal}>
         <View style={styles.ListItemCheckBoxtextContainer}>
           <Text

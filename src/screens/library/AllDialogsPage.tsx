@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {View} from 'react-native';
-import {Lang, Section} from '../../interfaces/Interfaces';
+import {Lang, TopicSection} from '../../interfaces/Interfaces';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
@@ -13,7 +13,7 @@ import SectionList from '../../components/lists/SectionList';
 export default function AllTopicsPage({navigation}: {navigation: any}) {
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
-  const [data, setData] = React.useState<Section[]>([]);
+  const [data, setData] = React.useState<TopicSection[]>([]);
   const sectionListRef = React.useRef<any>(null);
 
   React.useEffect(() => {

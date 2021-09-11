@@ -1,5 +1,5 @@
 import translations from '../context/translations';
-import {Section, Topic} from '../interfaces/Interfaces';
+import {TopicSection, Topic} from '../interfaces/Interfaces';
 
 enum Dates {
   TODAY = 'TODAY',
@@ -51,8 +51,8 @@ export const validLetters = [
 
 export const alphabeticalSectionSort = (topics: Topic[]) => {
   let indexChar = 0;
-  const complete: Section[] = [];
-  const tempList: Section = {
+  const complete: TopicSection[] = [];
+  const tempList: TopicSection = {
     data: [],
     title: 'a',
   };
@@ -153,8 +153,8 @@ export const isDateInRange = (comp: Date, value: Dates): boolean => {
 export const timeSectionSort = (topics: Topic[]) => {
   let indexArr = 0;
   console.log('innnnn!!!!', datesArr[0], translations[datesArr[0]]);
-  const complete: Section[] = [];
-  const tempList: Section = {
+  const complete: TopicSection[] = [];
+  const tempList: TopicSection = {
     data: [],
     title: translations[datesArr[0]],
   };

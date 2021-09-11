@@ -1,7 +1,7 @@
 import DeviceInfo from 'react-native-device-info';
 import NetInfo from '@react-native-community/netinfo';
 import {updateTopics} from './api';
-import {Lang, Topic, TopicLevel} from '../interfaces/Interfaces';
+import {HelpScreen, Lang, Topic, TopicLevel} from '../interfaces/Interfaces';
 import AsyncStorage from '@react-native-community/async-storage';
 import keys from '../../database/keys/keys';
 import {FontDimension} from '../constants/theme/Fonts';
@@ -248,11 +248,7 @@ export const readStorageRecents = async (
     const retrievedRecents = await AsyncStorage.getItem(
       keys.RECENT_SEARCH_KEY + language,
     );
-    if (retrievedRecents === null) {
-      return null;
-    } else {
-      return retrievedRecents;
-    }
+    return retrievedRecents;
   } catch (e) {
     return null;
   }
@@ -318,6 +314,23 @@ export const isAutomaticUpdate = async (): Promise<boolean> => {
     // Handle errors here
     return false;
   }
+};
+
+export const isFirstHelp = async (screen: HelpScreen): Promise<boolean> => {
+  try {
+    const isFirstHelp = await AsyncStorage.getItem(keys.FIRST_HELP + screen);
+    console.log('my new isFirstHelp', isFirstHelp);
+    return isFirstHelp === 'false' ? false : true;
+  } catch (error) {
+    // Handle errors here
+    return false;
+  }
+};
+
+export const setFirstHelp = async (screen: HelpScreen): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.FIRST_HELP + screen, 'false');
+  } catch (error) {}
 };
 
 export function hashCode(str: string): number {

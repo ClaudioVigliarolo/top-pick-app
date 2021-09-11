@@ -61,16 +61,11 @@ const SearchPage = ({navigation}: {navigation: any}) => {
   const getRecents = async () => {
     const retrievedArray = await readStorageRecents(translations.LANG as Lang);
     if (retrievedArray !== null) {
-      // We have data!!
-      const recentsArray: Topic[] = JSON.parse(retrievedArray).map(
-        (el: Topic) => {
-          if (el.lang === translations.LANG) return el;
-        },
-      );
+      const parsedArray: Topic[] = JSON.parse(retrievedArray);
       const newRecents =
-        recentsArray.length > CONSTANTS.MAX_RECENTS
-          ? recentsArray.slice(0, CONSTANTS.MAX_RECENTS)
-          : recentsArray;
+        parsedArray.length > CONSTANTS.MAX_RECENTS
+          ? parsedArray.slice(0, CONSTANTS.MAX_RECENTS)
+          : parsedArray;
       setRecents(newRecents.filter((e) => e));
     }
   };

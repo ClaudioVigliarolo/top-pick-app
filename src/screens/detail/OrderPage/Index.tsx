@@ -19,7 +19,7 @@ import {addQuestion, toggleLike, updateQuestion} from '../../../utils/sql';
 import {HelpContext} from '../../../context/HelpContext';
 import {AddBarHelp, BottomButtonHelp, ListItemHelp} from './Help';
 import {ActionButtonLabels, createPDF, getHtmlTemplate} from './utils';
-import {hashCode} from '../../../utils/utils';
+import {hashCode, isFirstHelp, setFirstHelp} from '../../../utils/utils';
 import CONSTANTS from '../../../constants/app/App';
 import ActionButtons from '../../../components/buttons/ActionButtons';
 interface OrderPageProps {
@@ -38,7 +38,9 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
   const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
-  let isHelp = help === HelpScreen.ORDER_SCREEN;
+  const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
+    false,
+  );
 
   let actionSheet = React.useRef<any>();
 
@@ -49,12 +51,25 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   React.useEffect(() => {
     copilotEvents.on('stop', () => {
       setHelp(HelpScreen.NO_SCREEN);
+      setCurrentPageHelp(false);
+      setFirstHelp(HelpScreen.ORDER_SCREEN);
     });
     copilotEvents.on('stepChange', (step: any) => setCurrentStep(step.order));
-    if (isHelp) {
+    if (isCurrentPageHelp) {
       start();
     }
-  }, [isHelp]);
+  }, [isCurrentPageHelp]);
+
+  React.useEffect(() => {
+    (async () => {
+      if (
+        help === HelpScreen.ORDER_SCREEN ||
+        (await isFirstHelp(HelpScreen.ORDER_SCREEN))
+      ) {
+        setCurrentPageHelp(true);
+      }
+    })();
+  }, [help]);
 
   const onRemove = (id: number) => {
     const newQuestions = [...questions];
@@ -176,7 +191,7 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
         backgroundColor: getColor(theme, 'primaryBackground'),
       }}>
       <AddBarHelp onAdd={onQuestionAdd} />
-      {isHelp && <ListItemHelp />}
+      {isCurrentPageHelp && <ListItemHelp />}
       <DraggableFlatList
         data={questions}
         renderItem={renderItem}

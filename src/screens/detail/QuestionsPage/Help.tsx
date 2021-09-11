@@ -25,7 +25,7 @@ export const SearchBarHelp = ({
   setFilter: (text: string) => void;
   topic: Topic;
 }) => (
-  <CopilotStep text="You can filter the questions here" order={1} name="one">
+  <CopilotStep text={translations.HELP_QUESTIONS_SCREEN_1} order={1} name="one">
     <WalkthroughableView>
       <SearchBar
         setText={(val: string) => {
@@ -44,9 +44,14 @@ export const ListItemHelp = () => {
   const {currentStep} = React.useContext(HelpContext);
 
   return (
-    <ListItemBase style={styles.ListItemHelpcontainer} noBorder={true}>
+    <ListItemBase
+      style={[
+        styles.ListItemcontainer,
+        {flexDirection: 'row', justifyContent: 'space-between'},
+      ]}
+      noBorder={true}>
       <CopilotStep
-        text="Press the question to copy the text"
+        text={translations.HELP_QUESTIONS_SCREEN_2}
         order={2}
         name="two">
         <WalkthroughableView style={styles.ListItemCheckBoxtextContainer}>
@@ -60,7 +65,7 @@ export const ListItemHelp = () => {
         </WalkthroughableView>
       </CopilotStep>
       <CopilotStep
-        text="Press the checkbox to select the question"
+        text={translations.HELP_QUESTIONS_SCREEN_3}
         order={3}
         name="three">
         <WalkthroughableView>
@@ -69,6 +74,7 @@ export const ListItemHelp = () => {
               true: getColor(theme, 'primaryOrange'),
               false: getColor(theme, 'lightGray'),
             }}
+            style={{marginLeft: '6%'}}
             onFillColor={getColor(theme, 'primaryOrange')}
             onTintColor={getColor(theme, 'checkOrange')}
             tintColor={getColor(theme, 'lightGray')}
@@ -92,7 +98,7 @@ export const ButtonQuestionsHelp = ({
   onSubmit: any;
 }) => (
   <CopilotStep
-    text="When you selected the questions you like, move on to the next section"
+    text={translations.HELP_QUESTIONS_SCREEN_4}
     order={4}
     name="four">
     <WalkthroughableView
