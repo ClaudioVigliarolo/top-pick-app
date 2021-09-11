@@ -4,13 +4,17 @@ import {ThemeContext} from '../../context/ThemeContext';
 import SearchBar from '../../components/bars/SearchBar';
 import {getColor} from '../../constants/theme/Themes';
 import {LocalizationContext} from '../../context/LocalizationContext';
-import {Lang, Topic} from '../../interfaces/Interfaces';
+import {Lang, Topic, TopicType} from '../../interfaces/Interfaces';
 import CardItem from '../../components/lists/CardItem';
 import ButtonsSearch from '../../components/buttons/ButtonsSearch';
 import {getPopularTopics, searchByTopic} from '../../utils/sql';
-import CONSTANTS from '../../constants/app/App';
+import {MAX_RECENTS} from '../../constants/app/App';
+import {
+  getTopicTypeLabel,
+  readStorageRecents,
+  saveStorageRecent,
+} from '../../utils/utils';
 import styles from '../../styles/styles';
-import {readStorageRecents, saveStorageRecent} from '../../utils/utils';
 
 const SearchPage = ({navigation}: {navigation: any}) => {
   const [text, setText] = React.useState('');
@@ -46,10 +50,7 @@ const SearchPage = ({navigation}: {navigation: any}) => {
     let newRecentsTemp: Topic[] = recents;
     //add item to the top of the list
     newRecentsTemp.unshift(newSearchTopic);
-    const newRecents = [...new Set(newRecentsTemp)].slice(
-      0,
-      CONSTANTS.MAX_RECENTS,
-    );
+    const newRecents = [...new Set(newRecentsTemp)].slice(0, MAX_RECENTS);
     setRecents([...newRecents]);
     saveRecents(newRecents);
   };
@@ -63,8 +64,8 @@ const SearchPage = ({navigation}: {navigation: any}) => {
     if (retrievedArray !== null) {
       const parsedArray: Topic[] = JSON.parse(retrievedArray);
       const newRecents =
-        parsedArray.length > CONSTANTS.MAX_RECENTS
-          ? parsedArray.slice(0, CONSTANTS.MAX_RECENTS)
+        parsedArray.length > MAX_RECENTS
+          ? parsedArray.slice(0, MAX_RECENTS)
           : parsedArray;
       setRecents(newRecents.filter((e) => e));
     }
@@ -101,7 +102,7 @@ const SearchPage = ({navigation}: {navigation: any}) => {
               key={i}
               text={recent.title}
               color={getColor(theme, 'primaryOrange')}
-              type="topic"
+              type={getTopicTypeLabel(recent.type as TopicType)}
               onPress={() => {
                 goQuestionsFromTopic(recent);
                 onChangeRecents(recent);
@@ -115,7 +116,7 @@ const SearchPage = ({navigation}: {navigation: any}) => {
               key={i}
               text={item.title}
               color={getColor(theme, 'primaryOrange')}
-              type="topic"
+              type={getTopicTypeLabel(item.type as TopicType)}
               onPress={() => {
                 goQuestionsFromTopic(item);
                 onChangeRecents(item);

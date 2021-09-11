@@ -105,7 +105,7 @@ curs.execute('''CREATE INDEX topics_by_id ON topics (id);''')
 curs.execute('''CREATE INDEX topics_by_timestamp ON topics (timestamp);''')
 
 
-curs.execute('insert into version (version) values (?)', (2,))
+curs.execute('insert into version (version) values (?)', (5,))
 
 
 # close communication with the PostgreSQL database server

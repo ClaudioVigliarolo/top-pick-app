@@ -20,7 +20,7 @@ import {HelpContext} from '../../../context/HelpContext';
 import {AddBarHelp, BottomButtonHelp, ListItemHelp} from './Help';
 import {ActionButtonLabels, createPDF, getHtmlTemplate} from './utils';
 import {hashCode, isFirstHelp, setFirstHelp} from '../../../utils/utils';
-import CONSTANTS from '../../../constants/app/App';
+import {USER_QUESTION_PRIORITY_N} from '../../../constants/app/App';
 import ActionButtons from '../../../components/buttons/ActionButtons';
 interface OrderPageProps {
   copilotEvents: any;
@@ -147,7 +147,7 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
         id,
         topic.id,
         questionText,
-        CONSTANTS.USER_QUESTION_PRIORITY_N,
+        USER_QUESTION_PRIORITY_N,
         translations.LANG as Lang,
       )
     ) {

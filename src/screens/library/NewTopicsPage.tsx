@@ -4,7 +4,7 @@ import {Lang, TopicSection} from '../../interfaces/Interfaces';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
-import CONSTANTS from '../../constants/app/App';
+import {LAZY_LOAD_TIMEOUT} from '../../constants/app/App';
 import {getRecentTopics} from '../../utils/sql';
 import styles from '../../styles/styles';
 import SectionList from '../../components/lists/SectionList';
@@ -19,11 +19,10 @@ export default function NewTopicsPage({navigation}: {navigation: any}) {
   React.useEffect(() => {
     (async () => {
       setTimeout(async () => {
-        console.log('iottto');
         const topics = await getRecentTopics(translations.LANG as Lang, 200);
         const topicsSectionList = timeSectionSort(topics);
         setData(topicsSectionList);
-      }, CONSTANTS.LAZY_LOAD_TIMEOUT);
+      }, LAZY_LOAD_TIMEOUT);
     })();
   }, []);
 

@@ -7,8 +7,8 @@ import {getColor} from '../../constants/theme/Themes';
 import {getAllTopics} from '../../utils/sql';
 import styles from '../../styles/styles';
 import SectionList from '../../components/lists/SectionList';
-import CONSTANTS from '../../constants/app/App';
 import {alphabeticalSectionSort} from '../../utils/sorting';
+import {LAZY_LOAD_TIMEOUT} from '../../constants/app/App';
 
 export default function AllTopicsPage({navigation}: {navigation: any}) {
   const {theme} = React.useContext(ThemeContext);
@@ -22,7 +22,7 @@ export default function AllTopicsPage({navigation}: {navigation: any}) {
         const topics = await getAllTopics(translations.LANG as Lang);
         const topicsSectionList = alphabeticalSectionSort(topics);
         setData(topicsSectionList);
-      }, CONSTANTS.LAZY_LOAD_TIMEOUT);
+      }, LAZY_LOAD_TIMEOUT);
     })();
   }, [translations.LANG]);
 

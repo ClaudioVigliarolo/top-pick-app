@@ -13,7 +13,10 @@ import Dimensions from '../../constants/theme/Dimensions';
 import TopicsAddedModal from '../modals/TopicsAddedModal';
 import StatusModal from '../modals/StatusModal';
 import {getNewTopicsCounter} from '../../utils/sql';
-import CONSTANTS from '../../constants/app/App';
+import CONSTANTS, {
+  NEW_TOPICS_MODAL_TIMEOUT,
+  RECENT_LOADED_N,
+} from '../../constants/app/App';
 export default function StatusBar() {
   const {theme} = React.useContext(ThemeContext);
   const [isUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
@@ -48,7 +51,7 @@ export default function StatusBar() {
             setNewTopicsCounter(newTopicsCounter);
             setTimeout(() => {
               setNewTopicsCounter(0);
-            }, CONSTANTS.NEW_TOPICS_MODAL_TIMEOUT);
+            }, NEW_TOPICS_MODAL_TIMEOUT);
           }
         }
       }
@@ -64,7 +67,7 @@ export default function StatusBar() {
         <>
           <TopicsAddedModal
             open={newTopicsCounter > 0}
-            n={Math.min(CONSTANTS.RECENT_LOADED_N, newTopicsCounter)}
+            n={Math.min(RECENT_LOADED_N, newTopicsCounter)}
           />
           <IconChecked
             name="checkmark-done"

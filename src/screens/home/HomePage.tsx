@@ -8,7 +8,10 @@ import Button from '../../components/buttons/CustomButton';
 import Dimensions from '../../constants/theme/Dimensions';
 import {getColor} from '../../constants/theme/Themes';
 import {getTopics} from '../../utils/sql';
-import CONSTANTS from '../../constants/app/App';
+import {
+  INITIALS_TOPICS_LOADED,
+  NEW_TOPICS_LOADED,
+} from '../../constants/app/App';
 
 const HomePage = ({navigation}: {navigation: any}) => {
   const mycarousel = React.useRef<any>(null);
@@ -18,7 +21,7 @@ const HomePage = ({navigation}: {navigation: any}) => {
   const {translations} = React.useContext(LocalizationContext);
   React.useEffect(() => {
     setCarouselItems(carouselItems.splice(0, carouselItems.length));
-    loadTopics(CONSTANTS.INITIALS_TOPICS_LOADED);
+    loadTopics(INITIALS_TOPICS_LOADED);
   }, [translations.LANG]);
 
   const loadTopics = async (n: number): Promise<void> => {
@@ -28,7 +31,7 @@ const HomePage = ({navigation}: {navigation: any}) => {
 
   const getNewTopics = (n: number): void => {
     if (carouselItems.length == n + 1) {
-      loadTopics(CONSTANTS.NEW_TOPICS_LOADED);
+      loadTopics(NEW_TOPICS_LOADED);
     }
   };
 

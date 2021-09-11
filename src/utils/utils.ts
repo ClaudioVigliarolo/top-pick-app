@@ -1,7 +1,13 @@
 import DeviceInfo from 'react-native-device-info';
 import NetInfo from '@react-native-community/netinfo';
 import {updateTopics} from './api';
-import {HelpScreen, Lang, Topic, TopicLevel} from '../interfaces/Interfaces';
+import {
+  HelpScreen,
+  Lang,
+  Topic,
+  TopicLevel,
+  TopicType,
+} from '../interfaces/Interfaces';
 import AsyncStorage from '@react-native-community/async-storage';
 import keys from '../../database/keys/keys';
 import {FontDimension} from '../constants/theme/Fonts';
@@ -414,6 +420,17 @@ export const getTopicLevelLabel = (level: TopicLevel | undefined): string => {
       return 'Medium';
     case TopicLevel.HARD:
       return 'Hard';
+    default:
+      return '';
+  }
+};
+
+export const getTopicTypeLabel = (level: TopicType): string => {
+  switch (level) {
+    case TopicType.TOPIC:
+      return 'Topic';
+    case TopicType.DIALOG:
+      return 'Dialog';
     default:
       return '';
   }

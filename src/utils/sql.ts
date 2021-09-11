@@ -1,5 +1,5 @@
 import SQLite from 'react-native-sqlite-storage';
-import CONSTANTS from '../constants/app/App';
+import {MAX_POPULAR, MAX_RECENTS, MIN_DB_VERSION} from '../constants/app/App';
 import {
   Category,
   Topic,
@@ -48,6 +48,9 @@ export const resetDB = async (): Promise<void> => {
 
 export const upgradeFrom = async (prevVersion: number, currVersion: number) => {
   let statements: string[] = [];
+  if (prevVersion < MIN_DB_VERSION) {
+    console.log('detected old db');
+  }
 
   dbUpgrade.versions.forEach((v) => {
     if (v.version > prevVersion) {
@@ -466,10 +469,10 @@ export const getPopularTopics = (lang: Lang): Promise<Topic[]> => {
   return new Promise<Topic[]>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
-        `SELECT id, title from topics
+        `SELECT id, type, title from topics
           WHERE lang = "${lang}"
           ORDER BY RANDOM()
-          LIMIT ${CONSTANTS.MAX_POPULAR};`,
+          LIMIT ${MAX_POPULAR};`,
         [],
         (tx, results) => {
           const rows = results.rows;
@@ -518,9 +521,9 @@ export const searchByTopic = (param: string, lang: Lang): Promise<Topic[]> => {
   return new Promise<Topic[]>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
-        `SELECT title,id from topics
+        `SELECT title, type, id from topics
         WHERE lang = "${lang}" AND title LIKE "%${param}%"  
-        LIMIT ${CONSTANTS.MAX_RECENTS};`,
+        LIMIT ${MAX_RECENTS};`,
         [],
         (tx, results) => {
           const rows = results.rows;

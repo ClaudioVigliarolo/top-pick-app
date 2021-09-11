@@ -4,7 +4,7 @@ import {Lang, TopicLevel, TopicSection} from '../../interfaces/Interfaces';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
-import CONSTANTS from '../../constants/app/App';
+import {LAZY_LOAD_TIMEOUT} from '../../constants/app/App';
 import {getTopicsByLevel} from '../../utils/sql';
 import styles from '../../styles/styles';
 import {alphabeticalSectionSort} from '../../utils/sorting';
@@ -25,7 +25,7 @@ export default function LevelMediumPage({navigation}: {navigation: any}) {
         );
         const topicsSectionList = alphabeticalSectionSort(topics);
         setData(topicsSectionList);
-      }, CONSTANTS.LAZY_LOAD_TIMEOUT);
+      }, LAZY_LOAD_TIMEOUT);
     })();
   }, [translations.LANG]);
 

@@ -42,11 +42,6 @@ export default function LibraryPage({navigation}: {navigation: any}) {
       id: 3,
     },
     {
-      heading: 'Newly Added',
-      children: <NewTopicsPage navigation={navigation} />,
-      id: 4,
-    },
-    {
       heading: 'Easy',
       children: <LevelEasyPage navigation={navigation} />,
       id: 5,

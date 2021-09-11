@@ -22,7 +22,7 @@ import SelectFontsize from '../screens/settings/SettingsFontsizePage';
 import ThemePage from '../screens/settings/SettingsCardthemePage';
 import translations from '../context/translations';
 import {staticFontSizes} from '../constants/theme/Fonts';
-import LibraryDetail from '../screens/library/LibraryTopic';
+import TopicsPage from '../screens/library/TopicsPage';
 import CustomDropDown from '../components/modals/CustomDropDown';
 import StatusBar from '../components/bars/StatusBar';
 import {HelpScreen} from '../interfaces/Interfaces';
@@ -142,7 +142,7 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
 
       <Stack.Screen
         name="Topics"
-        component={LibraryDetail}
+        component={TopicsPage}
         options={{
           title: 'Topics',
           headerTintColor: getColor(theme, 'headerPrimary'),
