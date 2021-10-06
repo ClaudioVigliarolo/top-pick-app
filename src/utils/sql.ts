@@ -1,5 +1,11 @@
 import SQLite from 'react-native-sqlite-storage';
-import {MAX_POPULAR, MAX_RECENTS, MIN_DB_VERSION} from '../constants/app/App';
+import {
+  MAX_POPULAR,
+  MAX_RECENTS,
+  MIN_DB_VERSION,
+  NO_DATE,
+  SQL_MAX_TUPLES,
+} from '../constants/app/App';
 import {
   Category,
   Topic,
@@ -12,9 +18,7 @@ import {
   TopicType,
 } from '../interfaces/Interfaces';
 import dbUpgrade from '../../database/updates/db-upgrade.json';
-import {clearStorage, saveTopicsTableNumber} from './utils';
-
-const SQL_MAX_TUPLES = 800;
+import {clearStorage, saveTopicsTableNumber, setLastSync} from './utils';
 
 const DB = SQLite.openDatabase(
   {
@@ -170,7 +174,7 @@ export const generateDB = async (
     //delete all topics
     await DB.transaction((tx) => {
       tx.executeSql(
-        `delete from topics WHERE user_modified IN (0) AND lang = "${LANG}"`,
+        `delete from topics WHERE lang = "${LANG}" OR user_modified = 1`,
       );
     });
 
@@ -202,7 +206,7 @@ export const generateDB = async (
     //delete questions table
     await DB.transaction((tx) => {
       tx.executeSql(
-        `delete from questions WHERE user_modified IN (0) AND lang = "${LANG}"`,
+        `delete from questions WHERE  lang = "${LANG}" OR user_modified = 1`,
       );
     });
     //insert new questions
@@ -224,20 +228,22 @@ const bulkInsertTopics = async (topics: Topic[], LANG: Lang) => {
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       topics.forEach((el: Topic, i: number) => {
-        bigqery += '(?,?,?,?,?,?,?,?)';
+        console.log('MY EL', el);
+        bigqery += '(?,?,?,?,?,?,?,?,?)';
         parameters.push(
           el.id,
           el.ref_id as number,
           el.title,
           el.source as string,
           (el.timestamp as Date).toString(),
+          el.user_modified ? 1 : 0,
           el.type as TopicType,
           el.level as TopicLevel,
           LANG,
         );
-        if (parameters.length == SQL_MAX_TUPLES || i == topics.length - 1) {
+        if (parameters.length >= SQL_MAX_TUPLES || i == topics.length - 1) {
           tx.executeSql(
-            'INSERT OR IGNORE INTO topics  (id, ref_id, title, source, timestamp, type, level, lang) VALUES ' +
+            'INSERT INTO topics  (id, ref_id, title, source, timestamp, type, user_modified, level, lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -265,11 +271,19 @@ const bulkInsertQuestions = async (questions: Question[], LANG: Lang) => {
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       questions.forEach((el: Question, i: number) => {
-        bigqery += '(?,?,?,?,?)';
-        parameters.push(el.id, el.topic_id, el.title, el.n as number, LANG);
-        if (parameters.length == SQL_MAX_TUPLES || i == questions.length - 1) {
+        bigqery += '(?,?,?,?,?,?,?)';
+        parameters.push(
+          el.id,
+          el.topic_id,
+          el.title,
+          el.n as number,
+          el.liked ? 1 : 0,
+          el.user_modified ? 1 : 0,
+          LANG,
+        );
+        if (parameters.length >= SQL_MAX_TUPLES || i == questions.length - 1) {
           tx.executeSql(
-            'INSERT OR IGNORE INTO questions  (id, topic_id, title, n, lang) VALUES ' +
+            'INSERT INTO questions  (id, topic_id, title, n, liked, user_modified, lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -305,7 +319,7 @@ const bulkInsertRelated = async (related: Related[], LANG: Lang) => {
           el.dest_ref_id,
           LANG,
         );
-        if (parameters.length == SQL_MAX_TUPLES || i == related.length - 1) {
+        if (parameters.length >= SQL_MAX_TUPLES || i == related.length - 1) {
           tx.executeSql(
             `INSERT INTO related (source_id, dest_id, source_ref_id, dest_ref_id, lang) VALUES` +
               bigqery +
@@ -348,7 +362,7 @@ const bulkInsertTopicCategories = async (
           LANG,
         );
         if (
-          parameters.length == SQL_MAX_TUPLES ||
+          parameters.length >= SQL_MAX_TUPLES ||
           i == topicCategories.length - 1
         ) {
           tx.executeSql(
@@ -384,7 +398,7 @@ const bulkInsertCategories = async (categories: Category[], LANG: Lang) => {
         bigqery += '(?,?,?,?)';
         parameters.push(el.id, el.ref_id, el.title, LANG);
         console.log('pp', parameters);
-        if (parameters.length == SQL_MAX_TUPLES || i == categories.length - 1) {
+        if (parameters.length >= SQL_MAX_TUPLES || i == categories.length - 1) {
           tx.executeSql(
             'INSERT INTO categories  (id, ref_id, title,lang) VALUES ' +
               bigqery +
@@ -541,6 +555,23 @@ export const searchByTopic = (param: string, lang: Lang): Promise<Topic[]> => {
       );
     });
   });
+};
+
+export const deleteUserContent = async (): Promise<boolean> => {
+  try {
+    await DB.transaction((tx) => {
+      tx.executeSql(`delete from questions where liked = 1;`);
+    });
+    await DB.transaction((tx) => {
+      tx.executeSql(`delete from questions where user_modified IN (1);`);
+    });
+
+    await setLastSync(NO_DATE);
+
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
 
 export const getTopicByCategory = (
@@ -790,8 +821,8 @@ export const getCategories = async (lang: Lang): Promise<Category[]> => {
           FROM categories c3
           WHERE  c3.id = c1.category_id
       )
-        GROUP BY c1.category_id
-        ORDER BY c2.title ASC  
+          GROUP BY c1.category_id
+          ORDER BY c2.title ASC  
     `,
         [],
         (tx, results) => {
@@ -818,6 +849,56 @@ export const getFavourites = (): Promise<Question[]> => {
       tx.executeSql(
         `SELECT * from questions
         WHERE liked = 1;`,
+        [],
+        (tx, results) => {
+          const rows = results.rows;
+          const items: Question[] = [];
+          for (let i = 0; i < rows.length; i++) {
+            const item = rows.item(i);
+            items.push({...item});
+          }
+          resolve(items);
+        },
+        (_tx, e) => {
+          console.log(e);
+          reject([]);
+        },
+      );
+    });
+  });
+};
+
+export const getUserTopics = (): Promise<Topic[]> => {
+  return new Promise<Question[]>((resolve, reject) => {
+    DB.transaction((tx) => {
+      tx.executeSql(
+        `SELECT * from topics
+         WHERE user_modified = 1;`,
+        [],
+        (tx, results) => {
+          const rows = results.rows;
+          const items: Question[] = [];
+          for (let i = 0; i < rows.length; i++) {
+            const item = rows.item(i);
+            items.push({...item});
+          }
+          resolve(items);
+        },
+        (_tx, e) => {
+          console.log(e);
+          reject([]);
+        },
+      );
+    });
+  });
+};
+
+export const getUserQuestions = (): Promise<Question[]> => {
+  return new Promise<Question[]>((resolve, reject) => {
+    DB.transaction((tx) => {
+      tx.executeSql(
+        `SELECT * from questions
+         WHERE user_modified = 1;`,
         [],
         (tx, results) => {
           const rows = results.rows;

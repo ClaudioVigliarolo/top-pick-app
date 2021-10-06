@@ -18,7 +18,7 @@ export const createPDF = async (topic: string, htmlContent: string) => {
       //File Name
       fileName: topic,
       //File directory
-      directory: 'Top Picks',
+      directory: 'Top Pick',
     };
     let file: Pdf = await RNHTMLtoPDF.convert(options);
     if (file.filePath)

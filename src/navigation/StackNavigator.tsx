@@ -26,6 +26,11 @@ import TopicsPage from '../screens/library/TopicsPage';
 import CustomDropDown from '../components/modals/CustomDropDown';
 import StatusBar from '../components/bars/StatusBar';
 import {HelpScreen} from '../interfaces/Interfaces';
+import LoginPage from '../screens/auth/LoginPage';
+import RegisterPage from '../screens/auth/RegisterPage';
+import SettingsResetPage from '../screens/settings/SettingsResetPage';
+import InterestsPage from '../screens/user/InterestsPage/index';
+import DetailsPage from '../screens/user/DetailsPage/index';
 
 const Stack = createStackNavigator();
 
@@ -289,12 +294,72 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
       />
 
       <Stack.Screen
+        name="Interests"
+        component={InterestsPage}
+        options={{
+          title: 'interessi',
+          headerTintColor: getColor(theme, 'headerPrimary'),
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+          headerLeft: () => (
+            <BackStructure destination="Settings" navigation={navigation} />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name="Details"
+        component={DetailsPage}
+        options={{
+          title: 'Details',
+          headerTintColor: getColor(theme, 'headerPrimary'),
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+          headerLeft: () => (
+            <BackStructure destination="Settings" navigation={navigation} />
+          ),
+        }}
+      />
+
+      <Stack.Screen
         name="Fontsize"
         component={SelectFontsize}
         options={{
           title: translations.FONTSIZE,
           headerTintColor: getColor(theme, 'headerPrimary'),
 
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+          headerLeft: () => (
+            <BackStructure destination="Settings" navigation={navigation} />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name="Reset"
+        component={SettingsResetPage}
+        options={{
+          title: translations.FONTSIZE,
+          headerTintColor: getColor(theme, 'headerPrimary'),
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },
@@ -331,8 +396,6 @@ const HomeStack = ({navigation}: {navigation: any}) => {
   const {isCheckingContentUpdates, isLoadingContentUpdates} = React.useContext(
     StatusContext,
   );
-  const [isUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
-  const {translations} = React.useContext(LocalizationContext);
   return (
     <Stack.Navigator initialRouteName="HomeScreen">
       <Stack.Screen
@@ -368,6 +431,14 @@ const HomeStack = ({navigation}: {navigation: any}) => {
         name="Questions"
         component={QuestionsStack}
       />
+
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Login"
+        component={AuthStack}
+      />
     </Stack.Navigator>
   );
 };
@@ -375,9 +446,9 @@ const HomeStack = ({navigation}: {navigation: any}) => {
 const SearchStack = () => {
   const {translations} = React.useContext(LocalizationContext);
   return (
-    <Stack.Navigator initialRouteName="SearchScreen">
+    <Stack.Navigator initialRouteName="Search">
       <Stack.Screen
-        name="SearchScreen"
+        name="Search"
         component={SearchPage}
         options={{
           headerTitleAlign: 'center',
@@ -391,6 +462,30 @@ const SearchStack = () => {
         }}
         name="Questions"
         component={QuestionsStack}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const AuthStack = () => {
+  const {translations} = React.useContext(LocalizationContext);
+  return (
+    <Stack.Navigator initialRouteName="LoginScreen">
+      <Stack.Screen
+        name="LoginScreen"
+        component={LoginPage}
+        options={{
+          headerTitleAlign: 'center',
+          title: translations.SEARCH,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="RegisterScreen"
+        component={RegisterPage}
       />
     </Stack.Navigator>
   );
@@ -472,4 +567,5 @@ export {
   SearchStack,
   QuestionsStack,
   SettingsStack,
+  AuthStack,
 };

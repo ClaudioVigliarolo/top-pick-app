@@ -2,18 +2,18 @@ import React from 'react';
 import {Linking, Platform} from 'react-native';
 import VersionCheck from 'react-native-version-check';
 import StatusModal from '../components/modals/StatusModal';
-import {Lang, Topic} from '../interfaces/Interfaces';
+import {Lang} from '../interfaces/Interfaces';
 import {checkUpdates, updateTopics} from '../utils/api';
 import {
   getDifferentLang,
   isAutomaticUpdate,
   isConnected,
   isFirstUpdate,
-  isStorageUpdated,
   setFirstUpdate,
   setStorageIsUpdated,
   setUsedLanguage,
 } from '../utils/utils';
+import {AuthContext} from './AuthContext';
 import {LocalizationContext} from './LocalizationContext';
 /*
     this context is used to notify the app about his state 
@@ -23,9 +23,13 @@ import {LocalizationContext} from './LocalizationContext';
 export const StatusContext = React.createContext({
   isLoadingContentUpdates: false,
   isContentUpdated: false,
-  isCheckingContentUpdates: true,
+  isCheckingContentUpdates: false,
+  isSyncingUserContent: false,
+  isSyncedUserContent: false,
   setLoadingContent: (value: boolean) => {},
   setUpdatedContent: (value: boolean) => {},
+  setSyncingUserContent: (value: boolean) => {},
+  setSyncedUserContent: (value: boolean) => {},
   onCheckContentUpdates: () => {},
 });
 
@@ -34,6 +38,13 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     false,
   );
   const [isRequiredAppUpdate, setRequiredAppUpdate] = React.useState<boolean>(
+    false,
+  );
+  const [isSyncingUserContent, setSyncingUserContent] = React.useState<boolean>(
+    false,
+  );
+
+  const [isSyncedUserContent, setSyncedUserContent] = React.useState<boolean>(
     false,
   );
 
@@ -48,6 +59,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   );
 
   const {translations, setAppLanguage} = React.useContext(LocalizationContext);
+  const {user} = React.useContext(AuthContext);
 
   React.useEffect(() => {
     (async () => {
@@ -73,13 +85,19 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
 
   const onCheckContentUpdates = async () => {
     if (await isConnected()) {
-      const isUpdated = await checkUpdates(translations.LANG as Lang);
+      const isUpdated = await checkUpdates(
+        user ? user.uid : '',
+        translations.LANG as Lang,
+      );
       setUpdatedContent(isUpdated);
       setStorageIsUpdated(isUpdated);
 
       if ((await isAutomaticUpdate()) && !isUpdated) {
         setLoadingContent(true);
-        const hasUpdated = await updateTopics(translations.LANG as Lang);
+        const hasUpdated = await updateTopics(
+          user ? user.uid : '',
+          translations.LANG as Lang,
+        );
         setLoadingContent(false);
         setUpdatedContent(hasUpdated);
       }
@@ -93,7 +111,10 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   const handleFirstUpdate = async () => {
     setLoadingContent(true);
     await setUsedLanguage(translations.LANG);
-    const hasFirstUpdated = await updateTopics(translations.LANG as Lang);
+    const hasFirstUpdated = await updateTopics(
+      user ? user.uid : '',
+      translations.LANG as Lang,
+    );
     setLoadingContent(false);
     setUpdatedContent(hasFirstUpdated);
 
@@ -120,6 +141,14 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     setUpdatedContent(newVal);
   };
 
+  const onSetSyncingUserContent = (newVal: boolean) => {
+    setSyncingUserContent(newVal);
+  };
+
+  const onSetSyncedUserContent = (newVal: boolean) => {
+    setSyncedUserContent(newVal);
+  };
+
   const openStore = async () => {
     if (Platform.OS == 'ios') {
       const url = await VersionCheck.getAppStoreUrl();
@@ -137,8 +166,12 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
         isContentUpdated,
         isCheckingContentUpdates,
         onCheckContentUpdates,
+        isSyncingUserContent,
+        isSyncedUserContent,
         setLoadingContent: onSetLoadingContent,
         setUpdatedContent: onSetUpdatedContent,
+        setSyncingUserContent: onSetSyncingUserContent,
+        setSyncedUserContent: onSetSyncedUserContent,
       }}>
       {children}
 

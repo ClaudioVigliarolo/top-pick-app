@@ -5,6 +5,7 @@ export default {
   RECENT_SEARCH_KEY: '@recent_search',
   THEME_KEY: '@theme',
   LAST_UPDATE_KEY: '@last_update',
+  LAST_SYNC: '@last_sync',
   HAS_LAUNCHED: '@launched',
   FIRST_UPDATED: '@first_updated',
   IS_UPDATED: '@is_updated',

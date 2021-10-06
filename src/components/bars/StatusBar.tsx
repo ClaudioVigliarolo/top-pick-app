@@ -13,10 +13,11 @@ import Dimensions from '../../constants/theme/Dimensions';
 import TopicsAddedModal from '../modals/TopicsAddedModal';
 import StatusModal from '../modals/StatusModal';
 import {getNewTopicsCounter} from '../../utils/sql';
-import CONSTANTS, {
+import {
   NEW_TOPICS_MODAL_TIMEOUT,
   RECENT_LOADED_N,
 } from '../../constants/app/App';
+import {AuthContext} from '../../context/AuthContext';
 export default function StatusBar() {
   const {theme} = React.useContext(ThemeContext);
   const [isUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
@@ -30,6 +31,7 @@ export default function StatusBar() {
     setLoadingContent,
     isContentUpdated,
   } = React.useContext(StatusContext);
+  const {user} = React.useContext(AuthContext);
 
   React.useEffect(() => {
     (async () => {
@@ -89,6 +91,7 @@ export default function StatusBar() {
           color={getColor(theme, 'secondaryIcon')}
           onPress={async () =>
             await onTopicsUpdate(
+              user ? user.uid : '',
               translations.LANG as Lang,
               setLoadingContent,
               setUpdatedContent,

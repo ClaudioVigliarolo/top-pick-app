@@ -9,6 +9,7 @@ export interface Topic {
   lang?: string;
   type?: TopicType;
   level?: TopicLevel;
+  user_modified?: number;
 }
 
 export interface Category {
@@ -39,10 +40,10 @@ export interface Question {
   id: number;
   topic_id: number;
   title: string;
-  liked?: boolean;
-  isUserModified?: boolean;
+  liked?: number;
   selected?: boolean;
   n?: number;
+  user_modified?: number;
 }
 
 export interface Language {
@@ -60,6 +61,7 @@ export enum Lang {
 export interface JSONresponse {
   is_error: boolean;
   already_updated: boolean;
+  last_sync: string;
   last_update: string;
   updates: Updates;
 }
@@ -94,6 +96,23 @@ export interface TopicSection {
   data: Topic[];
 }
 
+export interface SettingSection {
+  title: string;
+  data: Setting[];
+}
+
+export interface Setting {
+  type: SettingType;
+  title: string;
+  onPress: any;
+  id: number;
+  selected?: boolean;
+}
+export enum SettingType {
+  BASIC,
+  CHECKBOX,
+}
+
 export enum TopicLevel {
   EASY,
   MEDIUM,
@@ -110,4 +129,8 @@ export enum HelpScreen {
   QUESTIONS_SCREEN,
   ORDER_SCREEN,
   FAVOURITES_SCREEN,
+}
+
+export interface User {
+  username: string;
 }

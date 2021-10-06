@@ -8,7 +8,7 @@ import {LAZY_LOAD_TIMEOUT} from '../../constants/app/App';
 import {getTopicsByLevel} from '../../utils/sql';
 import styles from '../../styles/styles';
 import {alphabeticalSectionSort} from '../../utils/sorting';
-import SectionList from '../../components/lists/SectionList';
+import SectionList from '../../components/lists/TopicsSectionList';
 
 export default function LevelMediumPage({navigation}: {navigation: any}) {
   const {theme} = React.useContext(ThemeContext);

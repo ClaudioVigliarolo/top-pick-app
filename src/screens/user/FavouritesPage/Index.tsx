@@ -11,12 +11,13 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import {ThemeContext} from '../../../context/ThemeContext';
 import {LocalizationContext} from '../../../context/LocalizationContext';
-import {getFavourites} from '../../../utils/sql';
+import {getFavourites, toggleLike} from '../../../utils/sql';
 import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
 import {HelpContext} from '../../../context/HelpContext';
 import {ListItemHelp} from './Help';
 import {isFirstHelp, setFirstHelp} from '../../../utils/utils';
+import {LAZY_LOAD_TIMEOUT} from '../../../constants/app/App';
 
 interface FavouritesPageProps {
   copilotEvents: any;
@@ -30,7 +31,7 @@ function FavouritesPage({
   start,
 }: FavouritesPageProps) {
   const [loading, setLoading] = React.useState<boolean>(true);
-  const [items, setItems] = React.useState<Question[]>([]);
+  const [questions, setQuestions] = React.useState<Question[]>([]);
   const isFocused = useIsFocused();
   const {translations} = React.useContext(LocalizationContext);
 
@@ -43,20 +44,22 @@ function FavouritesPage({
   React.useEffect(() => {
     (async () => {
       await getItems();
-      setLoading(false);
+      setTimeout(async () => {
+        setLoading(false);
+      }, LAZY_LOAD_TIMEOUT);
     })();
   }, [isFocused]);
 
   React.useEffect(() => {
     (async () => {
       if (
-        help === HelpScreen.FAVOURITES_SCREEN ||
+        (questions.length > 0 && help === HelpScreen.FAVOURITES_SCREEN) ||
         (await isFirstHelp(HelpScreen.FAVOURITES_SCREEN))
       ) {
         setCurrentPageHelp(true);
       }
     })();
-  }, [help]);
+  }, [help, questions.length]);
 
   React.useEffect(() => {
     copilotEvents.on('stop', () => {
@@ -72,14 +75,18 @@ function FavouritesPage({
 
   const getItems = async () => {
     const questions: Question[] = await getFavourites();
-    setItems([...questions]);
+    setQuestions([...questions]);
   };
 
-  const onRemove = (id: number) => {
-    const newItems = [...items];
-    const index = newItems.findIndex((item) => item.id == id);
-    if (index != -1) newItems.splice(index, 1);
-    setItems(newItems.slice());
+  const onRemove = async (id: number) => {
+    const newItems = [...questions];
+    const index = questions.findIndex((item) => item.id == id);
+    const newVal = !questions[index].liked;
+    if (await toggleLike(id, questions[index].topic_id, newVal)) {
+      const index = newItems.findIndex((item) => item.id === id);
+      newItems.splice(index, 1);
+      setQuestions(newItems.slice());
+    }
   };
 
   const renderItem = ({
@@ -94,7 +101,7 @@ function FavouritesPage({
         onRemove={() => onRemove(item.id)}
         onDrag={drag}
         text={item.title}
-        liked={item.liked as boolean}
+        liked={item.liked ? true : false}
         id={item.id}
       />
     );
@@ -107,7 +114,7 @@ function FavouritesPage({
         {backgroundColor: getColor(theme, 'primaryBackground')},
       ]}>
       {isCurrentPageHelp && <ListItemHelp />}
-      {items.length == 0 && !loading && !isCurrentPageHelp && (
+      {questions.length == 0 && !loading && !isCurrentPageHelp && (
         <Text
           style={[
             styles.FavouritesPageText,
@@ -119,12 +126,12 @@ function FavouritesPage({
           {translations.NO_LIKED_QUESTIONS}
         </Text>
       )}
-      {items.length > 0 && (
+      {questions.length > 0 && (
         <DraggableFlatList
-          data={items}
+          data={questions}
           renderItem={renderItem}
           keyExtractor={(item, index) => `draggable-item-${item.id}`}
-          onDragEnd={({data}) => setItems(data)}
+          onDragEnd={({data}) => setQuestions(data)}
         />
       )}
     </View>

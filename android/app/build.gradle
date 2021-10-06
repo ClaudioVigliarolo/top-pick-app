@@ -1,5 +1,5 @@
 apply plugin: "com.android.application"
-
+apply plugin: 'com.google.gms.google-services'
 import com.android.build.OutputFile
 
 /**
@@ -133,9 +133,9 @@ android {
         applicationId "com.topick"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
+        versionCode 16
         multiDexEnabled true
-        versionName "15.0"
+        versionName "15.1"
     }
     splits {
         abi {
@@ -193,6 +193,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation platform('com.google.firebase:firebase-bom:28.4.0')
+    implementation 'com.google.firebase:firebase-analytics'
     //noinspection GradleDynamicVersion
     implementation 'com.android.support:multidex:1.0.3'  //with support libraries
     implementation "com.facebook.react:react-native:+"  // From node_modules

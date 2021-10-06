@@ -1,30 +1,22 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  SafeAreaView,
-  SectionList,
-  PixelRatio,
-} from 'react-native';
-import {TopicSection, Topic} from '../../interfaces/Interfaces';
-import ListItemBasic from './ListItemBasic';
+import {Text, SafeAreaView, SectionList, PixelRatio} from 'react-native';
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout';
 import styles from '../../styles/styles';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import {getFontSize} from '../../constants/theme/Fonts';
 
-interface TopicsSectionListState {}
+interface CustomSectionListState {}
 
-interface TopicsSectionListProps {
-  navigation: any;
-  items: TopicSection[];
+interface CustomSectionListProps {
+  items: any;
   sectionListRef: any;
+  renderItem: any;
 }
 
-export default class TopicsSectionList extends React.PureComponent<
-  TopicsSectionListProps,
-  TopicsSectionListState
+export default class CustomSectionList extends React.PureComponent<
+  CustomSectionListProps,
+  CustomSectionListState
 > {
   constructor(props: any) {
     super(props);
@@ -66,33 +58,10 @@ export default class TopicsSectionList extends React.PureComponent<
           stickySectionHeadersEnabled={true}
           ref={this.props.sectionListRef}
           maxToRenderPerBatch={80}
-          renderItem={({item}) => (
-            <Item topic={item} navigation={this.props.navigation} />
-          )}
+          renderItem={this.props.renderItem}
           renderSectionHeader={this.renderSectionHeader}
         />
       </SafeAreaView>
-    );
-  }
-}
-
-class Item extends React.PureComponent<any, any> {
-  goQuestions = (topic: Topic) => {
-    this.props.navigation.navigate('Questions', {
-      screen: 'QuestionsScreen',
-      params: {
-        id: topic.id,
-        title: topic.title,
-      },
-    });
-  };
-  render() {
-    return (
-      <ListItemBasic
-        text={this.props.topic.title}
-        icon={true}
-        onPress={() => this.goQuestions(this.props.topic)}
-      />
     );
   }
 }

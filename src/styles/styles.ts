@@ -93,6 +93,26 @@ export default StyleSheet.create({
     fontSize: staticFontSizes.fontMed,
   },
 
+  CustomDrawerSignInText: {
+    color: '#fff',
+    fontSize: staticFontSizes.fontSmallMed,
+    textTransform: 'uppercase',
+  },
+
+  CustomDrawerSyncText: {
+    color: '#fff',
+    fontSize: staticFontSizes.fontSmallMed,
+    textTransform: 'uppercase',
+    marginTop: 10,
+  },
+
+  CustomDrawerUsername: {
+    color: '#fff',
+    fontSize: staticFontSizes.fontSmallMed,
+    textTransform: 'uppercase',
+    width: 150,
+  },
+
   ListItemDragcontainer: {
     width: '100%',
     flex: 1,
@@ -408,7 +428,7 @@ export default StyleSheet.create({
     flex: 1,
     paddingTop: 10,
     marginHorizontal: 16,
-    width: '100%',
+    width: '95%',
   },
 
   sectionListHeader: {
@@ -417,6 +437,46 @@ export default StyleSheet.create({
     paddingLeft: 10,
     textTransform: 'capitalize',
     color: '#fff',
-    width: '85%',
+    width: '90%',
+  },
+
+  signInButton: {
+    width: 250,
+    height: 50,
+    alignSelf: 'center',
+  },
+
+  header: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: 'orange',
+  },
+
+  authContainer: {
+    justifyContent: 'center',
+    flexDirection: 'column',
+    backgroundColor: 'white',
+    height: 500,
+  },
+
+  marginSmall: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+
+  changeAuthText: {
+    textAlign: 'center',
+    fontSize: staticFontSizes.fontSmallMed,
+  },
+
+  errorText: {
+    color: 'orangered',
+    textAlign: 'center',
+  },
+  successText: {
+    color: 'green',
+    textAlign: 'center',
   },
 });

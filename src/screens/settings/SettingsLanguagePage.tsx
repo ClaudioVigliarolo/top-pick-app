@@ -13,6 +13,7 @@ import {
 import StatusModal from '../../components/modals/StatusModal';
 import {Lang} from '../../interfaces/Interfaces';
 import styles from '../../styles/styles';
+import {AuthContext} from '../../context/AuthContext';
 
 export default function SelectLanguagePage() {
   const {translations, appLanguage, setAppLanguage} = React.useContext(
@@ -21,10 +22,11 @@ export default function SelectLanguagePage() {
   const [selectedLanguage, setSelectedLanguage] = React.useState<Lang>(
     Lang.english,
   );
-  const {theme} = React.useContext(ThemeContext);
   const {setLoadingContent, onCheckContentUpdates} = React.useContext(
     StatusContext,
   );
+
+  const {user} = React.useContext(AuthContext);
   const [isModalShown, setShowModal] = React.useState<boolean>(false);
 
   const onValChange = async (index: number): Promise<void> => {
@@ -75,8 +77,16 @@ export default function SelectLanguagePage() {
             cancelText={translations.CANCEL}
             onConfirmPressed={() => {
               setShowModal(false);
-              onTopicsUpdate(selectedLanguage, setLoadingContent, (success) =>
-                onLangDownloadCallback(success, selectedLanguage, setShowModal),
+              onTopicsUpdate(
+                user ? user.uid : '',
+                selectedLanguage,
+                setLoadingContent,
+                (success) =>
+                  onLangDownloadCallback(
+                    success,
+                    selectedLanguage,
+                    setShowModal,
+                  ),
               );
             }}
             onCancelPressed={() => {

@@ -3,6 +3,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <Firebase.h>
 
 #import "RNBootSplash.h" // <- add the header import
 
@@ -27,9 +28,12 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 
 @implementation AppDelegate
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  // Add me --- \/
+  [FIRApp configure];
+  // Add me --- /\
+  // ...
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif

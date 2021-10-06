@@ -1,34 +1,23 @@
 import * as React from 'react';
-import {
-  Text,
-  View,
-  Linking,
-  TouchableWithoutFeedback,
-  Platform,
-} from 'react-native';
-import {ThemeContext} from '../context/ThemeContext';
+import {Text, View, Platform} from 'react-native';
+import {ThemeContext} from '../../context/ThemeContext';
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import {
-  Container,
-  Header,
-  Footer,
-  Content,
-  ListItem,
-  Right,
-  Switch,
-  List,
-} from 'native-base';
+import {Container, Content, ListItem, Switch, List} from 'native-base';
 import Animated from 'react-native-reanimated';
-import {getColor, Theme} from '../constants/theme/Themes';
-import translations from '../context/translations';
-import styles from '../styles/styles';
-import {setStorageTheme} from '../utils/utils';
+import {getColor, Theme} from '../../constants/theme/Themes';
+import translations from '../../context/translations';
+import styles from '../../styles/styles';
+import {setStorageTheme} from '../../utils/utils';
+import {AuthContext} from '../../context/AuthContext';
+import DrawerHeader from './DrawerHeader';
+import DrawerFooter from './DrawerFooter';
 
 const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
   const {theme, setTheme} = React.useContext(ThemeContext);
+  const {user} = React.useContext(AuthContext);
 
   const translateX = Animated.interpolate(progress, {
     inputRange: [0, 1],
@@ -41,27 +30,9 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
     await setStorageTheme(newTheme);
   };
 
-  const openStore = async () => {
-    if (Platform.OS === 'ios') {
-      Linking.openURL(
-        'https://apps.apple.com/us/app/top-pick-find-great-topics/id1571806777',
-      );
-    } else {
-      Linking.openURL('market://details?id=com.topick');
-    }
-  };
-
   return (
     <Container style={{backgroundColor: getColor(theme, 'primaryBackground')}}>
-      <Header
-        style={[
-          styles.CustomDrawerHeader,
-          {backgroundColor: getColor(theme, 'primaryOrange')},
-        ]}>
-        <Right>
-          <Text style={styles.CustomDrawerheaderText}>TOP Picks</Text>
-        </Right>
-      </Header>
+      <DrawerHeader navigation={props.navigation} />
       <Content>
         <DrawerContentScrollView {...props}>
           <Animated.View
@@ -80,14 +51,14 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
                   styles.CustomDrawerListItemText,
                   {color: getColor(theme, 'drawerGrey')},
                 ]}>
-                {theme == 'dark'
-                  ? translations.LIGHT_MODE
-                  : translations.DARK_MODE}
+                {theme === 'dark'
+                  ? translations.DARK_MODE
+                  : translations.LIGHT_MODE}
               </Text>
               <Switch
                 onValueChange={changeTheme}
                 thumbColor={getColor(theme, 'primaryOrange')}
-                value={theme == 'dark' ? true : false}
+                value={theme === 'dark' ? true : false}
                 trackColor={{
                   true: getColor(theme, 'checkOrange'),
                   false: getColor(theme, 'lighterGray'),
@@ -96,21 +67,7 @@ const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
           </ListItem>
         </List>
       </Content>
-
-      <Footer
-        style={[
-          styles.CustomDrawerFooterContainer,
-          {backgroundColor: getColor(theme, 'lighterOrange')},
-        ]}>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            openStore();
-          }}>
-          <Text style={styles.CustomDrawerfooterText}>
-            {translations.LEAVE_RATING}
-          </Text>
-        </TouchableWithoutFeedback>
-      </Footer>
+      <DrawerFooter />
     </Container>
   );
 };

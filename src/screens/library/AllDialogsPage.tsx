@@ -8,7 +8,7 @@ import styles from '../../styles/styles';
 import {getAllDialogs} from '../../utils/sql';
 import {alphabeticalSectionSort} from '../../utils/sorting';
 import {LAZY_LOAD_TIMEOUT} from '../../constants/app/App';
-import SectionList from '../../components/lists/SectionList';
+import SectionList from '../../components/lists/TopicsSectionList';
 
 export default function AllTopicsPage({navigation}: {navigation: any}) {
   const {theme} = React.useContext(ThemeContext);

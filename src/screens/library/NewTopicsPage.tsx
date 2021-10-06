@@ -7,7 +7,7 @@ import {getColor} from '../../constants/theme/Themes';
 import {LAZY_LOAD_TIMEOUT} from '../../constants/app/App';
 import {getRecentTopics} from '../../utils/sql';
 import styles from '../../styles/styles';
-import SectionList from '../../components/lists/SectionList';
+import SectionList from '../../components/lists/TopicsSectionList';
 import {timeSectionSort} from '../../utils/sorting';
 
 export default function NewTopicsPage({navigation}: {navigation: any}) {

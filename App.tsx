@@ -12,6 +12,8 @@ import {
   isFirstLaunch as hasAppLaunched,
   setFirstLaunch as setAppFirstLaunch,
 } from './src/utils/utils';
+import Login from './src/screens/auth/LoginPage';
+import {AuthProvider} from './src/context/AuthContext';
 
 const App = () => {
   const [isFirstLaunch, setFirstLaunch] = React.useState<boolean>(false);
@@ -28,20 +30,22 @@ const App = () => {
       <StatusBar barStyle="light-content" backgroundColor="black" />
       <LocalizationProvider>
         <HelpProvider>
-          <SafeAreaProvider>
-            {isFirstLaunch ? (
-              <StartSlides
-                onDone={() => {
-                  setFirstLaunch(false);
-                  setAppFirstLaunch();
-                }}
-              />
-            ) : (
-              <StatusProvider>
-                <Navigation />
-              </StatusProvider>
-            )}
-          </SafeAreaProvider>
+          <AuthProvider>
+            <SafeAreaProvider>
+              {isFirstLaunch ? (
+                <StartSlides
+                  onDone={() => {
+                    setFirstLaunch(false);
+                    setAppFirstLaunch();
+                  }}
+                />
+              ) : (
+                <StatusProvider>
+                  <Navigation />
+                </StatusProvider>
+              )}
+            </SafeAreaProvider>
+          </AuthProvider>
         </HelpProvider>
       </LocalizationProvider>
     </ThemeProvider>

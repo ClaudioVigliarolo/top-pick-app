@@ -13,8 +13,8 @@ import keys from '../../database/keys/keys';
 import {FontDimension} from '../constants/theme/Fonts';
 import {CardTemplates} from '../constants/theme/Cardtheme';
 import {Theme} from '../constants/theme/Themes';
+import {NO_DATE} from '../constants/app/App';
 
-const NO_DATE = 'Sun May 11,2014';
 const NO_LANGUAGE = 'en';
 
 export const isConnected = async (): Promise<boolean> => {
@@ -47,13 +47,14 @@ export const getUserID = () => {
 };
 
 export const onTopicsUpdate = async (
+  userId: string,
   lang: Lang,
   setLoading: (val: boolean) => void,
   setSuccess: (val: boolean) => void,
 ) => {
   if (await isConnected()) {
     setLoading(true);
-    const hasUpdated = await updateTopics(lang);
+    const hasUpdated = await updateTopics(userId, lang);
     console.log('finished update');
     setLoading(false);
     setSuccess(hasUpdated);
@@ -368,6 +369,28 @@ export const readTheme = async (): Promise<Theme> => {
 export const getLastUpdate = async (lang: Lang): Promise<string> => {
   try {
     const date = await AsyncStorage.getItem(keys.LAST_UPDATE_KEY + lang);
+    if (date === null) {
+      return NO_DATE;
+    } else {
+      return date;
+    }
+  } catch (e) {
+    console.log('Failed to fetch date from storage');
+    return NO_DATE;
+  }
+};
+
+export const setLastSync = async (date: string): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.LAST_SYNC, date);
+  } catch (e) {
+    console.log('Failed to fetch date from storage');
+  }
+};
+
+export const getLastSync = async (): Promise<string> => {
+  try {
+    const date = await AsyncStorage.getItem(keys.LAST_SYNC);
     if (date === null) {
       return NO_DATE;
     } else {

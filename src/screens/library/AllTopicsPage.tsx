@@ -6,7 +6,7 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import {getAllTopics} from '../../utils/sql';
 import styles from '../../styles/styles';
-import SectionList from '../../components/lists/SectionList';
+import SectionList from '../../components/lists/TopicsSectionList';
 import {alphabeticalSectionSort} from '../../utils/sorting';
 import {LAZY_LOAD_TIMEOUT} from '../../constants/app/App';
 

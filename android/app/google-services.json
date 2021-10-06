@@ -1,0 +1,40 @@
+{
+    "project_info": {
+      "project_number": "134055390971",
+      "project_id": "top-pick-678f0",
+      "storage_bucket": "top-pick-678f0.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:134055390971:android:b98680e00707f91d7c4a5e",
+          "android_client_info": {
+            "package_name": "com.topick"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "134055390971-pt4mrk9e43h116b16e6e54bac4gjj5mq.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyCw-jv-UdKs7EASwY2w156JcK_RF6VhI8E"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "134055390971-pt4mrk9e43h116b16e6e54bac4gjj5mq.apps.googleusercontent.com",
+                "client_type": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
+  

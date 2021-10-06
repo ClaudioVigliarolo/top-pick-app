@@ -7,14 +7,20 @@ const CustomButton = ({
   onPress,
   title,
   color,
+  loading,
 }: {
   onPress: () => void;
   title: string;
   color: string;
+  loading?: boolean;
 }) => {
   return (
-    <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
-      <View style={[styles.CustomButtonContainer, {backgroundColor: color}]}>
+    <TouchableOpacity activeOpacity={0.7} onPress={onPress} disabled={loading}>
+      <View
+        style={[
+          styles.CustomButtonContainer,
+          {backgroundColor: color, opacity: loading ? 0.5 : 1},
+        ]}>
         <Text
           style={[
             styles.CustomButtonbuttonText,

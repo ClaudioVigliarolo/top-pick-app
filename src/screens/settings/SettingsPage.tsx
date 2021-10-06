@@ -1,22 +1,46 @@
 import * as React from 'react';
-import {ScrollView} from 'react-native';
-import {getColor} from '../../constants/theme/Themes';
+import {Platform, View} from 'react-native';
+import {getColor, Theme} from '../../constants/theme/Themes';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import {ThemeContext} from '../../context/ThemeContext';
-import ListItem from '../../components/lists/ListItemBasic';
-import AwesomeAlert from 'react-native-awesome-alerts';
-import ListItemCheckBox from '../../components/lists/ListItemCheckbox';
+import auth from '@react-native-firebase/auth';
 import {
-  clearStorage,
   isAutomaticUpdate,
   saveStorageUpdateSettings,
+  setStorageTheme,
 } from '../../utils/utils';
-import {resetDB} from '../../utils/sql';
 import styles from '../../styles/styles';
+import {AuthContext} from '../../context/AuthContext';
+import {SettingSection, SettingType} from '../../interfaces/Interfaces';
+import SectionList from '../../components/lists/SettingsSectionList';
+import Alert from '../../components/alerts/CustomAlert';
+import {deleteUserContent} from '../../utils/sql';
 
+/*
+General
+  Language
+  Notifications
+  automatic update
+
+Appearance
+  App Theme
+  Font Size
+  Dark mode
+
+User
+  View user details
+  Your interests
+
+
+Advanced settings
+reset 
+
+
+*/
 export default function SettingsPage({navigation}: {navigation: any}) {
-  const [isAlert, setAlert] = React.useState<boolean>(false);
+  const [isSignoutAlert, setSignoutAlert] = React.useState<boolean>(false);
   const [isUpdate, setUpdate] = React.useState<boolean>(false);
+  const sectionListRef = React.useRef<any>(null);
 
   React.useEffect(() => {
     (async () => {
@@ -26,77 +50,163 @@ export default function SettingsPage({navigation}: {navigation: any}) {
 
   const {translations} = React.useContext(LocalizationContext);
 
-  const {theme} = React.useContext(ThemeContext);
-
-  const showAlert = () => {
-    setAlert(true);
-  };
-
+  const {theme, setTheme} = React.useContext(ThemeContext);
+  const {user} = React.useContext(AuthContext);
   const setUpdateSettings = async (newVal: boolean) => {
     await saveStorageUpdateSettings(newVal);
     setUpdate(newVal);
   };
 
+  const onSignOut = async () => {
+    await auth().signOut();
+    //delete user specific data
+    deleteUserContent();
+  };
+
+  const changeTheme = async () => {
+    const newTheme = theme == Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
+    setTheme(newTheme);
+    await setStorageTheme(newTheme);
+  };
+
+  const data: SettingSection[] = [
+    {
+      title: 'General',
+      data: [
+        {
+          title: translations.LANGUAGE,
+          type: SettingType.BASIC,
+          selected: isUpdate,
+          onPress: () => navigation.navigate('Language'),
+          id: 0,
+        },
+
+        {
+          title: translations.AUTOMATIC_UPDATE,
+          type: SettingType.CHECKBOX,
+          selected: isUpdate,
+          onPress: (newVal: boolean) => setUpdateSettings(newVal),
+          id: 1,
+        },
+        {
+          title: 'App Theme',
+          type: SettingType.BASIC,
+          onPress: () => navigation.navigate('Theme'),
+          id: 2,
+        },
+
+        {
+          title: 'Notifications',
+          type: SettingType.BASIC,
+          onPress: () => {},
+          id: 3,
+        },
+      ],
+    },
+
+    {
+      title: 'Appearance',
+      data: [
+        {
+          title: 'App Theme',
+          type: SettingType.BASIC,
+          onPress: () => navigation.navigate('Theme'),
+          id: 0,
+        },
+        {
+          title: translations.FONTSIZE,
+          type: SettingType.BASIC,
+          onPress: () => navigation.navigate('Fontsize'),
+          id: 1,
+        },
+        {
+          title: translations.DARK_MODE,
+          type: SettingType.CHECKBOX,
+          selected: theme === 'dark' ? true : false,
+          onPress: changeTheme,
+          id: 2,
+        },
+      ],
+    },
+
+    {
+      title: 'User',
+      data: [
+        user
+          ? {
+              title: 'Sign out',
+              type: SettingType.BASIC,
+              onPress: () => setSignoutAlert(true),
+              id: 0,
+            }
+          : {
+              title: 'Sign in ',
+              type: SettingType.BASIC,
+              onPress: () =>
+                navigation.navigate('Login', {
+                  screen: 'LoginScreen',
+                }),
+              id: 0,
+            },
+        {
+          title: 'Your Interests',
+          type: SettingType.BASIC,
+          onPress: () => navigation.navigate('Interests'),
+          id: 1,
+        },
+
+        {
+          title: 'User Details',
+          type: SettingType.BASIC,
+          onPress: () => navigation.navigate('Details'),
+          id: 2,
+        },
+      ],
+    },
+
+    {
+      title: 'Advanced',
+      data: [
+        {
+          title: 'Reset',
+          type: SettingType.BASIC,
+          onPress: () => navigation.navigate('Reset'),
+          id: 0,
+        },
+      ],
+    },
+  ];
+  console.log('NNNNNNNNNNN', navigation);
   return (
-    <ScrollView
+    <View
       style={[
         styles.DefaultContainer,
+        {marginTop: Platform.OS === 'ios' ? 50 : 0},
         {backgroundColor: getColor(theme, 'primaryBackground')},
       ]}>
-      <ListItem
-        text={translations.LANGUAGE}
-        onPress={() => {
-          navigation.navigate('Language');
+      <SectionList
+        navigation={navigation}
+        items={data}
+        sectionListRef={sectionListRef}
+      />
+      <Alert
+        show={isSignoutAlert}
+        showProgress={false}
+        title="Sign Out"
+        message="Are you sure to sign out. Your progress will not be synchronized anymore"
+        closeOnTouchOutside={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        cancelText="No,Cancel"
+        confirmText="Sign Out"
+        onCancelPressed={() => {
+          setSignoutAlert(false);
         }}
-        icon={false}
-      />
-
-      <ListItem
-        text={translations.CARD_THEME}
-        onPress={() => {
-          navigation.navigate('Theme');
+        onConfirmPressed={() => {
+          onSignOut();
+          setSignoutAlert(false);
         }}
-        icon={false}
       />
-      <ListItem
-        text={translations.FONTSIZE}
-        onPress={() => {
-          navigation.navigate('Fontsize');
-        }}
-        icon={false}
-      />
-      <ListItemCheckBox
-        text={translations.AUTOMATIC_UPDATE}
-        selected={isUpdate}
-        modal={false}
-        onSelect={(newVal: boolean) => setUpdateSettings(newVal)}
-      />
-
-      <ListItem text="Reset To Default" onPress={showAlert} icon={false} />
-
-      {isAlert && (
-        <AwesomeAlert
-          show={isAlert}
-          showProgress={false}
-          title="Reset App"
-          message="All the local settings and local questions will be deleted. You cannot undo this operation "
-          closeOnTouchOutside={false}
-          closeOnHardwareBackPress={false}
-          messageStyle={{textAlign: 'center'}}
-          showCancelButton={true}
-          showConfirmButton={true}
-          cancelText="No,Cancel"
-          confirmText="Ok,Delete"
-          confirmButtonColor={getColor(theme, 'primaryOrange')}
-          onCancelPressed={() => {
-            setAlert(false);
-          }}
-          onConfirmPressed={() => {
-            resetDB();
-            setAlert(false);
-          }}
-        />
-      )}
-    </ScrollView>
+    </View>
   );
 }
