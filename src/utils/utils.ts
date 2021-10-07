@@ -334,6 +334,29 @@ export const isFirstHelp = async (screen: HelpScreen): Promise<boolean> => {
   }
 };
 
+export const setLocalUserLastModified = async (time: string): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.USER_LAST_TIMESTAMP, time);
+  } catch (error) {
+    // Error saving data
+  }
+};
+
+export const getocalUserLastModified = async (): Promise<string> => {
+  try {
+    const retrievedTimestamp = await AsyncStorage.getItem(
+      keys.USER_LAST_TIMESTAMP,
+    );
+    if (retrievedTimestamp === null) {
+      return NO_DATE;
+    } else {
+      return retrievedTimestamp;
+    }
+  } catch (e) {
+    return NO_DATE;
+  }
+};
+
 export const setFirstHelp = async (screen: HelpScreen): Promise<void> => {
   try {
     await AsyncStorage.setItem(keys.FIRST_HELP + screen, 'false');
@@ -369,28 +392,6 @@ export const readTheme = async (): Promise<Theme> => {
 export const getLastUpdate = async (lang: Lang): Promise<string> => {
   try {
     const date = await AsyncStorage.getItem(keys.LAST_UPDATE_KEY + lang);
-    if (date === null) {
-      return NO_DATE;
-    } else {
-      return date;
-    }
-  } catch (e) {
-    console.log('Failed to fetch date from storage');
-    return NO_DATE;
-  }
-};
-
-export const setLastSync = async (date: string): Promise<void> => {
-  try {
-    await AsyncStorage.setItem(keys.LAST_SYNC, date);
-  } catch (e) {
-    console.log('Failed to fetch date from storage');
-  }
-};
-
-export const getLastSync = async (): Promise<string> => {
-  try {
-    const date = await AsyncStorage.getItem(keys.LAST_SYNC);
     if (date === null) {
       return NO_DATE;
     } else {

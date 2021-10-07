@@ -3,7 +3,13 @@ import {Linking, Platform} from 'react-native';
 import VersionCheck from 'react-native-version-check';
 import StatusModal from '../components/modals/StatusModal';
 import {Lang} from '../interfaces/Interfaces';
-import {checkUpdates, updateTopics} from '../utils/api';
+import {
+  checkClientSync,
+  checkUpdates,
+  syncToServer,
+  updateClient,
+  updateTopics,
+} from '../utils/api';
 import {
   getDifferentLang,
   isAutomaticUpdate,
@@ -24,12 +30,14 @@ export const StatusContext = React.createContext({
   isLoadingContentUpdates: false,
   isContentUpdated: false,
   isCheckingContentUpdates: false,
-  isSyncingUserContent: false,
-  isSyncedUserContent: false,
+  isSyncUserContentLoading: false,
+  isSyncUserContentError: false,
+  isSyncUserContent: false,
   setLoadingContent: (value: boolean) => {},
   setUpdatedContent: (value: boolean) => {},
-  setSyncingUserContent: (value: boolean) => {},
-  setSyncedUserContent: (value: boolean) => {},
+  setSyncUserContentLoading: (value: boolean) => {},
+  setSyncUserContentError: (value: boolean) => {},
+  setSyncUserContent: (value: boolean) => {},
   onCheckContentUpdates: () => {},
 });
 
@@ -40,11 +48,17 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   const [isRequiredAppUpdate, setRequiredAppUpdate] = React.useState<boolean>(
     false,
   );
-  const [isSyncingUserContent, setSyncingUserContent] = React.useState<boolean>(
-    false,
-  );
+  const [
+    isSyncUserContentLoading,
+    setSyncUserContentLoading,
+  ] = React.useState<boolean>(false);
 
-  const [isSyncedUserContent, setSyncedUserContent] = React.useState<boolean>(
+  const [
+    isSyncUserContentError,
+    setSyncUserContentError,
+  ] = React.useState<boolean>(false);
+
+  const [isSyncUserContent, setSyncUserContent] = React.useState<boolean>(
     false,
   );
 
@@ -68,11 +82,53 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
       if (!(await onCheckAppUpdates())) {
         //check content
         await onCheckContentUpdates();
-        //check app is used for the first time
       }
-      return () => {};
     })();
   }, []);
+
+  React.useEffect(() => {
+    (async () => {
+      //check user data
+      if (user) await onSyncUserData();
+    })();
+  }, [user]);
+
+  const fetchUserSync = async () => {
+    if (user) {
+      setSyncUserContentLoading(true);
+      if (await updateClient(user.uid)) {
+        setSyncUserContent(true);
+      } else {
+        //display error
+        setSyncUserContentError(true);
+      }
+      setSyncUserContentLoading(false);
+    }
+  };
+
+  const onSyncUserData = async () => {
+    //check if there app in store is up to date
+    //if not set update required
+    if (user) {
+      setSyncUserContentLoading(true);
+      const syncedResponse = await checkClientSync(user.uid);
+      console.log('synced respo', syncedResponse);
+      if (syncedResponse) {
+        if (syncedResponse.already_synced) {
+          setSyncUserContent(true);
+        } else if (syncedResponse.needs_upload) {
+          //upload the current content to server
+          await syncToServer(user.uid);
+          setSyncUserContent(false);
+        } else {
+          //load content from server
+          console.log('NEEEDS DOWNLOAD');
+          await fetchUserSync();
+        }
+      }
+      setSyncUserContentLoading(false);
+    }
+  };
 
   const onCheckAppUpdates = async () => {
     //check if there app in store is up to date
@@ -141,12 +197,16 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     setUpdatedContent(newVal);
   };
 
-  const onSetSyncingUserContent = (newVal: boolean) => {
-    setSyncingUserContent(newVal);
+  const onsetSyncUserContentLoading = (newVal: boolean) => {
+    setSyncUserContentLoading(newVal);
   };
 
-  const onSetSyncedUserContent = (newVal: boolean) => {
-    setSyncedUserContent(newVal);
+  const onsetSyncUserContentError = (newVal: boolean) => {
+    setSyncUserContentError(newVal);
+  };
+
+  const onsetSyncUserContent = (newVal: boolean) => {
+    setSyncUserContent(newVal);
   };
 
   const openStore = async () => {
@@ -166,12 +226,14 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
         isContentUpdated,
         isCheckingContentUpdates,
         onCheckContentUpdates,
-        isSyncingUserContent,
-        isSyncedUserContent,
+        isSyncUserContentLoading,
+        isSyncUserContentError,
+        isSyncUserContent,
         setLoadingContent: onSetLoadingContent,
         setUpdatedContent: onSetUpdatedContent,
-        setSyncingUserContent: onSetSyncingUserContent,
-        setSyncedUserContent: onSetSyncedUserContent,
+        setSyncUserContentLoading: onsetSyncUserContentLoading,
+        setSyncUserContentError: onsetSyncUserContentError,
+        setSyncUserContent: onsetSyncUserContent,
       }}>
       {children}
 
@@ -184,6 +246,19 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
         confirmText="update app"
         onConfirmPressed={openStore}
         message={translations.UPDATE_APP_REQUIRED_MESSAGE}
+      />
+
+      <StatusModal
+        show={isSyncUserContentError}
+        title={'Sync required'}
+        closeOnTouchOutside={false}
+        showConfirmButton={true}
+        showCancelButton={false}
+        confirmText="retry"
+        onConfirmPressed={fetchUserSync}
+        message={
+          "Couldn't fetch data from the server, you need to sync the data of your account"
+        }
       />
 
       <StatusModal

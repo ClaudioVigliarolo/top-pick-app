@@ -14,7 +14,7 @@ import ListItemDragModal from '../modals/ListItemDragModal';
 interface ListItemdragArrangeProps {
   id: number;
   text: string;
-  liked: boolean;
+  liked: number;
   onDrag(): void;
   onToggleLike(): void;
   onEdit(): void;

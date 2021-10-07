@@ -17,6 +17,7 @@ export interface Category {
   ref_id: number;
   title: string;
   counter: number;
+  lang?: string;
 }
 
 //counter: number;
@@ -25,6 +26,7 @@ export interface TopicCategory {
   category_id: number;
   category_ref_id: number;
   topic_ref_id: number;
+  lang?: string;
 }
 
 export interface Related {
@@ -33,7 +35,7 @@ export interface Related {
   dest_id: number;
   source_ref_id: number;
   dest_ref_id: number;
-  lang: string;
+  lang?: string;
 }
 
 export interface Question {
@@ -44,6 +46,7 @@ export interface Question {
   selected?: boolean;
   n?: number;
   user_modified?: number;
+  lang?: string;
 }
 
 export interface Language {
@@ -60,18 +63,22 @@ export enum Lang {
 
 export interface JSONresponse {
   is_error: boolean;
-  already_updated: boolean;
-  last_sync: string;
   last_update: string;
-  updates: Updates;
+  updates: TopicUpdates;
 }
 
-export interface Updates {
+export interface TopicUpdates {
   categories: Category[];
   topics: Topic[];
   topic_categories: TopicCategory[];
   related: [];
   questions: Question[];
+}
+
+export interface UserSyncedData {
+  topics: Topic[];
+  questions: Question[];
+  last_sync: string;
 }
 
 export interface Report {

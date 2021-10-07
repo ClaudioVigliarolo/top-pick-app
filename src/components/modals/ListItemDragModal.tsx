@@ -12,7 +12,7 @@ interface ListItemDragModalProps {
   onCopy: () => void;
   onRemove: () => void;
   onToggleLike: () => void;
-  liked: boolean;
+  liked: number;
 }
 export default function ListItemDragModal({
   isVisible,

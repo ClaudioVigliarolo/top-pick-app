@@ -5,7 +5,6 @@ export default {
   RECENT_SEARCH_KEY: '@recent_search',
   THEME_KEY: '@theme',
   LAST_UPDATE_KEY: '@last_update',
-  LAST_SYNC: '@last_sync',
   HAS_LAUNCHED: '@launched',
   FIRST_UPDATED: '@first_updated',
   IS_UPDATED: '@is_updated',
@@ -14,4 +13,6 @@ export default {
   USED_LANGUAGES: '@used_languages',
   TOPICS_NUMBER: '@topic_number',
   FIRST_HELP: '@first_help',
+  USER_LAST_TIMESTAMP: '@user_last_timestamp',
+  USER_SYNCED: '@user_synced',
 };

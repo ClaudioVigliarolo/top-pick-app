@@ -18,6 +18,7 @@ import {HelpContext} from '../../../context/HelpContext';
 import {ListItemHelp} from './Help';
 import {isFirstHelp, setFirstHelp} from '../../../utils/utils';
 import {LAZY_LOAD_TIMEOUT} from '../../../constants/app/App';
+import {StatusContext} from '../../../context/StatusContext';
 
 interface FavouritesPageProps {
   copilotEvents: any;
@@ -34,7 +35,7 @@ function FavouritesPage({
   const [questions, setQuestions] = React.useState<Question[]>([]);
   const isFocused = useIsFocused();
   const {translations} = React.useContext(LocalizationContext);
-
+  const {setSyncUserContent} = React.useContext(StatusContext);
   const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
   const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
     false,
@@ -81,8 +82,9 @@ function FavouritesPage({
   const onRemove = async (id: number) => {
     const newItems = [...questions];
     const index = questions.findIndex((item) => item.id == id);
-    const newVal = !questions[index].liked;
+    const newVal = questions[index].liked ? 0 : 1;
     if (await toggleLike(id, questions[index].topic_id, newVal)) {
+      setSyncUserContent(false);
       const index = newItems.findIndex((item) => item.id === id);
       newItems.splice(index, 1);
       setQuestions(newItems.slice());

@@ -22,6 +22,7 @@ import {ActionButtonLabels, createPDF, getHtmlTemplate} from './utils';
 import {hashCode, isFirstHelp, setFirstHelp} from '../../../utils/utils';
 import {USER_QUESTION_PRIORITY_N} from '../../../constants/app/App';
 import ActionButtons from '../../../components/buttons/ActionButtons';
+import {StatusContext} from '../../../context/StatusContext';
 interface OrderPageProps {
   copilotEvents: any;
   start: any;
@@ -38,6 +39,8 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
   const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
+  const {setSyncUserContent} = React.useContext(StatusContext);
+
   const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
     false,
   );
@@ -98,7 +101,7 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
         onDrag={drag}
         number={(index as number) + 1}
         text={item.title}
-        liked={item.liked as boolean}
+        liked={item.liked as number}
         onToggleLike={() => onToggleLike(item.id)}
         id={item.id}
       />
@@ -118,6 +121,7 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
           editedQuestion,
         )
       ) {
+        setSyncUserContent(false);
         setQuestions(newQuestions.slice());
       }
     }
@@ -126,8 +130,9 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   const onToggleLike = async (id: number) => {
     let itemsCopy = [...questions];
     const index = questions.findIndex((item) => item.id == id);
-    const newVal = !questions[index].liked;
+    const newVal = questions[index].liked ? 0 : 1;
     if (await toggleLike(id, questions[index].topic_id, newVal)) {
+      setSyncUserContent(false);
       questions[index].liked = newVal;
       setQuestions(itemsCopy.slice());
     }
@@ -151,10 +156,11 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
         translations.LANG as Lang,
       )
     ) {
+      setSyncUserContent(false);
       const newQuestionItem: Question = {
         id,
         topic_id: topic.id,
-        liked: false,
+        liked: 1,
         selected: false,
         title: questionText,
       };

@@ -11,7 +11,7 @@ import {getColor} from '../../constants/theme/Themes';
 import styles from '../../styles/styles';
 import {Left} from 'native-base';
 import {AuthContext} from '../../context/AuthContext';
-import {syncDB} from '../../utils/api';
+import {syncToServer, updateClient} from '../../utils/api';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {StatusContext} from '../../context/StatusContext';
 
@@ -19,10 +19,12 @@ const CustomDrawer = ({navigation}: {navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
   const {user} = React.useContext(AuthContext);
   const {
-    isSyncedUserContent,
-    isSyncingUserContent,
-    setSyncedUserContent,
-    setSyncingUserContent,
+    isSyncUserContent,
+    isSyncUserContentError,
+    isSyncUserContentLoading,
+    setSyncUserContent,
+    setSyncUserContentLoading,
+    setSyncUserContentError,
   } = React.useContext(StatusContext);
 
   const goLoginPage = () => {
@@ -31,18 +33,18 @@ const CustomDrawer = ({navigation}: {navigation: any}) => {
     });
   };
 
-  const onSyncDB = async () => {
-    setSyncingUserContent(true);
-    if (await syncDB(user as FirebaseAuthTypes.User)) {
-      setSyncedUserContent(true);
-    } else {
-      setSyncedUserContent(false);
+  const onsyncToServer = async () => {
+    if (user) {
+      setSyncUserContentLoading(true);
+      if (await syncToServer(user.uid)) {
+        setSyncUserContent(true);
+      }
+      setSyncUserContentLoading(false);
     }
-    setSyncingUserContent(false);
   };
 
   const renderSyncButton = () => {
-    if (isSyncingUserContent) {
+    if (isSyncUserContentLoading) {
       return (
         <Text style={styles.CustomDrawerSyncText} numberOfLines={1}>
           Loading...
@@ -50,7 +52,7 @@ const CustomDrawer = ({navigation}: {navigation: any}) => {
       );
     }
 
-    if (isSyncedUserContent) {
+    if (isSyncUserContent) {
       return (
         <TouchableOpacity onPress={goLoginPage}>
           <Text
@@ -66,7 +68,7 @@ const CustomDrawer = ({navigation}: {navigation: any}) => {
       );
     } else {
       return (
-        <TouchableOpacity onPress={onSyncDB}>
+        <TouchableOpacity onPress={onsyncToServer}>
           <Text style={styles.CustomDrawerSyncText} numberOfLines={1}>
             Sync now
           </Text>

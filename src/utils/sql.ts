@@ -12,13 +12,18 @@ import {
   TopicCategory,
   Question,
   Related,
-  Updates,
+  TopicUpdates,
   Lang,
   TopicLevel,
   TopicType,
+  UserSyncedData,
 } from '../interfaces/Interfaces';
 import dbUpgrade from '../../database/updates/db-upgrade.json';
-import {clearStorage, saveTopicsTableNumber, setLastSync} from './utils';
+import {
+  clearStorage,
+  saveTopicsTableNumber,
+  setLocalUserLastModified,
+} from './utils';
 
 const DB = SQLite.openDatabase(
   {
@@ -153,8 +158,8 @@ const addDefaultVersion = async () => {
   });
 };
 
-export const generateDB = async (
-  data: Updates,
+export const populateDBTopics = async (
+  data: TopicUpdates,
   LANG: Lang,
 ): Promise<boolean> => {
   console.log('start generate');
@@ -167,21 +172,21 @@ export const generateDB = async (
     console.log('1');
 
     //insert new categories
-    await bulkInsertCategories(data.categories, LANG);
+    await bulkInsertCategories(data.categories);
 
     console.log('2');
 
     //delete all topics
     await DB.transaction((tx) => {
       tx.executeSql(
-        `delete from topics WHERE lang = "${LANG}" OR user_modified = 1`,
+        `delete from topics WHERE lang = "${LANG}" AND user_modified = 0`,
       );
     });
 
     console.log('3');
 
     //insert new topics
-    await bulkInsertTopics(data.topics, LANG);
+    await bulkInsertTopics(data.topics);
 
     //delete category topics table
     await DB.transaction((tx) => {
@@ -191,26 +196,28 @@ export const generateDB = async (
     console.log('4');
 
     //insert new category topics table
-    await bulkInsertTopicCategories(data.topic_categories, LANG);
+    await bulkInsertTopicCategories(data.topic_categories);
 
     //delete related table
     await DB.transaction((tx) => {
       tx.executeSql(`delete from related where lang = "${LANG}"`);
     });
 
-    console.log('ok delete');
+    console.log('5');
 
     //insert new related table
-    await bulkInsertRelated(data.related, LANG);
+    await bulkInsertRelated(data.related);
 
     //delete questions table
     await DB.transaction((tx) => {
       tx.executeSql(
-        `delete from questions WHERE  lang = "${LANG}" OR user_modified = 1`,
+        `delete from questions WHERE  lang = "${LANG}" AND user_modified = 0`,
       );
     });
+    console.log('6');
+
     //insert new questions
-    await bulkInsertQuestions(data.questions, LANG);
+    await bulkInsertQuestions(data.questions);
 
     //save configurational parameters to speed up the db interactions
     saveTopicsTableNumber(data.topics.length, LANG);
@@ -222,13 +229,42 @@ export const generateDB = async (
   }
 };
 
-const bulkInsertTopics = async (topics: Topic[], LANG: Lang) => {
+export const populateDBClient = async (
+  data: UserSyncedData,
+): Promise<boolean> => {
+  console.log('start generate populateDBClient', data);
+  try {
+    //delete all topics
+    await DB.transaction((tx) => {
+      tx.executeSql(`delete from topics WHERE user_modified = 1`);
+    });
+
+    //insert new topics
+    await bulkInsertTopics(data.topics, true);
+
+    //delete questions table
+    await DB.transaction((tx) => {
+      tx.executeSql(`delete from questions WHERE user_modified = 1`);
+    });
+
+    //insert new questions
+    await bulkInsertQuestions(data.questions, true);
+
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+};
+
+const bulkInsertTopics = async (topics: Topic[], force: boolean = false) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
+  const INSERT_QUERY = force ? 'INSERT OR REPLACE ' : 'INSERT OR IGNORE ';
+  console.log(INSERT_QUERY);
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       topics.forEach((el: Topic, i: number) => {
-        console.log('MY EL', el);
         bigqery += '(?,?,?,?,?,?,?,?,?)';
         parameters.push(
           el.id,
@@ -239,11 +275,12 @@ const bulkInsertTopics = async (topics: Topic[], LANG: Lang) => {
           el.user_modified ? 1 : 0,
           el.type as TopicType,
           el.level as TopicLevel,
-          LANG,
+          el.lang as string,
         );
         if (parameters.length >= SQL_MAX_TUPLES || i == topics.length - 1) {
           tx.executeSql(
-            'INSERT INTO topics  (id, ref_id, title, source, timestamp, type, user_modified, level, lang) VALUES ' +
+            INSERT_QUERY +
+              'INTO topics  (id, ref_id, title, source, timestamp, type, user_modified, level, lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -265,9 +302,13 @@ const bulkInsertTopics = async (topics: Topic[], LANG: Lang) => {
   });
 };
 
-const bulkInsertQuestions = async (questions: Question[], LANG: Lang) => {
+const bulkInsertQuestions = async (
+  questions: Question[],
+  force: boolean = false,
+) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
+  const INSERT_QUERY = force ? 'INSERT OR REPLACE ' : 'INSERT OR IGNORE ';
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       questions.forEach((el: Question, i: number) => {
@@ -279,11 +320,12 @@ const bulkInsertQuestions = async (questions: Question[], LANG: Lang) => {
           el.n as number,
           el.liked ? 1 : 0,
           el.user_modified ? 1 : 0,
-          LANG,
+          el.lang as string,
         );
         if (parameters.length >= SQL_MAX_TUPLES || i == questions.length - 1) {
           tx.executeSql(
-            'INSERT INTO questions  (id, topic_id, title, n, liked, user_modified, lang) VALUES ' +
+            INSERT_QUERY +
+              'INTO questions  (id, topic_id, title, n, liked, user_modified, lang) VALUES ' +
               bigqery +
               ';',
             parameters,
@@ -305,7 +347,7 @@ const bulkInsertQuestions = async (questions: Question[], LANG: Lang) => {
   });
 };
 
-const bulkInsertRelated = async (related: Related[], LANG: Lang) => {
+const bulkInsertRelated = async (related: Related[]) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
   return new Promise<void>(async (resolve, reject) => {
@@ -317,7 +359,7 @@ const bulkInsertRelated = async (related: Related[], LANG: Lang) => {
           el.dest_id,
           el.source_ref_id,
           el.dest_ref_id,
-          LANG,
+          el.lang as string,
         );
         if (parameters.length >= SQL_MAX_TUPLES || i == related.length - 1) {
           tx.executeSql(
@@ -344,10 +386,7 @@ const bulkInsertRelated = async (related: Related[], LANG: Lang) => {
   });
 };
 
-const bulkInsertTopicCategories = async (
-  topicCategories: TopicCategory[],
-  LANG: Lang,
-) => {
+const bulkInsertTopicCategories = async (topicCategories: TopicCategory[]) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
   return new Promise<void>(async (resolve, reject) => {
@@ -359,7 +398,7 @@ const bulkInsertTopicCategories = async (
           el.topic_id,
           el.category_ref_id,
           el.topic_ref_id,
-          LANG,
+          el.lang as string,
         );
         if (
           parameters.length >= SQL_MAX_TUPLES ||
@@ -388,7 +427,7 @@ const bulkInsertTopicCategories = async (
   });
 };
 
-const bulkInsertCategories = async (categories: Category[], LANG: Lang) => {
+const bulkInsertCategories = async (categories: Category[]) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
   return new Promise<void>(async (resolve, reject) => {
@@ -396,7 +435,7 @@ const bulkInsertCategories = async (categories: Category[], LANG: Lang) => {
     await DB.transaction((tx) => {
       categories.forEach((el: Category, i: number) => {
         bigqery += '(?,?,?,?)';
-        parameters.push(el.id, el.ref_id, el.title, LANG);
+        parameters.push(el.id, el.ref_id, el.title, el.lang as string);
         console.log('pp', parameters);
         if (parameters.length >= SQL_MAX_TUPLES || i == categories.length - 1) {
           tx.executeSql(
@@ -566,7 +605,7 @@ export const deleteUserContent = async (): Promise<boolean> => {
       tx.executeSql(`delete from questions where user_modified IN (1);`);
     });
 
-    await setLastSync(NO_DATE);
+    await setLocalUserLastModified(NO_DATE);
 
     return true;
   } catch (error) {
@@ -918,13 +957,14 @@ export const getUserQuestions = (): Promise<Question[]> => {
   });
 };
 
-const setTopicModified = (id: number): Promise<boolean> => {
+const setTopicModified = async (id: number): Promise<boolean> => {
+  await setLocalUserLastModified(new Date().toISOString());
   return new Promise<boolean>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
         `UPDATE "topics"
-        SET user_modified = 1
-        WHERE "id" = ${id}
+          SET user_modified = 1
+          WHERE "id" = ${id}
         `,
         [],
         (tx, results) => {
@@ -942,7 +982,7 @@ const setTopicModified = (id: number): Promise<boolean> => {
 export const toggleLike = async (
   questionId: number,
   topicId: number,
-  val: boolean,
+  val: number,
 ): Promise<boolean> => {
   await setTopicModified(topicId);
   return new Promise<boolean>((resolve, reject) => {
@@ -990,18 +1030,19 @@ export const updateQuestion = async (
   });
 };
 
-export const addQuestion = (
+export const addQuestion = async (
   id: number,
   topicId: number,
   questionText: string,
   n: number,
   lang: Lang,
 ): Promise<boolean> => {
+  await setLocalUserLastModified(new Date().toISOString());
   return new Promise<boolean>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
         `INSERT INTO "questions"
-        VALUES (${id}, "${topicId}", "${questionText}", ${n},   0, 1, "${lang}")`,
+         VALUES (${id}, "${topicId}", "${questionText}", ${n}, 0, 1, "${lang}")`,
         [],
         (tx, results) => {
           resolve(true);
