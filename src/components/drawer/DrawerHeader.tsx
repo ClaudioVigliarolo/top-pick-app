@@ -11,13 +11,12 @@ import {getColor} from '../../constants/theme/Themes';
 import styles from '../../styles/styles';
 import {Left} from 'native-base';
 import {AuthContext} from '../../context/AuthContext';
-import {syncToServer, updateClient} from '../../utils/api';
-import {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {syncToServer} from '../../utils/api';
 import {StatusContext} from '../../context/StatusContext';
 
 const CustomDrawer = ({navigation}: {navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
-  const {user} = React.useContext(AuthContext);
+  const {user, DBAuthKey} = React.useContext(AuthContext);
   const {
     isSyncUserContent,
     isSyncUserContentError,
@@ -27,16 +26,16 @@ const CustomDrawer = ({navigation}: {navigation: any}) => {
     setSyncUserContentError,
   } = React.useContext(StatusContext);
 
-  const goLoginPage = () => {
+  const goSignIn = () => {
     navigation.navigate('Login', {
       screen: 'LoginScreen',
     });
   };
 
   const onsyncToServer = async () => {
-    if (user) {
+    if (DBAuthKey) {
       setSyncUserContentLoading(true);
-      if (await syncToServer(user.uid)) {
+      if (await syncToServer(DBAuthKey)) {
         setSyncUserContent(true);
       }
       setSyncUserContentLoading(false);
@@ -54,7 +53,7 @@ const CustomDrawer = ({navigation}: {navigation: any}) => {
 
     if (isSyncUserContent) {
       return (
-        <TouchableOpacity onPress={goLoginPage}>
+        <TouchableOpacity onPress={goSignIn}>
           <Text
             style={[
               styles.CustomDrawerSyncText,
@@ -94,7 +93,7 @@ const CustomDrawer = ({navigation}: {navigation: any}) => {
           </View>
         ) : (
           <>
-            <TouchableOpacity onPress={goLoginPage}>
+            <TouchableOpacity onPress={goSignIn}>
               <Text style={styles.CustomDrawerSignInText}>Sign in</Text>
             </TouchableOpacity>
           </>

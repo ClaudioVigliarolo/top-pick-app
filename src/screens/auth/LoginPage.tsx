@@ -1,29 +1,30 @@
 import React, {useState} from 'react';
 import {Form, Item, Input} from 'native-base';
 import {View} from 'native-base';
-import {Text, TouchableOpacity} from 'react-native';
+import {Alert, Text, TouchableOpacity} from 'react-native';
 import Button from '../../components/buttons/CustomButton';
 import {getColor} from '../../constants/theme/Themes';
 import {ThemeContext} from '../../context/ThemeContext';
 import styles from '../../styles/styles';
 import {useNavigation} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {
   GoogleSignin,
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
+import firestore from '@react-native-firebase/firestore';
 import BackIcon from '../../components/icons/BackIcon';
-import {
-  isFirstLaunch as hasAppLaunched,
-  onTopicsUpdate,
-} from '../../utils/utils';
+import {isFirstLaunch as hasAppLaunched} from '../../utils/storage';
 import SkipIcon from '../../components/icons/SkipIcon';
 import {AuthContext} from '../../context/AuthContext';
 import {REDIRECT_HOME} from '../../constants/app/App';
 import translations from '../../context/translations';
-import {Lang} from '../../interfaces/Interfaces';
+import {Lang, SettingType, UserSettings} from '../../interfaces/Interfaces';
 import {StatusContext} from '../../context/StatusContext';
-
+import {createUserData} from '../../utils/firebase';
+import {createClientDb} from '../../utils/api';
+import {getDeviceToken, onTopicsUpdate} from '../../utils/utils';
+import Settings from '../../components/tabs/Tab';
 export default function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
@@ -31,8 +32,9 @@ export default function LoginForm() {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const {theme} = React.useContext(ThemeContext);
-  const {user} = React.useContext(AuthContext);
+  const {user, setDBAuthKey} = React.useContext(AuthContext);
   const {setLoadingContent} = React.useContext(StatusContext);
+  const {setTheme, setCardtheme, setFontsize} = React.useContext(ThemeContext);
 
   const navigation = useNavigation();
 
@@ -48,7 +50,7 @@ export default function LoginForm() {
       setTimeout(async () => {
         navigation.navigate('HomeScreen');
         onTopicsUpdate(
-          user.uid,
+          user ? user.uid : await getDeviceToken(),
           translations.LANG as Lang,
           setLoadingContent,
           (success) => {},
@@ -57,7 +59,23 @@ export default function LoginForm() {
     }
   }, [user]);
 
-  const signIn = () => {
+  const loadSettings = async (user: FirebaseAuthTypes.User) => {
+    console.log('GIA PRESENTE LLLOADING');
+    const userDocument = (
+      await firestore().collection('Users').doc(user.uid).get()
+    ).data();
+
+    if (userDocument) {
+      //set db key to sign requests
+      setDBAuthKey(userDocument.DBAuthKey);
+      //load settings
+      const currentSettings: UserSettings = userDocument.settings;
+      setTheme(currentSettings.darkMode);
+      setCardtheme(currentSettings.cardTheme);
+      setFontsize(currentSettings.fontSize);
+    }
+  };
+  const signIn = async () => {
     setLoading(true);
     console.log('start');
     setError('');
@@ -66,26 +84,42 @@ export default function LoginForm() {
       setError('please all fields');
       return;
     }
-    auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        console.log('User account created & signed in!');
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setError('Invalid Credentials');
-      });
+    try {
+      const res = await auth().signInWithEmailAndPassword(email, password);
+      console.log('User signed in!');
+      console.log('KLLL SETTINGS');
+
+      loadSettings(res.user);
+    } catch (error) {
+      setError('Invalid Credentials');
+    }
     setLoading(false);
   };
 
   const onGoogleSignIn = async () => {
-    const {idToken} = await GoogleSignin.signIn();
-    // Create a Google credential with the token
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-    // Sign-in the user with the credential
-    return auth().signInWithCredential(googleCredential);
+    setLoading(true);
+    try {
+      const {idToken} = await GoogleSignin.signIn();
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      // Sign-in the user with the credential
+      const res = await auth().signInWithCredential(googleCredential);
+      console.log('MIE INFOOOOOOOOOOOOO', res.additionalUserInfo);
+      if (res.additionalUserInfo?.isNewUser) {
+        //create user data
+        Alert.alert('is nw');
+        const userData = await createUserData(res.user);
+        if (userData) {
+          await createClientDb(res.user.uid, userData.DBAuthKey);
+          setDBAuthKey(userData.DBAuthKey);
+        }
+      } else {
+        loadSettings(res.user);
+      }
+    } catch (error) {
+      setError('Failed to sign in with Google');
+    }
+    setLoading(false);
   };
 
   return (
@@ -134,12 +168,13 @@ export default function LoginForm() {
           <View style={{width: '50%', alignSelf: 'center'}}>
             <View style={styles.marginSmall}>
               {<Text style={styles.errorText}>{error}</Text>}
-              {user && <Text style={styles.successText}>Logged In</Text>}
+              {user && <Text style={styles.successText}>Signed In</Text>}
             </View>
 
             <Button
               color={getColor(theme, 'primaryOrange')}
               title="Login"
+              minWidth={'100%'}
               loading={loading}
               onPress={signIn}
             />
@@ -154,6 +189,7 @@ export default function LoginForm() {
               size={GoogleSigninButton.Size.Wide}
               color={GoogleSigninButton.Color.Dark}
               onPress={onGoogleSignIn}
+              disabled={loading}
             />
           </View>
           <View style={styles.marginSmall}>

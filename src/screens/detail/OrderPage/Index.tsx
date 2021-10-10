@@ -19,10 +19,14 @@ import {addQuestion, toggleLike, updateQuestion} from '../../../utils/sql';
 import {HelpContext} from '../../../context/HelpContext';
 import {AddBarHelp, BottomButtonHelp, ListItemHelp} from './Help';
 import {ActionButtonLabels, createPDF, getHtmlTemplate} from './utils';
-import {hashCode, isFirstHelp, setFirstHelp} from '../../../utils/utils';
-import {USER_QUESTION_PRIORITY_N} from '../../../constants/app/App';
+import {hashCode, isFirstHelp, setFirstHelp} from '../../../utils/storage';
+import {
+  COPILOT_OPTIONS,
+  USER_QUESTION_PRIORITY_N,
+} from '../../../constants/app/App';
 import ActionButtons from '../../../components/buttons/ActionButtons';
 import {StatusContext} from '../../../context/StatusContext';
+import {AuthContext} from '../../../context/AuthContext';
 interface OrderPageProps {
   copilotEvents: any;
   start: any;
@@ -39,7 +43,11 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   const {theme} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
   const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
-  const {setSyncUserContent} = React.useContext(StatusContext);
+  const {user} = React.useContext(AuthContext);
+
+  const {setSyncUserContent, setRequiredAuthFunctionality} = React.useContext(
+    StatusContext,
+  );
 
   const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
     false,
@@ -82,6 +90,10 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   };
 
   const onEdit = (id: number, newText: string) => {
+    if (!user) {
+      setRequiredAuthFunctionality(true);
+      return;
+    }
     setEditing(true);
     setQuestionText(newText);
     setQuestionId(id);
@@ -128,6 +140,10 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   };
 
   const onToggleLike = async (id: number) => {
+    if (!user) {
+      setRequiredAuthFunctionality(true);
+      return;
+    }
     let itemsCopy = [...questions];
     const index = questions.findIndex((item) => item.id == id);
     const newVal = questions[index].liked ? 0 : 1;
@@ -146,6 +162,10 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   };
 
   const onQuestionAdd = async (questionText: string) => {
+    if (!user) {
+      setRequiredAuthFunctionality(true);
+      return;
+    }
     const id = hashCode(questionText);
     if (
       await addQuestion(
@@ -242,8 +262,4 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   );
 }
 
-export default copilot({
-  animated: true, // Can be true or false
-  verticalOffset: 30, // <= this worked
-  overlay: 'svg', // Can be either view or svg
-})(OrderPage as any);
+export default copilot(COPILOT_OPTIONS)(OrderPage as any);

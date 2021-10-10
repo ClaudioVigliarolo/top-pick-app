@@ -2,8 +2,9 @@ import React, {createContext, useState} from 'react';
 import translations, {DEFAULT_LANGUAGE} from './translations';
 import * as RNLocalize from 'react-native-localize';
 import {Lang} from '../interfaces/Interfaces';
-import {readStorageLanguage, setStorageLanguage} from '../utils/utils';
-
+import {getStorageLanguage, setStorageLanguage} from '../utils/storage';
+import {AuthContext} from './AuthContext';
+import {updateFirebaseSettings} from '../utils/firebase';
 export const LocalizationContext = createContext({
   translations,
   setAppLanguage: (newLang: Lang) => {},
@@ -17,6 +18,7 @@ export const LocalizationProvider = ({
   children: React.ReactNode;
 }) => {
   const [appLanguage, setAppLanguage] = useState(DEFAULT_LANGUAGE);
+  const {user} = React.useContext(AuthContext);
 
   React.useEffect(() => {
     (async () => {
@@ -28,10 +30,13 @@ export const LocalizationProvider = ({
     translations.setLanguage(language);
     setAppLanguage(language);
     await setStorageLanguage(language);
+    if (user) {
+      await updateFirebaseSettings(user);
+    }
   };
 
   const configureDeviceDefaultLanguage = async () => {
-    const currentLanguage = await readStorageLanguage();
+    const currentLanguage = await getStorageLanguage();
     if (!currentLanguage) {
       let localeCode = DEFAULT_LANGUAGE;
       const supportedLocaleCodes = translations.getAvailableLanguages();

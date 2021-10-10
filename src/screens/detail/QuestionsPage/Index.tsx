@@ -18,14 +18,11 @@ import {
 } from '../../../utils/sql';
 import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
-import {
-  getTopicLevelColor,
-  getTopicLevelLabel,
-  isFirstHelp,
-  setFirstHelp,
-} from '../../../utils/utils';
+import {isFirstHelp, setFirstHelp} from '../../../utils/storage';
 import {HelpContext} from '../../../context/HelpContext';
 import {ListItemHelp, ButtonQuestionsHelp, SearchBarHelp} from './Help';
+import {COPILOT_OPTIONS} from '../../../constants/app/App';
+import {getTopicLevelColor, getTopicLevelLabel} from '../../../utils/utils';
 
 interface QuestionsPageProps {
   copilotEvents: any;
@@ -226,11 +223,12 @@ function QuestionsPage({
         </View>
 
         {isCurrentPageHelp && <ListItemHelp />}
-        {questions.map((item: Question, i) => {
+        {questions.map((item: Question, i: number) => {
           if (item.title.toLowerCase().includes(filter.toLowerCase())) {
             return (
               <ListItem
-                key={i}
+                key={item.id}
+                id={item.id}
                 text={item.title}
                 onSelect={() => onSelect(i)}
                 selected={item.selected ? true : false}
@@ -247,11 +245,4 @@ function QuestionsPage({
     </React.Fragment>
   );
 }
-export default copilot({
-  animated: true, // Can be true or false
-  verticalOffset: 30, // <= this worked
-  overlay: 'svg', // Can be either view or svg
-  // color: 'orange',
-  //borderRadius: 5,
-  //arrowColor: 'red',
-})(QuestionsPage as any);
+export default copilot(COPILOT_OPTIONS)(QuestionsPage as any);

@@ -1,19 +1,15 @@
 import React from 'react';
-import {ThemeContext} from '../../context/ThemeContext';
 import {View, ScrollView} from 'react-native';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import ListeItemCheck from '../../components/lists/ListeItemCheck';
 import {StatusContext} from '../../context/StatusContext';
 import {defaultLanguages} from '../../context/translations';
-import {
-  isUsedLanguage,
-  onTopicsUpdate,
-  setUsedLanguage,
-} from '../../utils/utils';
+import {isUsedLanguage, setUsedLanguage} from '../../utils/storage';
 import StatusModal from '../../components/modals/StatusModal';
 import {Lang} from '../../interfaces/Interfaces';
 import styles from '../../styles/styles';
 import {AuthContext} from '../../context/AuthContext';
+import {getDeviceToken, onTopicsUpdate} from '../../utils/utils';
 
 export default function SelectLanguagePage() {
   const {translations, appLanguage, setAppLanguage} = React.useContext(
@@ -38,9 +34,6 @@ export default function SelectLanguagePage() {
       onCheckContentUpdates();
     }
   };
-  {
-    console.log('curent lang', translations.LANG);
-  }
 
   const onLangDownloadCallback = (
     success: boolean,
@@ -75,10 +68,10 @@ export default function SelectLanguagePage() {
             showCancelButton={true}
             confirmText={translations.DOWNLOAD}
             cancelText={translations.CANCEL}
-            onConfirmPressed={() => {
+            onConfirmPressed={async () => {
               setShowModal(false);
               onTopicsUpdate(
-                user ? user.uid : '',
+                user ? user.uid : await getDeviceToken(),
                 selectedLanguage,
                 setLoadingContent,
                 (success) =>

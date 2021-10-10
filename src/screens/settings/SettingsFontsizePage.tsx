@@ -5,12 +5,16 @@ import ListeItemCheck from '../../components/lists/ListeItemCheck';
 import styles from '../../styles/styles';
 import {FontDimension} from '../../constants/theme/Fonts';
 import {FontsizeOption} from '../../interfaces/Interfaces';
-import {readStorageFontsize, setStorageFontsize} from '../../utils/utils';
+import {getStorageFontsize, setStorageFontsize} from '../../utils/storage';
 import {ThemeContext} from '../../context/ThemeContext';
+import {updateFirebaseSettings} from '../../utils/firebase';
+import {AuthContext} from '../../context/AuthContext';
 
 export default function SelectThemePage() {
   const {translations} = React.useContext(LocalizationContext);
   const {setFontsize, fontsize} = React.useContext(ThemeContext);
+  const {user} = React.useContext(AuthContext);
+
   const defaultFontSizeOptions: FontsizeOption[] = [
     {value: FontDimension.BIGGER, title: translations.FONT_BIGGER},
     {value: FontDimension.BIG, title: translations.FONT_BIG},
@@ -21,13 +25,16 @@ export default function SelectThemePage() {
 
   React.useEffect(() => {
     (async () => {
-      setFontsize(await readStorageFontsize());
+      setFontsize(await getStorageFontsize());
     })();
   }, []);
 
   const onChangeCardtheme = async (index: number) => {
     setFontsize(defaultFontSizeOptions[index].value);
     await setStorageFontsize(defaultFontSizeOptions[index].value);
+    if (user) {
+      await updateFirebaseSettings(user);
+    }
   };
 
   return (

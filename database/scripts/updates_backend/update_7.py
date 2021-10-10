@@ -63,7 +63,9 @@ curs.execute('DROP TABLE IF EXISTS client_topics cascade')
 # internal statistics
 curs.execute('''CREATE TABLE clients
     (
-        "id"  INTEGER  PRIMARY KEY,
+        "id" SERIAL PRIMARY KEY,
+        "key" INTEGER UNIQUE NOT NULL,
+        "client_id" TEXT UNIQUE NOT NULL, 
         "last_sync" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     )''')
 
@@ -79,7 +81,7 @@ curs.execute('''CREATE TABLE client_topics
      "lang" VARCHAR(2) NOT NULL, 
      "source" TEXT NOT NULL, 
      "user_modified" NUMERIC DEFAULT 1, 
-     "client_id" INTEGER REFERENCES "clients" ("id") on delete cascade
+     "client_key" INTEGER REFERENCES "clients" ("key") on delete cascade
     )''')
 
 
@@ -92,7 +94,7 @@ curs.execute('''CREATE TABLE client_questions
         "liked"	INTEGER DEFAULT 0,
         "lang" VARCHAR(2) NOT NULL,
         "user_modified" INTEGER DEFAULT 1,
-        "client_id" INTEGER REFERENCES "clients" ("id") on delete cascade
+        "client_key" INTEGER REFERENCES "clients" ("key") on delete cascade
     )''')
 
 

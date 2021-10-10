@@ -16,9 +16,10 @@ import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
 import {HelpContext} from '../../../context/HelpContext';
 import {ListItemHelp} from './Help';
-import {isFirstHelp, setFirstHelp} from '../../../utils/utils';
-import {LAZY_LOAD_TIMEOUT} from '../../../constants/app/App';
+import {isFirstHelp, setFirstHelp} from '../../../utils/storage';
+import {COPILOT_OPTIONS, LAZY_LOAD_TIMEOUT} from '../../../constants/app/App';
 import {StatusContext} from '../../../context/StatusContext';
+import {AuthContext} from '../../../context/AuthContext';
 
 interface FavouritesPageProps {
   copilotEvents: any;
@@ -35,7 +36,10 @@ function FavouritesPage({
   const [questions, setQuestions] = React.useState<Question[]>([]);
   const isFocused = useIsFocused();
   const {translations} = React.useContext(LocalizationContext);
-  const {setSyncUserContent} = React.useContext(StatusContext);
+  const {setSyncUserContent, setRequiredAuthFunctionality} = React.useContext(
+    StatusContext,
+  );
+  const {user} = React.useContext(AuthContext);
   const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
   const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
     false,
@@ -80,6 +84,10 @@ function FavouritesPage({
   };
 
   const onRemove = async (id: number) => {
+    if (!user) {
+      setRequiredAuthFunctionality(true);
+      return;
+    }
     const newItems = [...questions];
     const index = questions.findIndex((item) => item.id == id);
     const newVal = questions[index].liked ? 0 : 1;
@@ -140,8 +148,4 @@ function FavouritesPage({
   );
 }
 
-export default copilot({
-  animated: true, // Can be true or false
-  verticalOffset: 30, // <= this worked
-  overlay: 'svg', // Can be either view or svg
-})(FavouritesPage as any);
+export default copilot(COPILOT_OPTIONS)(FavouritesPage as any);

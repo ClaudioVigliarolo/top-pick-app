@@ -1,4 +1,6 @@
+import {CardTemplates} from '../constants/theme/Cardtheme';
 import {FontDimension} from '../constants/theme/Fonts';
+import {Theme} from '../constants/theme/Themes';
 
 export interface Topic {
   id: number;
@@ -82,7 +84,7 @@ export interface UserSyncedData {
 }
 
 export interface Report {
-  client_id: number;
+  client_id: string;
   question_id: number;
   reason: string;
 }
@@ -120,6 +122,16 @@ export enum SettingType {
   CHECKBOX,
 }
 
+export enum LIBRARY_TABS {
+  CATEGORIES,
+  TOPICS,
+  DIALOGS,
+  EASY,
+  MEDIUM,
+  HARD,
+  NEWLY_ADDED,
+}
+
 export enum TopicLevel {
   EASY,
   MEDIUM,
@@ -140,4 +152,17 @@ export enum HelpScreen {
 
 export interface User {
   username: string;
+}
+
+export interface UserSettings {
+  cardTheme: keyof CardTemplates;
+  fontSize: FontDimension;
+  language: Lang;
+  darkMode: Theme;
+  isAutoUpdate: boolean;
+}
+
+export interface UserData {
+  settings: UserSettings;
+  DBAuthKey: number;
 }

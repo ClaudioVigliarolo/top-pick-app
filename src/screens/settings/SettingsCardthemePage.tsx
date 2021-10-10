@@ -3,9 +3,11 @@ import {View, ScrollView} from 'react-native';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import ListeItemCheck from '../../components/lists/ListeItemCheck';
 import styles from '../../styles/styles';
-import {saveStoragCardtheme} from '../../utils/utils';
+import {setStorageCardtheme} from '../../utils/storage';
 import {ThemeContext} from '../../context/ThemeContext';
 import {CardTemplates} from '../../constants/theme/Cardtheme';
+import {updateFirebaseSettings} from '../../utils/firebase';
+import {AuthContext} from '../../context/AuthContext';
 
 interface Cardtheme {
   title: string;
@@ -15,6 +17,7 @@ interface Cardtheme {
 export default function SelectThemePage() {
   const {translations} = React.useContext(LocalizationContext);
   const {cardTheme, setCardtheme} = React.useContext(ThemeContext);
+  const {user} = React.useContext(AuthContext);
 
   const defaultCardthemes: Cardtheme[] = [
     {value: 'default', title: translations.DEFAULT},
@@ -27,8 +30,11 @@ export default function SelectThemePage() {
 
   const onChangeCardtheme = async (index: number) => {
     const newTheme = defaultCardthemes[index].value;
-    await saveStoragCardtheme(newTheme);
+    await setStorageCardtheme(newTheme);
     setCardtheme(newTheme as keyof CardTemplates);
+    if (user) {
+      await updateFirebaseSettings(user);
+    }
   };
 
   return (

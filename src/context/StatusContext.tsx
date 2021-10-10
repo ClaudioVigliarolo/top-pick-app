@@ -11,16 +11,17 @@ import {
   updateTopics,
 } from '../utils/api';
 import {
-  getDifferentLang,
-  isAutomaticUpdate,
-  isConnected,
+  getStorageAutomaticUpdate,
   isFirstUpdate,
   setFirstUpdate,
   setStorageIsUpdated,
   setUsedLanguage,
-} from '../utils/utils';
+} from '../utils/storage';
 import {AuthContext} from './AuthContext';
 import {LocalizationContext} from './LocalizationContext';
+import * as RootNavigation from '../navigation/RootNavigation';
+import {getDeviceToken, getDifferentLang, isConnected} from '../utils/utils';
+
 /*
     this context is used to notify the app about his state 
     it can be either up to date with the server, loading or not up to date
@@ -33,11 +34,13 @@ export const StatusContext = React.createContext({
   isSyncUserContentLoading: false,
   isSyncUserContentError: false,
   isSyncUserContent: false,
+  isRequiredAuthFunctionality: false,
   setLoadingContent: (value: boolean) => {},
   setUpdatedContent: (value: boolean) => {},
   setSyncUserContentLoading: (value: boolean) => {},
   setSyncUserContentError: (value: boolean) => {},
   setSyncUserContent: (value: boolean) => {},
+  setRequiredAuthFunctionality: (value: boolean) => {},
   onCheckContentUpdates: () => {},
 });
 
@@ -52,18 +55,14 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     isSyncUserContentLoading,
     setSyncUserContentLoading,
   ] = React.useState<boolean>(false);
-
   const [
     isSyncUserContentError,
     setSyncUserContentError,
   ] = React.useState<boolean>(false);
-
   const [isSyncUserContent, setSyncUserContent] = React.useState<boolean>(
     false,
   );
-
   const [isContentUpdated, setUpdatedContent] = React.useState<boolean>(true);
-
   const [
     isRequiredContentUpdate,
     setRequiredContentUpdate,
@@ -71,9 +70,13 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   const [isCheckingContentUpdates, setCheckUpdates] = React.useState<boolean>(
     true,
   );
+  const [
+    isRequiredAuthFunctionality,
+    setRequiredAuthFunctionality,
+  ] = React.useState<boolean>(false);
 
   const {translations, setAppLanguage} = React.useContext(LocalizationContext);
-  const {user} = React.useContext(AuthContext);
+  const {user, DBAuthKey} = React.useContext(AuthContext);
 
   React.useEffect(() => {
     (async () => {
@@ -89,14 +92,14 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   React.useEffect(() => {
     (async () => {
       //check user data
-      if (user) await onSyncUserData();
+      if (DBAuthKey) await onSyncUserData();
     })();
-  }, [user]);
+  }, [DBAuthKey]);
 
   const fetchUserSync = async () => {
-    if (user) {
+    if (DBAuthKey) {
       setSyncUserContentLoading(true);
-      if (await updateClient(user.uid)) {
+      if (await updateClient(DBAuthKey)) {
         setSyncUserContent(true);
       } else {
         //display error
@@ -106,19 +109,26 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     }
   };
 
+  const goSignIn = () => {
+    RootNavigation.navigate('Login', {
+      screen: 'LoginScreen',
+    });
+    setRequiredAuthFunctionality(false);
+  };
+
   const onSyncUserData = async () => {
     //check if there app in store is up to date
     //if not set update required
-    if (user) {
+    if (DBAuthKey) {
       setSyncUserContentLoading(true);
-      const syncedResponse = await checkClientSync(user.uid);
+      const syncedResponse = await checkClientSync(DBAuthKey);
       console.log('synced respo', syncedResponse);
       if (syncedResponse) {
         if (syncedResponse.already_synced) {
           setSyncUserContent(true);
         } else if (syncedResponse.needs_upload) {
           //upload the current content to server
-          await syncToServer(user.uid);
+          await syncToServer(DBAuthKey);
           setSyncUserContent(false);
         } else {
           //load content from server
@@ -141,17 +151,14 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
 
   const onCheckContentUpdates = async () => {
     if (await isConnected()) {
-      const isUpdated = await checkUpdates(
-        user ? user.uid : '',
-        translations.LANG as Lang,
-      );
+      const isUpdated = await checkUpdates(translations.LANG as Lang);
       setUpdatedContent(isUpdated);
       setStorageIsUpdated(isUpdated);
 
-      if ((await isAutomaticUpdate()) && !isUpdated) {
+      if ((await getStorageAutomaticUpdate()) && !isUpdated) {
         setLoadingContent(true);
         const hasUpdated = await updateTopics(
-          user ? user.uid : '',
+          user ? user.uid : await getDeviceToken(),
           translations.LANG as Lang,
         );
         setLoadingContent(false);
@@ -166,9 +173,9 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
 
   const handleFirstUpdate = async () => {
     setLoadingContent(true);
-    await setUsedLanguage(translations.LANG);
+    await setUsedLanguage(translations.LANG as Lang);
     const hasFirstUpdated = await updateTopics(
-      user ? user.uid : '',
+      user ? user.uid : await getDeviceToken(),
       translations.LANG as Lang,
     );
     setLoadingContent(false);
@@ -209,6 +216,12 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     setSyncUserContent(newVal);
   };
 
+  const onsetRequiredAuthFunctionality = (newVal: boolean) => {
+    setTimeout(() => {
+      setRequiredAuthFunctionality(newVal);
+    }, 500);
+  };
+
   const openStore = async () => {
     if (Platform.OS == 'ios') {
       const url = await VersionCheck.getAppStoreUrl();
@@ -229,11 +242,13 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
         isSyncUserContentLoading,
         isSyncUserContentError,
         isSyncUserContent,
+        isRequiredAuthFunctionality,
         setLoadingContent: onSetLoadingContent,
         setUpdatedContent: onSetUpdatedContent,
         setSyncUserContentLoading: onsetSyncUserContentLoading,
         setSyncUserContentError: onsetSyncUserContentError,
         setSyncUserContent: onsetSyncUserContent,
+        setRequiredAuthFunctionality: onsetRequiredAuthFunctionality,
       }}>
       {children}
 
@@ -282,6 +297,21 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
           handleFirstUpdate();
         }}
         message={translations.UPDATE_CONTENT_REQUIRED_MESSAGE}
+      />
+
+      <StatusModal
+        show={isRequiredAuthFunctionality}
+        title={'Sign in Required'}
+        onCancelPressed={() => {
+          setRequiredAuthFunctionality(false);
+        }}
+        closeOnTouchOutside={false}
+        showConfirmButton={true}
+        showCancelButton={true}
+        cancelText={'Close'}
+        confirmText="Sign in"
+        onConfirmPressed={goSignIn}
+        message={'Sign in to unlock this functionality'}
       />
     </StatusContext.Provider>
   );

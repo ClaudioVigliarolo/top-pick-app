@@ -30,16 +30,18 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
   const itemHeight = height * Dimensions.CAROUSEL_ITEM_HEIGHT_FACTOR;
 
   React.useEffect(() => {
-    (async () => {
-      setColor(getCardTemplate(theme, cardTheme));
-    })();
-
     Dim.addEventListener('change', (e) => {
       const {width, height} = e.window;
       setWidth(width);
       setheight(height);
     });
   }, [isFocused]);
+
+  React.useEffect(() => {
+    (async () => {
+      setColor(getCardTemplate(theme, cardTheme));
+    })();
+  }, [cardTheme]);
 
   React.useImperativeHandle(ref, () => ({
     validate() {},

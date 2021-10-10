@@ -9,16 +9,16 @@ import CardItem from '../../components/lists/CardItem';
 import ButtonsSearch from '../../components/buttons/ButtonsSearch';
 import {getPopularTopics, searchByTopic} from '../../utils/sql';
 import {MAX_RECENTS} from '../../constants/app/App';
-import {
-  getTopicTypeLabel,
-  readStorageRecents,
-  saveStorageRecent,
-} from '../../utils/utils';
+import {getStorageRecents, setStorageRecent} from '../../utils/storage';
 import styles from '../../styles/styles';
+import {getTopicTypeLabel} from '../../utils/utils';
+import {updateFirebaseSettings} from '../../utils/firebase';
+import {AuthContext} from '../../context/AuthContext';
 
 const SearchPage = ({navigation}: {navigation: any}) => {
   const [text, setText] = React.useState('');
   const {theme} = React.useContext(ThemeContext);
+  const {user} = React.useContext(AuthContext);
   const {translations} = React.useContext(LocalizationContext);
   const [items, setItems] = React.useState<Topic[]>([]);
   const [popular, setPopular] = React.useState<Topic[]>([]);
@@ -56,11 +56,14 @@ const SearchPage = ({navigation}: {navigation: any}) => {
   };
 
   const saveRecents = async (newRecentsArray: Topic[]) => {
-    await saveStorageRecent(newRecentsArray, translations.LANG as Lang);
+    await setStorageRecent(newRecentsArray, translations.LANG as Lang);
+    if (user) {
+      await updateFirebaseSettings(user);
+    }
   };
 
   const getRecents = async () => {
-    const retrievedArray = await readStorageRecents(translations.LANG as Lang);
+    const retrievedArray = await getStorageRecents(translations.LANG as Lang);
     if (retrievedArray !== null) {
       const parsedArray: Topic[] = JSON.parse(retrievedArray);
       const newRecents =

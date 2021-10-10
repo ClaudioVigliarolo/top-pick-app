@@ -7,6 +7,7 @@ import {
   View,
   TouchableOpacity,
   Text,
+  Platform,
 } from 'react-native';
 import {HelpContext} from '../../context/HelpContext';
 import {HelpScreen} from '../../interfaces/Interfaces';
@@ -61,8 +62,8 @@ const styles = StyleSheet.create({
   modalContent: {
     position: 'absolute',
     right: -5,
-    top: 3,
-    width: 200,
+    top: Platform.OS === 'ios' ? 50 : 0,
+    width: Platform.OS === 'ios' ? 160 : 200,
     borderRadius: 4,
     elevation: 5,
     backgroundColor: 'white',

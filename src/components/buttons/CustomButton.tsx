@@ -1,3 +1,5 @@
+import {Button} from 'native-base';
+import {Spinner} from 'native-base';
 import * as React from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import {staticFontSizes} from '../../constants/theme/Fonts';
@@ -8,30 +10,39 @@ const CustomButton = ({
   title,
   color,
   loading,
+  minWidth = 50,
 }: {
   onPress: () => void;
   title: string;
   color: string;
   loading?: boolean;
+  minWidth?: number | string;
 }) => {
   return (
-    <TouchableOpacity activeOpacity={0.7} onPress={onPress} disabled={loading}>
-      <View
+    <Button
+      onPress={onPress}
+      disabled={loading}
+      style={[
+        styles.CustomButtonContainer,
+        {minWidth},
+        {backgroundColor: color, opacity: loading ? 0.8 : 1},
+      ]}>
+      {loading && (
+        <View style={styles.absoluteCenter}>
+          <Spinner color="white" />
+        </View>
+      )}
+      <Text
         style={[
-          styles.CustomButtonContainer,
-          {backgroundColor: color, opacity: loading ? 0.5 : 1},
+          styles.CustomButtonbuttonText,
+          {
+            fontSize: staticFontSizes.fontMed,
+            opacity: loading ? 0 : 1,
+          },
         ]}>
-        <Text
-          style={[
-            styles.CustomButtonbuttonText,
-            {
-              fontSize: staticFontSizes.fontMed,
-            },
-          ]}>
-          {title}
-        </Text>
-      </View>
-    </TouchableOpacity>
+        {title}
+      </Text>
+    </Button>
   );
 };
 

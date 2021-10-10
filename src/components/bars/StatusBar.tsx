@@ -8,7 +8,7 @@ import IconChecked from 'react-native-vector-icons/Ionicons';
 import {getColor} from '../../constants/theme/Themes';
 import {Lang} from '../../interfaces/Interfaces';
 import translations from '../../context/translations';
-import {getLastUpdate, onTopicsUpdate} from '../../utils/utils';
+import {getLastUpdate} from '../../utils/storage';
 import Dimensions from '../../constants/theme/Dimensions';
 import TopicsAddedModal from '../modals/TopicsAddedModal';
 import StatusModal from '../modals/StatusModal';
@@ -18,6 +18,7 @@ import {
   RECENT_LOADED_N,
 } from '../../constants/app/App';
 import {AuthContext} from '../../context/AuthContext';
+import {getDeviceToken, onTopicsUpdate} from '../../utils/utils';
 export default function StatusBar() {
   const {theme} = React.useContext(ThemeContext);
   const [isUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
@@ -91,7 +92,7 @@ export default function StatusBar() {
           color={getColor(theme, 'secondaryIcon')}
           onPress={async () =>
             await onTopicsUpdate(
-              user ? user.uid : '',
+              user ? user.uid : await getDeviceToken(),
               translations.LANG as Lang,
               setLoadingContent,
               setUpdatedContent,

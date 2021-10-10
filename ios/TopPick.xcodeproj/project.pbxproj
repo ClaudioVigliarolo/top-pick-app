@@ -37,7 +37,7 @@
 		CA8C51DF2672C1130061FAE7 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA8C51DE2672C1130061FAE7 /* Launch Screen.storyboard */; };
 		CA8EC3CF265D4635002A3079 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA8EC3CE265D4635002A3079 /* BootSplash.storyboard */; };
 		CA8F5BEA270757E3005613D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CA8F5BE9270757E3005613D5 /* GoogleService-Info.plist */; };
-		CAA7B20B2707568E0000F786 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		CAA7B20B2707568E0000F786 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		CD7CF649DB8CCE08089B0AE4 /* libPods-TopPick-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 380C2B20063C86D1BFDBE66A /* libPods-TopPick-tvOSTests.a */; };
 		D26196A96A984F94846FB016 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 104B902E25CF476EA1EE132C /* Ionicons.ttf */; };
 		E5650990A2BD4001925B7B05 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FCB828EA34CD468393A3B77E /* FontAwesome5_Brands.ttf */; };
@@ -423,7 +423,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA8F5BEA270757E3005613D5 /* GoogleService-Info.plist in Resources */,
-				CAA7B20B2707568E0000F786 /* (null) in Resources */,
+				CAA7B20B2707568E0000F786 /* BuildFile in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				7B7C9B95D6AE4532BCE2D91A /* AntDesign.ttf in Resources */,
 				242DEA20AD5F4567B2D95025 /* Entypo.ttf in Resources */,
@@ -529,10 +529,13 @@
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/gRPCCertificates-Cpp.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates-Cpp.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -653,10 +656,13 @@
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/gRPCCertificates-Cpp.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates-Cpp.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

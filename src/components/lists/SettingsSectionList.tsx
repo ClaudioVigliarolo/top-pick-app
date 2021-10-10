@@ -33,6 +33,7 @@ class Item extends React.PureComponent<any, any> {
             text={this.props.title}
             selected={this.props.selected}
             modal={false}
+            id={0}
             onSelect={this.props.onPress}
           />
         );

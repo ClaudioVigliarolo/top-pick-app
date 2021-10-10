@@ -105,6 +105,7 @@ export default class ButtonQuestions extends React.Component<
             <CustomButton
               title={this.props.text}
               onPress={this.props.onPress}
+              minWidth={'90%'}
               color={getColor(this.context.theme, 'primaryOrange')}
             />
           </View>

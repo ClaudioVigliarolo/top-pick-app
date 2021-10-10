@@ -4,6 +4,7 @@ import {Animated, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {getColor} from '../../constants/theme/Themes';
 import {ThemeContext} from '../../context/ThemeContext';
+import {LIBRARY_TABS} from '../../interfaces/Interfaces';
 
 const FadeInView = (props: any) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
@@ -61,7 +62,7 @@ const NewTopicsModal = ({open, n}: {open: boolean; n: number}) => {
                 navigation.navigate('Library', {
                   screen: 'LibraryScreen',
                   params: {
-                    index: 3,
+                    index: LIBRARY_TABS.NEWLY_ADDED,
                   },
                 })
               }>

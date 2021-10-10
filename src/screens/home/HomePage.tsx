@@ -44,6 +44,7 @@ const HomePage = ({navigation}: {navigation: any}) => {
       },
     });
   };
+
   return (
     <SafeAreaView
       style={{

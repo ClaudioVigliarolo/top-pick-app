@@ -229,7 +229,7 @@ const translations = {
     FONT_MEDIUM: 'default',
     FONT_SMALL: 'small',
     FONT_SMALLER: 'smaller',
-    FONTSIZE: 'fontsize',
+    FONTSIZE: 'font Size',
     UPDATE_CONTENT_REQUIRED_TITLE: 'Top Pick',
     UPDATE_CONTENT_REQUIRED_MESSAGE:
       ' You need to upload the topics to use the app',

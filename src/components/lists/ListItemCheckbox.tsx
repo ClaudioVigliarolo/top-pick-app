@@ -6,27 +6,33 @@ import {getColor} from '../../constants/theme/Themes';
 import CheckBox from '@react-native-community/checkbox';
 import translations from '../../context/translations';
 import {addReport} from '../../utils/api';
-import {Report} from '../../interfaces/Interfaces';
-import {getUserID} from '../../utils/utils';
+import {Lang, Report} from '../../interfaces/Interfaces';
 import styles from '../../styles/styles';
 import {getFontSize} from '../../constants/theme/Fonts';
 import ListItemCheckboxModal from '../modals/ListItemCheckboxModal';
 import Clipboard from '@react-native-community/clipboard';
+import {AuthContext} from '../../context/AuthContext';
+import {StatusContext} from '../../context/StatusContext';
+import {getDeviceToken} from '../../utils/utils';
 
 interface ListItemCheckBoxProps {
   text: string;
   selected: boolean;
   onSelect: (newVal: boolean) => void;
   modal?: boolean;
+  id: number;
 }
 
 const ListItemCheckBox = ({
   text,
   selected,
   onSelect,
+  id,
   modal = true,
 }: ListItemCheckBoxProps) => {
   const {theme, fontsize} = React.useContext(ThemeContext);
+  const {user} = React.useContext(AuthContext);
+  const {setRequiredAuthFunctionality} = React.useContext(StatusContext);
   const [isModalVisible, setModalVisible] = React.useState(false);
 
   const closeModal = () => {
@@ -37,14 +43,18 @@ const ListItemCheckBox = ({
   };
 
   const onReport = async (reason: string, question_id: number) => {
-    closeModal();
+    if (!user) {
+      setRequiredAuthFunctionality(true);
+      return;
+    }
     const newReport: Report = {
       question_id,
       reason,
-      client_id: getUserID(),
+      client_id: user ? user.uid : await getDeviceToken(),
     };
-    addReport(newReport, translations.LANG);
+    addReport(newReport, translations.LANG as Lang);
   };
+
   return (
     <ListItem style={[styles.ListItemcontainer]} noBorder={true}>
       <TouchableWithoutFeedback onPress={openModal}>

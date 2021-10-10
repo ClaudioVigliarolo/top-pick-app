@@ -2,10 +2,10 @@ import React from 'react';
 import {FontDimension} from '../constants/theme/Fonts';
 import {CardTemplates} from '../constants/theme/Cardtheme';
 import {
-  readStorageCardtheme,
-  readStorageFontsize,
-  readTheme,
-} from '../utils/utils';
+  getStorageCardtheme,
+  getStorageFontsize,
+  getStorageTheme,
+} from '../utils/storage';
 import {Theme} from '../constants/theme/Themes';
 /*
     this context is used to notify the app about his state 
@@ -31,11 +31,11 @@ export const ThemeProvider = ({children}: {children: React.ReactNode}) => {
 
   React.useEffect(() => {
     (async () => {
-      setTheme(await readTheme());
-      setFontsize(await readStorageFontsize());
-      setCardtheme(await readStorageCardtheme());
+      setTheme(await getStorageTheme());
+      setFontsize(await getStorageFontsize());
+      setCardtheme(await getStorageCardtheme());
     })();
-  });
+  }, []);
   const onSetTheme = (newTheme: Theme) => {
     setTheme(newTheme);
   };
@@ -48,6 +48,7 @@ export const ThemeProvider = ({children}: {children: React.ReactNode}) => {
     setCardtheme(newTheme);
   };
 
+  console.log('RUOCO', cardTheme);
   return (
     <ThemeContext.Provider
       value={{

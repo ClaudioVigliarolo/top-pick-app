@@ -11,8 +11,7 @@ import {HelpProvider} from './src/context/HelpContext';
 import {
   isFirstLaunch as hasAppLaunched,
   setFirstLaunch as setAppFirstLaunch,
-} from './src/utils/utils';
-import Login from './src/screens/auth/LoginPage';
+} from './src/utils/storage';
 import {AuthProvider} from './src/context/AuthContext';
 
 const App = () => {
@@ -26,11 +25,11 @@ const App = () => {
   }, []);
 
   return (
-    <ThemeProvider>
-      <StatusBar barStyle="light-content" backgroundColor="black" />
-      <LocalizationProvider>
-        <HelpProvider>
-          <AuthProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <StatusBar barStyle="light-content" backgroundColor="black" />
+        <LocalizationProvider>
+          <HelpProvider>
             <SafeAreaProvider>
               {isFirstLaunch ? (
                 <StartSlides
@@ -45,10 +44,10 @@ const App = () => {
                 </StatusProvider>
               )}
             </SafeAreaProvider>
-          </AuthProvider>
-        </HelpProvider>
-      </LocalizationProvider>
-    </ThemeProvider>
+          </HelpProvider>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 };
 

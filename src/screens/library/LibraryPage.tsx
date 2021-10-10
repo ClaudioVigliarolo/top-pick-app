@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {TabButton} from '../../interfaces/Interfaces';
+import {LIBRARY_TABS, TabButton} from '../../interfaces/Interfaces';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import Tabs from '../../components/buttons/Tabs';
 import CategoriesPage from './CategoriesPage';
@@ -28,38 +28,38 @@ export default function LibraryPage({navigation}: {navigation: any}) {
     {
       heading: translations.CATEGORIES,
       children: <CategoriesPage navigation={navigation} />,
-      id: 1,
+      id: LIBRARY_TABS.CATEGORIES,
     },
     {
       heading: translations.TOPICS,
       children: <AllTopicsPage navigation={navigation} />,
-      id: 2,
+      id: LIBRARY_TABS.TOPICS,
     },
 
     {
       heading: translations.DIALOGS,
       children: <AllDialogsPage navigation={navigation} />,
-      id: 3,
+      id: LIBRARY_TABS.DIALOGS,
     },
     {
       heading: 'Easy',
       children: <LevelEasyPage navigation={navigation} />,
-      id: 5,
+      id: LIBRARY_TABS.EASY,
     },
     {
       heading: 'Medium',
       children: <LevelMediumPage navigation={navigation} />,
-      id: 6,
+      id: LIBRARY_TABS.MEDIUM,
     },
     {
       heading: 'Hard',
       children: <LevelHardPage navigation={navigation} />,
-      id: 7,
+      id: LIBRARY_TABS.HARD,
     },
     {
       heading: 'Newly Added',
       children: <NewTopicsPage navigation={navigation} />,
-      id: 8,
+      id: LIBRARY_TABS.NEWLY_ADDED,
     },
   ];
   return (

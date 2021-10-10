@@ -358,7 +358,7 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
         name="Reset"
         component={SettingsResetPage}
         options={{
-          title: translations.FONTSIZE,
+          title: 'Reset',
           headerTintColor: getColor(theme, 'headerPrimary'),
           headerStyle: {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),

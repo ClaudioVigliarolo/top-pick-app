@@ -1,4 +1,3 @@
-import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import axios from 'axios';
 import {HOSTNAME} from '../config/config';
 import {
@@ -14,20 +13,17 @@ import {
   populateDBClient,
 } from './sql';
 import {
-  getHash,
   getLastUpdate,
   getocalUserLastModified,
   setLastUpdate,
   setLocalUserLastModified,
-} from './utils';
+} from './storage';
 
-export const updateClient = async (userId: string): Promise<boolean> => {
+export const updateClient = async (key: number): Promise<boolean> => {
   console.log('IN CLIENT UPDATE');
   let hasUpdated = false;
   try {
-    const response = await axios.get(
-      `${HOSTNAME}/client/sync/get/${getHash(userId)}`,
-    );
+    const response = await axios.get(`${HOSTNAME}/client/sync/get/${key}`);
     if (!response || !response.data) {
       throw new Error('got null response');
     }
@@ -37,6 +33,7 @@ export const updateClient = async (userId: string): Promise<boolean> => {
     const data: UserSyncedData = response.data;
     //set the app as updated
     const generated = await populateDBClient(data);
+    console.log('HAS GENERATE', generated);
     if (generated) {
       hasUpdated = true;
       await setLocalUserLastModified(data.last_sync);
@@ -51,14 +48,13 @@ export const updateClient = async (userId: string): Promise<boolean> => {
 };
 
 export const updateTopics = async (
-  userId: string,
+  id: string,
   lang: Lang,
 ): Promise<boolean> => {
+  console.log('API PARAM', id);
   let hasUpdated = false;
   try {
-    const response = await axios.get(
-      `${HOSTNAME}/updates/get/${getHash(userId)}/${lang}`,
-    );
+    const response = await axios.get(`${HOSTNAME}/updates/get/${id}/${lang}`);
     if (!response || !response.data) {
       throw new Error('got null response');
     }
@@ -83,7 +79,7 @@ export const updateTopics = async (
 
 export const addReport = async (
   report: Report,
-  lang: string,
+  lang: Lang,
 ): Promise<boolean> => {
   try {
     const response = await axios.post(`${HOSTNAME}/reports`, {
@@ -97,12 +93,12 @@ export const addReport = async (
   }
 };
 
-export const syncToServer = async (userId: string): Promise<boolean> => {
+export const syncToServer = async (key: number): Promise<boolean> => {
   try {
     const questions = await getUserQuestions();
     const topics = await getUserTopics();
     const response = await axios.post(`${HOSTNAME}/client/sync`, {
-      id: getHash(userId),
+      key,
       topics,
       questions,
       last_sync: await getocalUserLastModified(),
@@ -114,15 +110,10 @@ export const syncToServer = async (userId: string): Promise<boolean> => {
   }
 };
 
-export const checkUpdates = async (
-  userId: string,
-  lang: Lang,
-): Promise<boolean> => {
+export const checkUpdates = async (lang: Lang): Promise<boolean> => {
   try {
     const response = await axios.get(
-      `${HOSTNAME}/updates/check/${getHash(userId)}/${await getLastUpdate(
-        lang,
-      )}/${lang}`,
+      `${HOSTNAME}/updates/check/${await getLastUpdate(lang)}/${lang}`,
     );
     if (!response) {
       throw new Error('got null response');
@@ -136,7 +127,7 @@ export const checkUpdates = async (
 };
 
 export const checkClientSync = async (
-  userId: string,
+  key: number,
 ): Promise<{
   already_synced: boolean;
   needs_upload: boolean;
@@ -144,9 +135,7 @@ export const checkClientSync = async (
 } | null> => {
   try {
     const response = await axios.get(
-      `${HOSTNAME}/client/sync/check/${getHash(
-        userId,
-      )}/${await getocalUserLastModified()}`,
+      `${HOSTNAME}/client/sync/check/${key}/${await getocalUserLastModified()}`,
     );
     if (!response) {
       throw new Error('got null response');
@@ -160,11 +149,13 @@ export const checkClientSync = async (
 
 //2 condizioni: il contenuto non è più update, o sul server c'è una aggiornamento più nuovo
 export const createClientDb = async (
-  user: FirebaseAuthTypes.User,
+  client_id: string,
+  key: number,
 ): Promise<boolean> => {
   try {
     const response = await axios.post(`${HOSTNAME}/client/create`, {
-      id: getHash(user.uid),
+      client_id,
+      key,
     });
     return response.status === 200;
   } catch (err) {

@@ -5,16 +5,17 @@ import {LocalizationContext} from '../../context/LocalizationContext';
 import {ThemeContext} from '../../context/ThemeContext';
 import auth from '@react-native-firebase/auth';
 import {
-  isAutomaticUpdate,
-  saveStorageUpdateSettings,
+  getStorageAutomaticUpdate,
+  setStorageAutomaticUpdate,
   setStorageTheme,
-} from '../../utils/utils';
+} from '../../utils/storage';
 import styles from '../../styles/styles';
 import {AuthContext} from '../../context/AuthContext';
 import {SettingSection, SettingType} from '../../interfaces/Interfaces';
 import SectionList from '../../components/lists/SettingsSectionList';
 import Alert from '../../components/alerts/CustomAlert';
 import {deleteUserContent} from '../../utils/sql';
+import {updateFirebaseSettings} from '../../utils/firebase';
 
 /*
 General
@@ -44,21 +45,26 @@ export default function SettingsPage({navigation}: {navigation: any}) {
 
   React.useEffect(() => {
     (async () => {
-      setUpdate(await isAutomaticUpdate());
+      setUpdate(await getStorageAutomaticUpdate());
     })();
   }, []);
 
   const {translations} = React.useContext(LocalizationContext);
 
   const {theme, setTheme} = React.useContext(ThemeContext);
-  const {user} = React.useContext(AuthContext);
+  const {user, setDBAuthKey, setUser} = React.useContext(AuthContext);
   const setUpdateSettings = async (newVal: boolean) => {
-    await saveStorageUpdateSettings(newVal);
+    await setStorageAutomaticUpdate(newVal);
+    if (user) {
+      await updateFirebaseSettings(user);
+    }
     setUpdate(newVal);
   };
 
   const onSignOut = async () => {
     await auth().signOut();
+    setDBAuthKey(null);
+    setUser(null);
     //delete user specific data
     deleteUserContent();
   };
@@ -67,6 +73,9 @@ export default function SettingsPage({navigation}: {navigation: any}) {
     const newTheme = theme == Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
     setTheme(newTheme);
     await setStorageTheme(newTheme);
+    if (user) {
+      await updateFirebaseSettings(user);
+    }
   };
 
   const data: SettingSection[] = [
@@ -89,13 +98,6 @@ export default function SettingsPage({navigation}: {navigation: any}) {
           id: 1,
         },
         {
-          title: 'App Theme',
-          type: SettingType.BASIC,
-          onPress: () => navigation.navigate('Theme'),
-          id: 2,
-        },
-
-        {
           title: 'Notifications',
           type: SettingType.BASIC,
           onPress: () => {},
@@ -108,7 +110,7 @@ export default function SettingsPage({navigation}: {navigation: any}) {
       title: 'Appearance',
       data: [
         {
-          title: 'App Theme',
+          title: 'Card Theme',
           type: SettingType.BASIC,
           onPress: () => navigation.navigate('Theme'),
           id: 0,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import Alert from '../../components/alerts/CustomAlert';
 import {resetDB} from '../../utils/sql';
 import ListItem from '../../components/lists/ListItemBasic';
@@ -16,7 +16,7 @@ export default function SettingsResetPage({navigation}: {navigation: any}) {
   const {user} = React.useContext(AuthContext);
 
   return (
-    <View
+    <ScrollView
       style={[
         styles.DefaultContainer,
         {backgroundColor: getColor(theme, 'primaryBackground')},
@@ -49,6 +49,6 @@ export default function SettingsResetPage({navigation}: {navigation: any}) {
           RNRestart.Restart();
         }}
       />
-    </View>
+    </ScrollView>
   );
 }

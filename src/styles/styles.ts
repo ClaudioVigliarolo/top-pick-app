@@ -228,10 +228,23 @@ export default StyleSheet.create({
   },
 
   CustomButtonContainer: {
-    backgroundColor: 'darkorange',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    position: 'relative',
     borderRadius: 5,
+    alignSelf: 'center',
+    backgroundColor: 'darkorange',
+    //used in case of flex
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  absoluteCenter: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   CustomButtonbuttonText: {
@@ -239,6 +252,8 @@ export default StyleSheet.create({
     textAlign: 'center',
     fontWeight: Platform.OS === 'ios' ? '500' : '900',
     textTransform: 'uppercase',
+    padding: Platform.OS === 'ios' ? 10 : 15,
+    paddingBottom: Platform.OS === 'ios' ? 30 : 15,
   },
 
   CustomCarouselContainer: {

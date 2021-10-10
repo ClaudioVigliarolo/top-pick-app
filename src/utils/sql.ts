@@ -23,7 +23,7 @@ import {
   clearStorage,
   saveTopicsTableNumber,
   setLocalUserLastModified,
-} from './utils';
+} from './storage';
 
 const DB = SQLite.openDatabase(
   {
@@ -239,8 +239,11 @@ export const populateDBClient = async (
       tx.executeSql(`delete from topics WHERE user_modified = 1`);
     });
 
+    console.log('SSS');
     //insert new topics
     await bulkInsertTopics(data.topics, true);
+
+    console.log('TTT');
 
     //delete questions table
     await DB.transaction((tx) => {
@@ -261,7 +264,7 @@ const bulkInsertTopics = async (topics: Topic[], force: boolean = false) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
   const INSERT_QUERY = force ? 'INSERT OR REPLACE ' : 'INSERT OR IGNORE ';
-  console.log(INSERT_QUERY);
+  if (topics.length === 0) return;
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       topics.forEach((el: Topic, i: number) => {
@@ -309,6 +312,7 @@ const bulkInsertQuestions = async (
   let bigqery = '';
   let parameters: (string | number)[] = [];
   const INSERT_QUERY = force ? 'INSERT OR REPLACE ' : 'INSERT OR IGNORE ';
+  if (questions.length === 0) return;
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       questions.forEach((el: Question, i: number) => {
@@ -350,6 +354,7 @@ const bulkInsertQuestions = async (
 const bulkInsertRelated = async (related: Related[]) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
+  if (related.length === 0) return;
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       related.forEach((el: Related, i: number) => {
@@ -389,6 +394,7 @@ const bulkInsertRelated = async (related: Related[]) => {
 const bulkInsertTopicCategories = async (topicCategories: TopicCategory[]) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
+  if (topicCategories.length === 0) return;
   return new Promise<void>(async (resolve, reject) => {
     await DB.transaction((tx) => {
       topicCategories.forEach((el: TopicCategory, i: number) => {
@@ -430,6 +436,7 @@ const bulkInsertTopicCategories = async (topicCategories: TopicCategory[]) => {
 const bulkInsertCategories = async (categories: Category[]) => {
   let bigqery = '';
   let parameters: (string | number)[] = [];
+  if (categories.length === 0) return;
   return new Promise<void>(async (resolve, reject) => {
     console.log('sstart');
     await DB.transaction((tx) => {
@@ -782,6 +789,7 @@ export const getNewTopicsCounter = (
           console.log('my res', results);
           const rows = results.rows;
           const counter = rows.item(0).counter;
+          console.log('MMMMM CUNN', counter);
           resolve(counter);
         },
         (_tx, e) => {
