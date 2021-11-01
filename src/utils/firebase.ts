@@ -1,6 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import {UserData} from '../interfaces/Interfaces';
+import {UserData, UserInterests} from '../interfaces/Interfaces';
 import {getHash, uuid} from './utils';
 import {getStoreSettings} from './storage';
 
@@ -20,4 +20,13 @@ export const updateFirebaseSettings = async (user: FirebaseAuthTypes.User) => {
     .update({
       settings: await getStoreSettings(),
     });
+};
+
+export const setUserInterests = async (
+  user: FirebaseAuthTypes.User,
+  interests: UserInterests,
+) => {
+  await firestore().collection('Users').doc(user.uid).update({
+    interests,
+  });
 };

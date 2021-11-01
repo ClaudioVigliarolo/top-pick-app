@@ -20,6 +20,7 @@ export interface Category {
   title: string;
   counter: number;
   lang?: string;
+  selected?: boolean;
 }
 
 //counter: number;
@@ -122,20 +123,11 @@ export enum SettingType {
   CHECKBOX,
 }
 
-export enum LIBRARY_TABS {
-  CATEGORIES,
-  TOPICS,
-  DIALOGS,
-  EASY,
-  MEDIUM,
-  HARD,
-  NEWLY_ADDED,
-}
-
 export enum TopicLevel {
   EASY,
   MEDIUM,
   HARD,
+  IGNORE,
 }
 
 export enum TopicType {
@@ -164,5 +156,51 @@ export interface UserSettings {
 
 export interface UserData {
   settings: UserSettings;
+  interests?: UserInterests;
   DBAuthKey: number;
+}
+
+export interface UserInterests {
+  categories_ref_id: number[];
+  level: TopicLevel;
+  goals: UserGoal[];
+}
+
+export interface Option {
+  title: string;
+  id: number;
+  selected: boolean;
+  next: FormName;
+}
+
+export interface FormBasic {
+  title: string;
+  subTitle: string;
+  options: Option[];
+  name: FormName;
+}
+
+export interface FormCategories {
+  title: string;
+  subTitle: string;
+  categories: Option[];
+  name: FormName;
+}
+
+export enum FormName {
+  FORM_GOALS,
+  FORM_LEVELS,
+  FORM_INTERESTS,
+}
+
+export enum FormType {
+  FORM_BASIC,
+  FORM_CATEGORIES,
+}
+
+export enum UserGoal {
+  LANGUAGE,
+  FRIENDS,
+  ESSAYS,
+  OTHER,
 }

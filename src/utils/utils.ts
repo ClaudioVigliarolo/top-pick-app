@@ -86,9 +86,9 @@ export const getTopicLevelColor = (level: TopicLevel | undefined): string => {
   }
 };
 
-export const getDeviceToken = async (): Promise<string> => {
+export const getDeviceId = async (): Promise<string> => {
   try {
-    const deviceToken = await DeviceInfo.getDeviceToken();
+    const deviceToken = await DeviceInfo.getDeviceId();
     return deviceToken;
   } catch (error) {
     return uuid();

@@ -5,7 +5,7 @@ import IconBack from 'react-native-vector-icons/MaterialIcons';
 import IconMenu from 'react-native-vector-icons/MaterialIcons';
 import IconOptions from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomePage from '../screens/home/HomePage';
-import Library from '../screens/library/LibraryPage';
+import LevelsPage from '../screens/library/Levels/Index';
 import {ThemeContext} from '../context/ThemeContext';
 import QuestionsPage from '../screens/detail/QuestionsPage/Index';
 import OrderPage from '../screens/detail/OrderPage/Index';
@@ -14,7 +14,7 @@ import FavouritesPage from '../screens/user/FavouritesPage/Index';
 import SearchPage from '../screens/home/SearchPage';
 import PresentationPage from '../screens/detail/PresentationPage';
 import {getColor} from '../constants/theme/Themes';
-import Dimensions from '../constants/theme/Dimensions';
+import {ICON_MED} from '../constants/theme/Dimensions';
 import SettingsPage from '../screens/settings/SettingsPage';
 import {StatusContext} from '../context/StatusContext';
 import SelectLanguagePage from '../screens/settings/SettingsLanguagePage';
@@ -22,7 +22,8 @@ import SelectFontsize from '../screens/settings/SettingsFontsizePage';
 import ThemePage from '../screens/settings/SettingsCardthemePage';
 import translations from '../context/translations';
 import {staticFontSizes} from '../constants/theme/Fonts';
-import TopicsPage from '../screens/library/TopicsPage';
+import AllTopicsPage from '../screens/library/Topics/AllTopicsPage';
+import AllCategoriesPage from '../screens/library/Categories/AllCategoriesPage';
 import CustomDropDown from '../components/modals/CustomDropDown';
 import StatusBar from '../components/bars/StatusBar';
 import {HelpScreen} from '../interfaces/Interfaces';
@@ -31,6 +32,9 @@ import RegisterPage from '../screens/auth/RegisterPage';
 import SettingsResetPage from '../screens/settings/SettingsResetPage';
 import InterestsPage from '../screens/user/InterestsPage/index';
 import DetailsPage from '../screens/user/DetailsPage/index';
+import NewLibraryPage from '../screens/library/Library/NewLibraryPage';
+import NewTopicsPage from '../screens/library/Topics/NewTopicsPage';
+import TopicsPage from '../screens/library/Topics/TopicsPage';
 
 const Stack = createStackNavigator();
 
@@ -48,7 +52,7 @@ const NavigationDrawerStructure = (props: any) => {
         <IconMenu
           name="menu"
           color={getColor(theme, 'headerPrimary')}
-          size={Dimensions.iconMed}
+          size={ICON_MED}
           style={{
             width: 25,
             height: 25,
@@ -124,7 +128,7 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
     <Stack.Navigator initialRouteName="LibraryScreen">
       <Stack.Screen
         name="LibraryScreen"
-        component={Library}
+        component={NewLibraryPage}
         options={{
           title: translations.LIBRARY,
           headerTintColor: getColor(theme, 'headerPrimary'),
@@ -137,6 +141,78 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
             backgroundColor: getColor(theme, 'primaryHeaderBackground'),
           },
 
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="NewTopics"
+        component={NewTopicsPage}
+        options={{
+          title: 'New Topics',
+          headerTintColor: getColor(theme, 'headerPrimary'),
+
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerLeft: () => (
+            <BackStructure
+              destination="LibraryScreen"
+              navigation={navigation}
+            />
+          ),
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="Levels"
+        component={LevelsPage}
+        options={{
+          title: 'Levels',
+          headerTintColor: getColor(theme, 'headerPrimary'),
+
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerLeft: () => (
+            <BackStructure
+              destination="LibraryScreen"
+              navigation={navigation}
+            />
+          ),
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="AllTopics"
+        component={AllTopicsPage}
+        options={{
+          title: 'Topics',
+          headerTintColor: getColor(theme, 'headerPrimary'),
+
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerLeft: () => (
+            <BackStructure
+              destination="LibraryScreen"
+              navigation={navigation}
+            />
+          ),
           headerTitleStyle: {
             fontWeight: 'bold',
             fontFamily: 'arial',
@@ -168,6 +244,31 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
           },
         }}
       />
+
+      <Stack.Screen
+        name="Categories"
+        component={AllCategoriesPage}
+        options={{
+          title: 'Categories',
+          headerTintColor: getColor(theme, 'headerPrimary'),
+
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerLeft: () => (
+            <BackStructure
+              destination="LibraryScreen"
+              navigation={navigation}
+            />
+          ),
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+        }}
+      />
+
       <Stack.Screen
         options={{
           headerShown: false,

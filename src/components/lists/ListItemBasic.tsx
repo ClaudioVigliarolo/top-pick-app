@@ -3,9 +3,9 @@ import {ListItem, Text, Right} from 'native-base';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import Icon from 'react-native-vector-icons/AntDesign';
-import Dimensions from '../../constants/theme/Dimensions';
 import styles from '../../styles/styles';
 import {getFontSize} from '../../constants/theme/Fonts';
+import {ICON_SMALL} from '../../constants/theme/Dimensions';
 
 interface CustomListItemProps {
   text: string;
@@ -54,7 +54,7 @@ const CustomListItem = ({
           <Icon
             name="right"
             color={getColor(theme, 'lightGray')}
-            size={Dimensions.iconSmall}
+            size={ICON_SMALL}
           />
         </Right>
       )}

@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {ThemeContext} from '../../context/ThemeContext';
 import {Question, Topic} from '../../interfaces/Interfaces';
 import {getColor} from '../../constants/theme/Themes';
-import Slider from '../../components/sliders/Slider';
+import Slider from '../../components/sliders/QuestionsSlider';
 
 export default function PresentationPage({
   route,

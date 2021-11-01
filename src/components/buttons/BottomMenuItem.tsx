@@ -1,16 +1,16 @@
 import React from 'react';
 import {ThemeContext} from '../../context/ThemeContext';
 import {View} from 'react-native';
-import {getColor} from '../../constants/theme/Themes';
-import Dimensions from '../../constants/theme/Dimensions';
+import {getColor, Theme} from '../../constants/theme/Themes';
+import {ICON_BOTTOM} from '../../constants/theme/Dimensions';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-const renderIcon = (name: string, isCurrent: boolean, theme: string): any => {
+const renderIcon = (name: string, isCurrent: boolean, theme: Theme): any => {
   switch (name) {
     case 'Home':
       return (
         <AntDesign
           name="home"
-          size={Dimensions.iconBottom}
+          size={ICON_BOTTOM}
           style={{
             color: isCurrent
               ? getColor(theme, 'primaryOrange')
@@ -23,7 +23,7 @@ const renderIcon = (name: string, isCurrent: boolean, theme: string): any => {
       return (
         <AntDesign
           name="search1"
-          size={Dimensions.iconBottom}
+          size={ICON_BOTTOM}
           style={{
             color: isCurrent
               ? getColor(theme, 'primaryOrange')
@@ -36,7 +36,7 @@ const renderIcon = (name: string, isCurrent: boolean, theme: string): any => {
       return (
         <AntDesign
           name="hearto"
-          size={Dimensions.iconBottom}
+          size={ICON_BOTTOM}
           style={{
             color: isCurrent
               ? getColor(theme, 'primaryOrange')

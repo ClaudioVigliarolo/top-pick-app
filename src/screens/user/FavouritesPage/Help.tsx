@@ -4,12 +4,12 @@ import {CopilotStep, walkthroughable} from 'react-native-copilot';
 import {ThemeContext} from '../../../context/ThemeContext';
 import {getColor} from '../../../constants/theme/Themes';
 import {ListItem as ListItemBase} from 'native-base';
-import Dimensions from '../../../constants/theme/Dimensions';
 import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
 import translations from '../../../context/translations';
 import DragIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LikeIcon from 'react-native-vector-icons/AntDesign';
+import {ICON_MED, ICON_MED_SMALL} from '../../../constants/theme/Dimensions';
 
 const WalkthroughableView = walkthroughable(View);
 
@@ -54,7 +54,7 @@ export const ListItemHelp = () => {
             <LikeIcon
               name={true ? 'heart' : 'hearto'}
               color={getColor(theme, 'primaryOrange')}
-              size={Dimensions.iconMedSmall}
+              size={ICON_MED_SMALL}
               style={{
                 padding: 10,
                 paddingLeft: 0,
@@ -72,7 +72,7 @@ export const ListItemHelp = () => {
             <DragIcon
               name="drag"
               color={getColor(theme, 'lightGray')}
-              size={Dimensions.iconMed}
+              size={ICON_MED}
             />
           </WalkthroughableView>
         </CopilotStep>

@@ -5,13 +5,13 @@ import {Lang, Topic} from '../../interfaces/Interfaces';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import TopicsCarousel from '../../components/carousels/CustomCarousel';
 import Button from '../../components/buttons/CustomButton';
-import Dimensions from '../../constants/theme/Dimensions';
 import {getColor} from '../../constants/theme/Themes';
 import {getTopics} from '../../utils/sql';
 import {
   INITIALS_TOPICS_LOADED,
   NEW_TOPICS_LOADED,
 } from '../../constants/app/App';
+import {TAB_HEIGTH} from '../../constants/theme/Dimensions';
 
 const HomePage = ({navigation}: {navigation: any}) => {
   const mycarousel = React.useRef<any>(null);
@@ -30,6 +30,7 @@ const HomePage = ({navigation}: {navigation: any}) => {
   };
 
   const getNewTopics = (n: number): void => {
+    console.log('my nn', n);
     if (carouselItems.length == n + 1) {
       loadTopics(NEW_TOPICS_LOADED);
     }
@@ -78,7 +79,7 @@ const HomePage = ({navigation}: {navigation: any}) => {
           alignItems: 'center',
           minWidth: 250,
           width: '100%',
-          marginBottom: Dimensions.tabHeight,
+          marginBottom: TAB_HEIGTH,
           justifyContent: 'center',
         }}>
         <Button

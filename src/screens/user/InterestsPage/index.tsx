@@ -1,185 +1,231 @@
 import * as React from 'react';
-import {
-  PixelRatio,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
 import {LocalizationContext} from '../../../context/LocalizationContext';
-import {getColor} from '../../../constants/theme/Themes';
-import {ThemeContext} from '../../../context/ThemeContext';
-import {Text, View, StyleSheet, Image} from 'react-native';
-import {staticFontSizes} from '../../../constants/theme/Fonts';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {Dimensions} from 'react-native';
+import InterestsForm from '../../../components/forms/InterestsForm';
+import {getCategories} from '../../../utils/sql';
+import {
+  Category,
+  FormBasic,
+  FormCategories,
+  FormName,
+  Lang,
+  Option,
+  TopicLevel,
+  UserGoal,
+  UserInterests,
+} from '../../../interfaces/Interfaces';
+import MultipleChoiceForm from '../../../components/forms/MultipleChoiceForm';
+import {formGoal, formInterests, formLevels, getForm} from './data';
+import BackIcon from '../../../components/icons/BackIcon';
+import StartForm from './StartForm';
+import EndForm from './EndForm';
+import {setUserInterests} from '../../../utils/firebase';
+import {AuthContext} from '../../../context/AuthContext';
+import {getStorageInterests, loadInterests} from '../../../utils/storage';
+import {useNavigation} from '@react-navigation/native';
 
-const StartSlides = ({onDone}: {onDone(): void}) => {
-  const {theme} = React.useContext(ThemeContext);
-  const [sliderState, setSliderState] = React.useState({currentPage: 0});
+const loadSelectedGoals = (): UserGoal[] => {
+  return [];
+};
+
+const loadSelecteCategories = (): number[] => {
+  return [];
+};
+
+const loadSelectedLevel = (): TopicLevel => {
+  return -1;
+};
+
+const UserForm = () => {
+  const [pagesHistory, setPagesHistory] = React.useState<
+    (FormBasic | FormCategories)[]
+  >([getForm(FormName.FORM_GOALS)]);
+  const [start, setStart] = React.useState<boolean>(true);
+  const [end, setEnd] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [selectedGoals, setSelectedGoals] = React.useState<UserGoal[]>([]);
+  const [selectedLevel, setSelectedLevel] = React.useState<TopicLevel>();
   const {translations} = React.useContext(LocalizationContext);
-  const {width, height} = Dimensions.get('window');
+  const {user} = React.useContext(AuthContext);
+  const navigation = useNavigation();
 
-  const setSliderPage = (event: any) => {
-    const {currentPage} = sliderState;
-    const {x} = event.nativeEvent.contentOffset;
-    const indexOfNextScreen = Math.round(x / width);
-    if (indexOfNextScreen !== currentPage) {
-      setSliderState({
-        ...sliderState,
-        currentPage: indexOfNextScreen,
-      });
+  React.useEffect(() => {
+    (async () => {
+      /**load goal */
+
+      const interests = await getStorageInterests();
+      console.log('Mmmmmmmmmm', interests);
+
+      if (interests) {
+        //load goals
+        setSelectedGoals(interests.goals);
+
+        //load categories
+
+        const categories = await getCategories(translations.LANG as Lang);
+        categories.forEach(function (c: Category) {
+          if (interests.categories_ref_id.includes(c.ref_id)) {
+            c.selected = true;
+          } else {
+            c.selected = false;
+          }
+        });
+
+        console.log('ddioopo', categories);
+        setCategories(categories);
+        //load level
+        setSelectedLevel(interests.level);
+      }
+    })();
+  }, []);
+
+  const onSubmitInterests = (categories: Category[]) => {
+    console.log('cccc', categories);
+    setCategories(categories);
+    const currentPages = [...pagesHistory];
+    setEnd(true);
+    setPagesHistory(currentPages);
+    //end
+    //const currentPages = [...pagesHistory];
+    //currentPages.push(getForm(FormName.));
+    //setPagesHistory(currentPages);
+  };
+
+  const onSubmitFormGoal = (options: Option[]) => {
+    const selectedOptions = options.filter((op) => op.selected);
+    const selectedGoals: UserGoal[] = selectedOptions.map((s) => s.id);
+    if (selectedGoals) {
+      setSelectedGoals(selectedGoals);
+      const newPages = [...pagesHistory];
+      if (selectedGoals.includes(UserGoal.LANGUAGE)) {
+        newPages.push(getForm(FormName.FORM_LEVELS));
+      } else {
+        newPages.push(getForm(FormName.FORM_INTERESTS));
+      }
+      setPagesHistory(newPages);
     }
   };
 
-  const {currentPage: pageIndex} = sliderState;
+  const onSubmitLevel = (options: Option[]) => {
+    const selectedOption = options.find((op) => op.selected);
+    if (selectedOption) {
+      setSelectedLevel(selectedOption.id as TopicLevel);
+      const newPages = [...pagesHistory];
+      newPages.push(getForm(selectedOption.next));
+      setPagesHistory(newPages);
+    }
+  };
 
-  const styles = StyleSheet.create({
-    imageStyle: {
-      height: '50%',
-      width: '100%',
-    },
-    wrapper: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginVertical: 30,
-      width: '80%',
-      alignSelf: 'center',
-    },
-    header: {
-      fontSize: 30,
-      fontWeight: 'bold',
-      marginBottom: '5%',
-      textAlign: 'center',
-      color: '#fff',
-    },
-    lastSlideHeader: {
-      fontSize: 30,
-      fontWeight: 'bold',
-      marginBottom: 20,
-      textAlign: 'center',
-      color: '#fff',
-    },
-    paragraph: {
-      fontSize: staticFontSizes.fontMed,
-      textAlign: 'center',
-      color: '#fff',
-    },
-    paginationWrapper: {
-      position: 'absolute',
-      bottom: '5%',
-      left: 0,
-      right: 0,
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
-    },
-    paginationDots: {
-      height: 10,
-      width: 10,
-      borderRadius: 10 / 2,
-      backgroundColor: 'white',
-      marginLeft: 10,
-    },
-    lastSlide: {
-      flex: 1,
-      width: '80%',
-      alignSelf: 'center',
-      justifyContent: 'center',
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
-  });
+  const onSubmitForm = async () => {
+    const selectedCategories = categories.filter((c) => c.selected);
+    const userInterests: UserInterests = {
+      categories_ref_id: selectedCategories.map((s) => s.ref_id),
+      goals: selectedGoals,
+      level: selectedLevel ? selectedLevel : TopicLevel.IGNORE,
+    };
+    setLoading(true);
+    if (user) {
+      try {
+        await setUserInterests(user, userInterests);
+        navigation.navigate('Settings');
+      } catch (error) {}
+    }
+    setLoading(false);
+  };
 
+  const goBackForm = () => {
+    if (pagesHistory.length === 1) setStart(true);
+    if (pagesHistory.length > 0) {
+      const currentPages = [...pagesHistory];
+      currentPages.pop();
+      setPagesHistory(currentPages);
+    }
+  };
+
+  const onStartForm = () => {
+    setStart(false);
+    setPagesHistory([getForm(FormName.FORM_GOALS)]);
+  };
+
+  const renderForm = (currentPage: FormBasic | FormCategories) => {
+    if (currentPage.name === FormName.FORM_GOALS) {
+      const goals = (currentPage as FormBasic).options;
+      goals.forEach((g) => {
+        if (selectedGoals.includes(g.id)) {
+          g.selected = true;
+        }
+      });
+      return (
+        <MultipleChoiceForm
+          goBack={goBackForm}
+          subTitle={currentPage.subTitle}
+          title={currentPage.title}
+          options={goals}
+          onSubmit={onSubmitFormGoal}
+        />
+      );
+    }
+
+    if (currentPage.name === FormName.FORM_LEVELS) {
+      const levels = (currentPage as FormBasic).options;
+      levels.forEach((l) => {
+        if (l.id === selectedLevel) l.selected = true;
+      });
+      console.log('ciucc', levels);
+      return (
+        <MultipleChoiceForm
+          goBack={goBackForm}
+          subTitle={currentPage.subTitle}
+          multiple={false}
+          title={currentPage.title}
+          options={levels}
+          onSubmit={onSubmitLevel}
+        />
+      );
+    }
+
+    if (currentPage.name === FormName.FORM_INTERESTS) {
+      return (
+        <InterestsForm
+          goBack={goBackForm}
+          onSubmit={onSubmitInterests}
+          minSelected={5}
+          categories={categories}
+          subTitle={currentPage.subTitle}
+          title={currentPage.title}
+        />
+      );
+    }
+  };
   return (
     <>
-      <StatusBar barStyle="dark-content" />
-
-      <SafeAreaView style={{flex: 1, zIndex: 1000000}}>
-        <TouchableOpacity
-          style={{position: 'absolute', right: '3%', top: '3%', zIndex: 1000}}
-          onPress={onDone}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: Platform.OS === 'ios' ? 30 : 0,
-            }}>
-            <Text
-              style={{
-                color: 'white',
-                fontStyle: 'italic',
-                fontSize: staticFontSizes.fontMed,
-              }}>
-              Skip
-            </Text>
-            <Icon
-              style={{marginLeft: 5}}
-              name="play-skip-forward-outline"
-              size={20}
-              color="#fff"
-            />
-          </View>
-        </TouchableOpacity>
-        <ScrollView
-          style={{
-            flex: 1,
-            backgroundColor: getColor(theme, 'primaryBackground'),
+      {start && (
+        <StartForm newForm={selectedGoals.length === 0} onStart={onStartForm} />
+      )}
+      {end && (
+        <EndForm
+          onSubmit={onSubmitForm}
+          loading={loading}
+          goBack={() => {
+            setEnd(false);
           }}
-          horizontal={true}
-          scrollEventThrottle={16}
-          pagingEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          onScroll={(event: any) => {
-            setSliderPage(event);
-          }}>
-          <View style={{width, height}}>
-            <View style={styles.wrapper}>
-              <Text
-                style={[
-                  styles.header,
-                  {color: getColor(theme, 'primaryOrange')},
-                ]}>
-                Select Your interests (1/3)
-              </Text>
-              <Text style={styles.paragraph}>
-                {translations.WELCOME_TOPICK_DESCRIPTION}
-              </Text>
-            </View>
-          </View>
-          <View style={{width, height}}>
-            <View style={styles.wrapper}>
-              <Text style={styles.header}>{translations.STEP_1_TITLE}</Text>
-              <Text style={styles.paragraph}>
-                {translations.STEP_1_DESCRIPTION}
-              </Text>
-            </View>
-          </View>
-          <View style={{width, height}}>
-            <View style={styles.wrapper}>
-              <Text style={styles.header}>{translations.STEP_2_TITLE}</Text>
-              <Text style={styles.paragraph}>
-                {translations.STEP_2_DESCRIPTION}
-              </Text>
-            </View>
-          </View>
-        </ScrollView>
-        <View style={styles.paginationWrapper}>
-          {Array.from(Array(5).keys()).map((key, index) => (
-            <View
-              style={[
-                styles.paginationDots,
-                {backgroundColor: 'orange'},
-                {opacity: pageIndex === index ? 1 : 0.2},
-              ]}
-              key={index}
-            />
-          ))}
-        </View>
-      </SafeAreaView>
+        />
+      )}
+      {!start &&
+        !end &&
+        pagesHistory.length > 0 &&
+        renderForm(pagesHistory[pagesHistory.length - 1])}
     </>
   );
 };
 
-export default StartSlides;
+export default UserForm;
+/*
+ <InterestsForm
+        onSubmit={onSubmitCategories}
+        minSelected={5}
+        categories={pages[0].categories}
+        subTitle={pages[0].subTitle}
+        title={pages[0].title}
+      />
+*/

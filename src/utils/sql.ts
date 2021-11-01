@@ -21,6 +21,8 @@ import {
 import dbUpgrade from '../../database/updates/db-upgrade.json';
 import {
   clearStorage,
+  getStorageUserCategoriesId,
+  getStorageUserLevel,
   saveTopicsTableNumber,
   setLocalUserLastModified,
 } from './storage';
@@ -830,12 +832,33 @@ export const getRecentTopics = (lang: Lang, n: number): Promise<Topic[]> => {
   });
 };
 
-export const getTopics = (n: number, lang: Lang): Promise<Topic[]> => {
+const buildTopicsQuery = (level: number | null) => {
+  let query = '';
+  if (level !== null) {
+  }
+};
+
+export const getTopics = async (n: number, lang: Lang): Promise<Topic[]> => {
+  const level = await getStorageUserLevel();
+  const categoriesId = await getStorageUserCategoriesId();
+  const LEVEL_FILTER =
+    level !== null && level !== TopicLevel.IGNORE ? 'AND LEVEL =' + level : '';
+  const CATEGORIES_FILTER =
+    categoriesId !== null && categoriesId.length > 0
+      ? 'AND ref_id in (SELECT topic_ref_id FROM topic_categories WHERE category_ref_id in (' +
+        categoriesId.toString() +
+        '))'
+      : '';
+
+  //construct query
+
   return new Promise<Topic[]>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
         `SELECT title,id from topics
-         WHERE lang = "${lang}"
+         WHERE lang = "${lang}" 
+         ${LEVEL_FILTER}
+         ${CATEGORIES_FILTER}
          ORDER BY RANDOM()
          LIMIT ${n};`,
         [],
@@ -861,7 +884,7 @@ export const getCategories = async (lang: Lang): Promise<Category[]> => {
   return new Promise<Category[]>((resolve, reject) => {
     DB.transaction((tx) => {
       tx.executeSql(
-        ` SELECT c2.title, c2.id,  count(*) as counter
+        ` SELECT c2.title, c2.id, c2.ref_id,  count(*) as counter
           FROM topic_categories c1,  categories c2 
           WHERE c1.lang = "${lang}" AND c2.lang = "${lang}" AND c2.id = (
           SELECT c3.id

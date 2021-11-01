@@ -4,7 +4,6 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {ThemeProvider} from './src/context/ThemeContext';
 import Navigation from './src/navigation';
 import RNBootSplash from 'react-native-bootsplash';
-import StartSlides from './src/screens/start/StartPage';
 import {LocalizationProvider} from './src/context/LocalizationContext';
 import {StatusProvider} from './src/context/StatusContext';
 import {HelpProvider} from './src/context/HelpContext';
@@ -13,6 +12,7 @@ import {
   setFirstLaunch as setAppFirstLaunch,
 } from './src/utils/storage';
 import {AuthProvider} from './src/context/AuthContext';
+import StartSlider from './src/components/sliders/StartSlider';
 
 const App = () => {
   const [isFirstLaunch, setFirstLaunch] = React.useState<boolean>(false);
@@ -32,7 +32,7 @@ const App = () => {
           <HelpProvider>
             <SafeAreaProvider>
               {isFirstLaunch ? (
-                <StartSlides
+                <StartSlider
                   onDone={() => {
                     setFirstLaunch(false);
                     setAppFirstLaunch();

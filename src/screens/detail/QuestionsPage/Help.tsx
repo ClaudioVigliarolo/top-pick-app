@@ -5,14 +5,14 @@ import {ThemeContext} from '../../../context/ThemeContext';
 import {getColor} from '../../../constants/theme/Themes';
 import CheckBox from '@react-native-community/checkbox';
 import {ListItem as ListItemBase} from 'native-base';
-import BottomButton from '../../../components/buttons/ButtonQuestions';
+import ButtonQuestions from '../../../components/buttons/ButtonQuestions';
 import SearchBar from '../../../components/bars/SearchBar';
-import Dimensions from '../../../constants/theme/Dimensions';
 import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
 import {HelpContext} from '../../../context/HelpContext';
 import translations from '../../../context/translations';
 import {Topic} from '../../../interfaces/Interfaces';
+import {BUTTON_QUESTIONS_HEIGTH} from '../../../constants/theme/Dimensions';
 
 const WalkthroughableView = walkthroughable(View);
 
@@ -103,9 +103,9 @@ export const ButtonQuestionsHelp = ({
     name="four">
     <WalkthroughableView
       style={{
-        maxHeight: counter > 0 || isHelp ? Dimensions.ButtonQuestionsHeight : 0,
+        maxHeight: counter > 0 || isHelp ? BUTTON_QUESTIONS_HEIGTH : 0,
       }}>
-      <BottomButton
+      <ButtonQuestions
         onPress={onSubmit}
         text={translations.NEXT}
         isTextEnabled={counter > 0 || isHelp}

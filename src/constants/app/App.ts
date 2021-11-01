@@ -14,8 +14,13 @@ export const MIN_DB_VERSION = 5;
 export const SQL_MAX_TUPLES = 600;
 export const REDIRECT_HOME = 1000;
 export const NO_DATE = 'Sun May 11,2014';
-export const APP_ID = {
-  appID: 'com.topick',
+export const APP_ID_ANDROID = {
+  packageName: 'com.topick',
+  appName: 'TopPick',
+};
+
+export const APP_ID_IOS = {
+  appID: '1571806777',
   appName: 'TopPick',
 };
 

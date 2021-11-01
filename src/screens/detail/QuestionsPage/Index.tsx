@@ -44,7 +44,6 @@ function QuestionsPage({
   });
   const [related, setRelated] = React.useState<Topic[]>([]);
   const [filter, setFilter] = React.useState('');
-  const [counter, setCounter] = React.useState(0);
   const {theme, fontsize} = React.useContext(ThemeContext);
   const {translations} = React.useContext(LocalizationContext);
   const {id, title}: {id: number; title: string} = route.params;
@@ -52,8 +51,8 @@ function QuestionsPage({
   const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
     false,
   );
+  let counter = questions.filter((q) => q.selected).length;
 
-  //  let isCurrentPageHelp = help === HelpScreen.QUESTIONS_SCREEN || await isFirstHelp(HelpScreen.QUESTIONS_SCREEN);
   React.useEffect(() => {
     (async () => {
       setTopic({
@@ -118,12 +117,9 @@ function QuestionsPage({
   };
 
   const onSelect = (index: number): void => {
-    let questionsCopy = [...questions];
-    questionsCopy[index]['selected'] = !questionsCopy[index]['selected'];
-    questionsCopy[index]['selected']
-      ? setCounter(counter + 1)
-      : setCounter(counter - 1);
-    setQuestions(questionsCopy.slice());
+    const newQuestions = [...questions];
+    newQuestions[index]['selected'] = !newQuestions[index]['selected'];
+    setQuestions(newQuestions.slice());
   };
 
   return (

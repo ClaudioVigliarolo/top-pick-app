@@ -1,10 +1,14 @@
 import {Platform, StyleSheet} from 'react-native';
-import Dimensions from '../constants/theme/Dimensions';
+import {
+  BUTTON_QUESTIONS_HEIGTH,
+  MODAL_WIDTH,
+  TAB_HEIGTH,
+} from '../constants/theme/Dimensions';
 import {staticFontSizes} from '../constants/theme/Fonts';
 
 export default StyleSheet.create({
   buttomButtonsContainer: {
-    height: Dimensions.ButtonQuestionsHeight,
+    height: BUTTON_QUESTIONS_HEIGTH,
     width: '100%',
     borderTopWidth: 2,
     padding: 10,
@@ -19,6 +23,41 @@ export default StyleSheet.create({
 
   ButtonQuestionsText: {
     textAlign: 'center',
+  },
+
+  LibraryItemHeaderContainer: {},
+
+  LibraryItemSubHeader: {
+    fontWeight: 'bold',
+    marginBottom: '5%',
+    textAlign: 'left',
+    color: '#fff',
+    fontSize: staticFontSizes.fontSmallMed,
+  },
+  LibraryItemHeader: {
+    fontWeight: 'bold',
+    marginBottom: '5%',
+    textAlign: 'left',
+    color: '#fff',
+    fontSize: staticFontSizes.fontBigMed,
+  },
+  LibraryItemIconContainer: {},
+
+  LibraryItemContainer: {
+    width: '80%',
+    height: 100,
+    flex: 1,
+    borderRadius: 10,
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'orange',
+    marginTop: 30,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
   },
 
   buttomButtonsBottomContainer: {
@@ -45,7 +84,7 @@ export default StyleSheet.create({
   },
 
   TabBarContainer: {
-    height: Dimensions.tabHeight,
+    height: TAB_HEIGTH,
     backgroundColor: 'white',
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
@@ -143,6 +182,36 @@ export default StyleSheet.create({
     //backgroundColor: 'green',
   },
 
+  DropDownContent: {
+    position: 'absolute',
+    right: -5,
+    top: Platform.OS === 'ios' ? 50 : 0,
+    width: Platform.OS === 'ios' ? 160 : 200,
+    borderRadius: 4,
+    backgroundColor: 'white',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+  },
+  DropDownContentItem: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 15,
+    height: 50,
+    borderBottomColor: '#eee',
+    borderBottomWidth: 0.4,
+  },
+  DropDownOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+  },
+
   ListItemDragIconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -160,7 +229,7 @@ export default StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 2,
     alignSelf: 'center',
-    width: Dimensions.MODAL_WIDTH,
+    width: MODAL_WIDTH,
   },
   ListItemDragmodalText: {
     alignSelf: 'baseline',
@@ -188,7 +257,7 @@ export default StyleSheet.create({
     alignSelf: 'center',
     opacity: 0.9,
     padding: 2,
-    width: Dimensions.MODAL_WIDTH,
+    width: MODAL_WIDTH,
   },
   ListItemCheckBoxmodalText: {
     alignSelf: 'baseline',
@@ -300,68 +369,6 @@ export default StyleSheet.create({
     marginBottom: 20,
   },
 
-  Sliderwrapper: {
-    flex: 1,
-    paddingTop: '20%',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 5,
-    textAlignVertical: 'center',
-  },
-  Slidertitle: {
-    textAlign: 'center',
-    fontWeight: Platform.OS == 'ios' ? '500' : '100',
-    marginTop: '2%',
-    textTransform: 'uppercase',
-    color: '#fff',
-  },
-  Sliderquestion: {
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
-  Sliderheader: {
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#fff',
-  },
-  Sliderparagraph: {
-    fontSize: 17,
-  },
-  SliderpaginationWrapper: {
-    position: 'absolute',
-    bottom: '15%',
-    left: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  SliderpaginationDots: {
-    height: 10,
-    width: 10,
-    borderRadius: 10 / 2,
-    backgroundColor: '#fff',
-    marginLeft: 10,
-  },
-  SlidertitleSection: {
-    height: '8%',
-    width: '100%',
-  },
-
-  SliderContainer: {
-    flex: 1,
-    position: 'relative',
-  },
-
-  QuestionsPagecounter: {
-    textAlign: 'center',
-    color: 'black',
-    fontWeight: 'bold',
-    position: 'absolute',
-    top: -50,
-    zIndex: 1000,
-  },
   QuestionsPagerelatedText: {
     textAlign: 'left',
     paddingLeft: 10,
@@ -388,57 +395,6 @@ export default StyleSheet.create({
     flex: 1,
     paddingRight: '2%',
   },
-
-  SliderimageStyle: {
-    height: '50%',
-    width: '100%',
-  },
-
-  StartSliderWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 30,
-    width: '80%',
-    alignSelf: 'center',
-  },
-
-  StartSliderheader: {
-    fontWeight: 'bold',
-    marginBottom: '5%',
-    textAlign: 'center',
-    color: '#fff',
-  },
-  StartSliderlastSlideHeader: {
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#fff',
-  },
-  StartSliderparagraph: {
-    textAlign: 'center',
-    color: '#fff',
-  },
-
-  StartSliderlastSlide: {
-    flex: 1,
-    width: '80%',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-
-  StartSliderSkipButton: {
-    color: 'white',
-    fontStyle: 'italic',
-  },
-
-  StartSliderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-
   sectionListContainer: {
     flex: 1,
     paddingTop: 10,
@@ -456,17 +412,22 @@ export default StyleSheet.create({
   },
 
   signInButton: {
-    width: 250,
-    height: 50,
+    width: 300,
     alignSelf: 'center',
   },
 
   header: {
-    fontSize: 30,
+    fontSize: staticFontSizes.fontBig,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: 'orange',
+  },
+
+  subHeader: {
+    fontSize: staticFontSizes.fontSmallMed,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
   },
 
   authContainer: {
@@ -493,5 +454,120 @@ export default StyleSheet.create({
   successText: {
     color: 'green',
     textAlign: 'center',
+  },
+
+  Sliderwrapper: {
+    flex: 1,
+    paddingTop: '20%',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: 5,
+    textAlignVertical: 'center',
+  },
+  Slidertitle: {
+    textAlign: 'center',
+    fontWeight: Platform.OS == 'ios' ? '500' : '100',
+    marginTop: '2%',
+    textTransform: 'uppercase',
+    color: '#fff',
+  },
+
+  Sliderquestion: {
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+  },
+  Sliderheader: {
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: '#fff',
+    fontSize: staticFontSizes.fontBig,
+  },
+
+  SliderpaginationWrapper: {
+    position: 'absolute',
+    bottom: '15%',
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  SliderpaginationDots: {
+    height: 10,
+    width: 10,
+    borderRadius: 10 / 2,
+    backgroundColor: '#fff',
+    marginLeft: 10,
+  },
+  SlidertitleSection: {
+    height: '8%',
+    width: '100%',
+  },
+
+  SliderimageStyle: {
+    height: '50%',
+    width: '100%',
+    resizeMode: 'center',
+  },
+
+  SliderStartApp: {
+    flex: 1,
+    width: '80%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+
+  SliderStartAppHeader: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#fff',
+  },
+
+  SliderlastSlide: {
+    flex: 1,
+    width: '80%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+
+  SliderSkipButton: {
+    color: 'white',
+    fontStyle: 'italic',
+  },
+
+  SliderContainer: {
+    flex: 1,
+    position: 'relative',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  lastSlideHeader: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#fff',
+  },
+  SliderParagraph: {
+    fontSize: staticFontSizes.fontMed,
+    textAlign: 'center',
+    color: '#fff',
+  },
+
+  lastSlide: {
+    flex: 1,
+    width: '80%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
 });

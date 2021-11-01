@@ -9,7 +9,6 @@ import {getColor} from '../../constants/theme/Themes';
 import {Lang} from '../../interfaces/Interfaces';
 import translations from '../../context/translations';
 import {getLastUpdate} from '../../utils/storage';
-import Dimensions from '../../constants/theme/Dimensions';
 import TopicsAddedModal from '../modals/TopicsAddedModal';
 import StatusModal from '../modals/StatusModal';
 import {getNewTopicsCounter} from '../../utils/sql';
@@ -18,7 +17,8 @@ import {
   RECENT_LOADED_N,
 } from '../../constants/app/App';
 import {AuthContext} from '../../context/AuthContext';
-import {getDeviceToken, onTopicsUpdate} from '../../utils/utils';
+import {getDeviceId, onTopicsUpdate} from '../../utils/utils';
+import {ICON_MED, ICON_MED_SMALL} from '../../constants/theme/Dimensions';
 export default function StatusBar() {
   const {theme} = React.useContext(ThemeContext);
   const [isUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
@@ -78,7 +78,7 @@ export default function StatusBar() {
             onPress={() => {
               setUpdatedAlert(true);
             }}
-            size={Dimensions.iconMed}
+            size={ICON_MED}
             style={{
               marginRight: 20,
             }}
@@ -92,13 +92,13 @@ export default function StatusBar() {
           color={getColor(theme, 'secondaryIcon')}
           onPress={async () =>
             await onTopicsUpdate(
-              user ? user.uid : await getDeviceToken(),
+              user ? user.uid : await getDeviceId(),
               translations.LANG as Lang,
               setLoadingContent,
               setUpdatedContent,
             )
           }
-          size={Dimensions.iconMedSmall}
+          size={ICON_MED_SMALL}
           style={{
             marginRight: 20,
           }}

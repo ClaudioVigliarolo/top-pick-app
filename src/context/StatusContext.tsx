@@ -20,7 +20,8 @@ import {
 import {AuthContext} from './AuthContext';
 import {LocalizationContext} from './LocalizationContext';
 import * as RootNavigation from '../navigation/RootNavigation';
-import {getDeviceToken, getDifferentLang, isConnected} from '../utils/utils';
+import {getDeviceId, getDifferentLang, isConnected} from '../utils/utils';
+import {APP_ID_ANDROID, APP_ID_IOS} from '../constants/app/App';
 
 /*
     this context is used to notify the app about his state 
@@ -143,7 +144,9 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   const onCheckAppUpdates = async () => {
     //check if there app in store is up to date
     //if not set update required
-    const res = await VersionCheck.needUpdate();
+    const res = await VersionCheck.needUpdate({
+      packageName: APP_ID_ANDROID.packageName,
+    });
     const isNeeded = res && res.isNeeded;
     setRequiredAppUpdate(isNeeded);
     return isNeeded;
@@ -158,7 +161,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
       if ((await getStorageAutomaticUpdate()) && !isUpdated) {
         setLoadingContent(true);
         const hasUpdated = await updateTopics(
-          user ? user.uid : await getDeviceToken(),
+          user ? user.uid : await getDeviceId(),
           translations.LANG as Lang,
         );
         setLoadingContent(false);
@@ -175,7 +178,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     setLoadingContent(true);
     await setUsedLanguage(translations.LANG as Lang);
     const hasFirstUpdated = await updateTopics(
-      user ? user.uid : await getDeviceToken(),
+      user ? user.uid : await getDeviceId(),
       translations.LANG as Lang,
     );
     setLoadingContent(false);
@@ -223,13 +226,17 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   };
 
   const openStore = async () => {
+    let url;
     if (Platform.OS == 'ios') {
-      const url = await VersionCheck.getAppStoreUrl();
-      Linking.openURL(url);
+      url = await VersionCheck.getAppStoreUrl({
+        appID: APP_ID_IOS.appID,
+      });
     } else {
-      const url = await VersionCheck.getPlayStoreUrl();
-      Linking.openURL(url);
+      url = await VersionCheck.getPlayStoreUrl({
+        packageName: APP_ID_ANDROID.packageName,
+      });
     }
+    Linking.openURL(url);
   };
 
   return (

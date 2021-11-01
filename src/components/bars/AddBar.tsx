@@ -4,8 +4,8 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import IconAdd from 'react-native-vector-icons/Ionicons';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
-import Dimensions from '../../constants/theme/Dimensions';
 import translations from '../../context/translations';
+import {ICON_CANCEL_BAR, ICON_MED} from '../../constants/theme/Dimensions';
 
 interface AddBarProps {
   onAdd: (text: string) => void;
@@ -28,7 +28,7 @@ const AddBar = ({onAdd}: AddBarProps) => {
         <IconAdd
           onPress={onAddCheck}
           name="add"
-          size={Dimensions.iconMed}
+          size={ICON_MED}
           style={{paddingLeft: 10}}
           color={getColor(theme, 'searchIconColor')}
         />
@@ -37,7 +37,7 @@ const AddBar = ({onAdd}: AddBarProps) => {
         <IconBack
           name="cancel"
           color={getColor(theme, 'searchIconColor')}
-          size={Dimensions.iconCancelBar}
+          size={ICON_CANCEL_BAR}
           style={{padding: 5}}
           onPress={() => setText('')}
         />

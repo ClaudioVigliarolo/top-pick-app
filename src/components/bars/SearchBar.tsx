@@ -1,11 +1,10 @@
 import React from 'react';
-import {Platform} from 'react-native';
 import Bar from '../bars/Bar';
-import {Header, Item, Input, Icon, Button, Text} from 'native-base';
+import {Icon} from 'native-base';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
-import Dimensions from '../../constants/theme/Dimensions';
+import {ICON_CANCEL_BAR} from '../../constants/theme/Dimensions';
 
 interface SearchBarProps {
   text: string;
@@ -28,7 +27,7 @@ const SearchBar = ({automatic, placeholder, setText, text}: SearchBarProps) => {
         <IconBack
           name="cancel"
           color={getColor(theme, 'searchIconColor')}
-          size={Dimensions.iconCancelBar}
+          size={ICON_CANCEL_BAR}
           style={{padding: 5}}
           onPress={() => setText('')}
         />

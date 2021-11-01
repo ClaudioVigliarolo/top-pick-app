@@ -4,12 +4,16 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ThemeContext} from '../../context/ThemeContext';
 import {Topic} from '../../interfaces/Interfaces';
 import Carousel from 'react-native-snap-carousel'; // Version can be specified in package.json
-import Dimensions from '../../constants/theme/Dimensions';
 import {scrollInterpolator, animatedStyles} from '../../utils/animations';
 import {useIsFocused} from '@react-navigation/native';
 import {getCardTemplate} from '../../constants/theme/Cardtheme';
 import styles from '../../styles/styles';
 import {getFontSize} from '../../constants/theme/Fonts';
+import {
+  CAROUSEL_ITEM_HEIGHT_FACTOR,
+  CAROUSEL_ITEM_WIDTH_FACTOR,
+  SCREEN_HEIGHT,
+} from '../../constants/theme/Dimensions';
 
 interface CarouselProps {
   carouselItems: Topic[];
@@ -26,8 +30,8 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
   const {theme, fontsize, cardTheme} = React.useContext(ThemeContext);
 
   let _carousel: any = {};
-  const itemWidth = width * Dimensions.CAROUSEL_ITEM_WIDTH_FACTOR;
-  const itemHeight = height * Dimensions.CAROUSEL_ITEM_HEIGHT_FACTOR;
+  const itemWidth = width * CAROUSEL_ITEM_WIDTH_FACTOR;
+  const itemHeight = height * CAROUSEL_ITEM_HEIGHT_FACTOR;
 
   React.useEffect(() => {
     Dim.addEventListener('change', (e) => {
@@ -94,7 +98,7 @@ const TopicCarousel = React.forwardRef((props: CarouselProps, ref) => {
         }}
         data={props.carouselItems}
         //sliderHeight={Dimensions.SCREEN_HEIGHT / 1.7}
-        itemHeight={Dimensions.SCREEN_HEIGHT / 1.7}
+        itemHeight={SCREEN_HEIGHT / 1.7}
         onSnapToItem={(index) => {
           props.setIndex(index);
         }}

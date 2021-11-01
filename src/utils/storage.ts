@@ -1,4 +1,12 @@
-import {HelpScreen, Lang, Topic, UserSettings} from '../interfaces/Interfaces';
+import {
+  HelpScreen,
+  Lang,
+  Topic,
+  TopicLevel,
+  UserGoal,
+  UserInterests,
+  UserSettings,
+} from '../interfaces/Interfaces';
 import AsyncStorage from '@react-native-community/async-storage';
 import keys from '../../database/keys/keys';
 import {FontDimension} from '../constants/theme/Fonts';
@@ -108,6 +116,44 @@ export const isUsedLanguage = async (lang: Lang): Promise<boolean> => {
   }
 };
 
+export const getStorageUserCategoriesId = async (): Promise<
+  number[] | null
+> => {
+  try {
+    const categoriesId = await AsyncStorage.getItem(keys.USER_CATEGORIES_ID);
+    if (categoriesId !== null) {
+      return JSON.parse(categoriesId);
+    }
+    return [];
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getStorageUserLevel = async (): Promise<TopicLevel | null> => {
+  try {
+    const level = await AsyncStorage.getItem(keys.USER_LEVEL);
+    if (level !== null) {
+      return parseInt(level);
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getUserGoals = async (): Promise<UserGoal[] | null> => {
+  try {
+    const goals = await AsyncStorage.getItem(keys.USER_GOALS);
+    if (goals !== null) {
+      return JSON.parse(goals);
+    }
+    return [];
+  } catch (error) {
+    return null;
+  }
+};
+
 export const setUsedLanguage = async (lang: Lang): Promise<void> => {
   try {
     let usedLanguagesArr: string[] = [];
@@ -207,6 +253,29 @@ export const setStorageAutomaticUpdate = async (
 ): Promise<void> => {
   try {
     await AsyncStorage.setItem(keys.SETTINGS_UPDATE, val.toString());
+  } catch (error) {}
+};
+
+export const setStorageUserCategoriesId = async (
+  category_ref_id: number[],
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(
+      keys.USER_CATEGORIES_ID,
+      JSON.stringify(category_ref_id),
+    );
+  } catch (error) {}
+};
+
+export const setStorageUserLevel = async (level: TopicLevel): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.USER_LEVEL, JSON.stringify(level));
+  } catch (error) {}
+};
+
+export const setStorageUserGoals = async (goals: UserGoal[]): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(keys.USER_GOALS, JSON.stringify(goals));
   } catch (error) {}
 };
 
@@ -387,7 +456,27 @@ export const loadSettings = async (settings: UserSettings): Promise<void> => {
   await setStorageTheme(settings.darkMode);
 };
 
-export const getStoreSettings = async () => {
+export const loadInterests = async (
+  interests: UserInterests,
+): Promise<void> => {
+  await setStorageUserGoals(interests.goals);
+  await setStorageUserCategoriesId(interests.categories_ref_id);
+  await setStorageUserLevel(interests.level);
+};
+
+export const getStorageInterests = async (): Promise<UserInterests> => {
+  const userGoals = await getUserGoals();
+  const categoriesRefId = await getStorageUserCategoriesId();
+  const level = await getStorageUserLevel();
+  const interests: UserInterests = {
+    goals: userGoals ? userGoals : [],
+    categories_ref_id: categoriesRefId ? categoriesRefId : [],
+    level: level ? level : TopicLevel.IGNORE,
+  };
+  return interests;
+};
+
+export const getStoreSettings = async (): Promise<UserSettings> => {
   const settings: UserSettings = {
     isAutoUpdate: await getStorageAutomaticUpdate(),
     cardTheme: await getStorageCardtheme(),

@@ -3,8 +3,8 @@ import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {WEB_CLIENT_ID} from '../config/config';
-import {UserSettings} from '../interfaces/Interfaces';
-import {loadSettings} from '../utils/storage';
+import {UserData, UserInterests, UserSettings} from '../interfaces/Interfaces';
+import {loadInterests, loadSettings} from '../utils/storage';
 
 export const AuthContext = React.createContext({
   user: null as FirebaseAuthTypes.User | null,
@@ -40,6 +40,8 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         setDBAuthKey(userDocument.DBAuthKey);
         //load settings
         await loadSettings(userDocument.settings as UserSettings);
+        if (userDocument.interests)
+          await loadInterests(userDocument.interests as UserInterests);
       }
     }
     console.log('LOGGG', user);

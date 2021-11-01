@@ -133,9 +133,9 @@ android {
         applicationId "com.topick"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 16
+        versionCode 19
         multiDexEnabled true
-        versionName "15.1"
+        versionName "15.3"
     }
     splits {
         abi {

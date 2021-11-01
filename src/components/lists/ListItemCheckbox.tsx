@@ -13,7 +13,7 @@ import ListItemCheckboxModal from '../modals/ListItemCheckboxModal';
 import Clipboard from '@react-native-community/clipboard';
 import {AuthContext} from '../../context/AuthContext';
 import {StatusContext} from '../../context/StatusContext';
-import {getDeviceToken} from '../../utils/utils';
+import {getDeviceId} from '../../utils/utils';
 
 interface ListItemCheckBoxProps {
   text: string;
@@ -50,7 +50,7 @@ const ListItemCheckBox = ({
     const newReport: Report = {
       question_id,
       reason,
-      client_id: user ? user.uid : await getDeviceToken(),
+      client_id: user ? user.uid : await getDeviceId(),
     };
     addReport(newReport, translations.LANG as Lang);
   };

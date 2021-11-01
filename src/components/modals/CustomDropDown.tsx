@@ -2,15 +2,14 @@
 import React from 'react';
 import {
   TouchableWithoutFeedback,
-  StyleSheet,
   Modal,
   View,
   TouchableOpacity,
   Text,
-  Platform,
 } from 'react-native';
 import {HelpContext} from '../../context/HelpContext';
 import {HelpScreen} from '../../interfaces/Interfaces';
+import styles from '../../styles/styles';
 
 interface CustomDropDownProps {
   onClose: () => void;
@@ -27,16 +26,16 @@ const CustomDropDown = ({onClose, open, screen}: CustomDropDownProps) => {
         onRequestClose={onClose}
         animationType="fade">
         <TouchableWithoutFeedback onPress={onClose}>
-          <View style={styles.modalOverlay} />
+          <View style={styles.DropDownOverlay} />
         </TouchableWithoutFeedback>
         {/*here starts the content */}
-        <View style={styles.modalContent}>
+        <View style={styles.DropDownContent}>
           <TouchableOpacity
             onPress={() => {
               setHelp(screen);
               onClose();
             }}>
-            <View style={styles.modalContentItem}>
+            <View style={styles.DropDownContentItem}>
               <Text>Help</Text>
             </View>
           </TouchableOpacity>
@@ -58,34 +57,3 @@ const CustomDropDown = ({onClose, open, screen}: CustomDropDownProps) => {
   </TouchableOpacity>
   */
 export default CustomDropDown;
-const styles = StyleSheet.create({
-  modalContent: {
-    position: 'absolute',
-    right: -5,
-    top: Platform.OS === 'ios' ? 50 : 0,
-    width: Platform.OS === 'ios' ? 160 : 200,
-    borderRadius: 4,
-    elevation: 5,
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.8,
-    shadowRadius: 1,
-  },
-  modalContentItem: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingLeft: 15,
-    height: 50,
-    borderBottomColor: '#eee',
-    borderBottomWidth: 0.4,
-  },
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-  },
-});

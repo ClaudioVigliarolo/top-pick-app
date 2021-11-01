@@ -23,7 +23,7 @@ import {Lang, SettingType, UserSettings} from '../../interfaces/Interfaces';
 import {StatusContext} from '../../context/StatusContext';
 import {createUserData} from '../../utils/firebase';
 import {createClientDb} from '../../utils/api';
-import {getDeviceToken, onTopicsUpdate} from '../../utils/utils';
+import {getDeviceId, onTopicsUpdate} from '../../utils/utils';
 import Settings from '../../components/tabs/Tab';
 export default function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -50,7 +50,7 @@ export default function LoginForm() {
       setTimeout(async () => {
         navigation.navigate('HomeScreen');
         onTopicsUpdate(
-          user ? user.uid : await getDeviceToken(),
+          user ? user.uid : await getDeviceId(),
           translations.LANG as Lang,
           setLoadingContent,
           (success) => {},
@@ -88,7 +88,6 @@ export default function LoginForm() {
       const res = await auth().signInWithEmailAndPassword(email, password);
       console.log('User signed in!');
       console.log('KLLL SETTINGS');
-
       loadSettings(res.user);
     } catch (error) {
       setError('Invalid Credentials');
@@ -138,6 +137,9 @@ export default function LoginForm() {
         />
       ) : (
         <BackIcon
+          left="3%"
+          top="3%"
+          color="#fff"
           onPress={() => {
             navigation.goBack();
           }}
@@ -147,7 +149,13 @@ export default function LoginForm() {
       <View style={styles.authContainer}>
         <Form>
           <View>
-            <Text style={styles.header}>Login</Text>
+            <Text
+              style={[
+                styles.header,
+                {color: getColor(theme, 'primaryOrange')},
+              ]}>
+              Login
+            </Text>
           </View>
           <Item>
             <Input
@@ -170,7 +178,6 @@ export default function LoginForm() {
               {<Text style={styles.errorText}>{error}</Text>}
               {user && <Text style={styles.successText}>Signed In</Text>}
             </View>
-
             <Button
               color={getColor(theme, 'primaryOrange')}
               title="Login"

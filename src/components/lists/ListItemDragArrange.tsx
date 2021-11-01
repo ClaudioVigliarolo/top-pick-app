@@ -6,10 +6,10 @@ import {View, TouchableWithoutFeedback, Platform} from 'react-native';
 import {getColor} from '../../constants/theme/Themes';
 import DragIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LikeIcon from 'react-native-vector-icons/AntDesign';
-import Dimensions from '../../constants/theme/Dimensions';
 import styles from '../../styles/styles';
 import {getFontSize} from '../../constants/theme/Fonts';
 import ListItemDragModal from '../modals/ListItemDragModal';
+import {ICON_MED, ICON_MED_SMALL} from '../../constants/theme/Dimensions';
 
 interface ListItemdragArrangeProps {
   id: number;
@@ -85,7 +85,7 @@ const ListItemdragArrange = ({
           <LikeIcon
             name={liked ? 'heart' : 'hearto'}
             color={getColor(theme, 'primaryOrange')}
-            size={Dimensions.iconMedSmall}
+            size={ICON_MED_SMALL}
             onPress={onToggleLike}
             style={{
               marginRight: 10,
@@ -96,7 +96,7 @@ const ListItemdragArrange = ({
             <DragIcon
               name="drag"
               color={getColor(theme, 'lightGray')}
-              size={Dimensions.iconMed}
+              size={ICON_MED}
             />
           </TouchableWithoutFeedback>
         </View>

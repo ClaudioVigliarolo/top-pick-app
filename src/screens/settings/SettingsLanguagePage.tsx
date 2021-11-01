@@ -9,7 +9,7 @@ import StatusModal from '../../components/modals/StatusModal';
 import {Lang} from '../../interfaces/Interfaces';
 import styles from '../../styles/styles';
 import {AuthContext} from '../../context/AuthContext';
-import {getDeviceToken, onTopicsUpdate} from '../../utils/utils';
+import {getDeviceId, onTopicsUpdate} from '../../utils/utils';
 
 export default function SelectLanguagePage() {
   const {translations, appLanguage, setAppLanguage} = React.useContext(
@@ -71,7 +71,7 @@ export default function SelectLanguagePage() {
             onConfirmPressed={async () => {
               setShowModal(false);
               onTopicsUpdate(
-                user ? user.uid : await getDeviceToken(),
+                user ? user.uid : await getDeviceId(),
                 selectedLanguage,
                 setLoadingContent,
                 (success) =>

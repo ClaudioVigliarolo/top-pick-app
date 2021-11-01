@@ -16,6 +16,7 @@ import SectionList from '../../components/lists/SettingsSectionList';
 import Alert from '../../components/alerts/CustomAlert';
 import {deleteUserContent} from '../../utils/sql';
 import {updateFirebaseSettings} from '../../utils/firebase';
+import {StatusContext} from '../../context/StatusContext';
 
 /*
 General
@@ -53,6 +54,8 @@ export default function SettingsPage({navigation}: {navigation: any}) {
 
   const {theme, setTheme} = React.useContext(ThemeContext);
   const {user, setDBAuthKey, setUser} = React.useContext(AuthContext);
+  const {setRequiredAuthFunctionality} = React.useContext(StatusContext);
+
   const setUpdateSettings = async (newVal: boolean) => {
     await setStorageAutomaticUpdate(newVal);
     if (user) {
@@ -150,19 +153,26 @@ export default function SettingsPage({navigation}: {navigation: any}) {
                 }),
               id: 0,
             },
-        {
-          title: 'Your Interests',
-          type: SettingType.BASIC,
-          onPress: () => navigation.navigate('Interests'),
-          id: 1,
-        },
 
-        {
-          title: 'User Details',
-          type: SettingType.BASIC,
-          onPress: () => navigation.navigate('Details'),
-          id: 2,
-        },
+        ...(user
+          ? [
+              {
+                title: 'Your Interests',
+                type: SettingType.BASIC,
+                onPress: () => {
+                  navigation.navigate('Interests');
+                },
+                id: 1,
+              },
+
+              {
+                title: 'User Details',
+                type: SettingType.BASIC,
+                onPress: () => navigation.navigate('Details'),
+                id: 2,
+              },
+            ]
+          : []),
       ],
     },
 

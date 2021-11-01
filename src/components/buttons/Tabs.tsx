@@ -4,6 +4,7 @@ import {TabButton} from '../../interfaces/Interfaces';
 import {getColor} from '../../constants/theme/Themes';
 import {ThemeContext} from '../../context/ThemeContext';
 import {ScrollableTab} from 'native-base';
+import {Dimensions} from 'react-native';
 
 interface TabButtonsProps {
   tabs: TabButton[];
@@ -20,7 +21,17 @@ const renderScrollableTab = (props: any) => {
   props.tabStyle = Object.create(props.tabStyle);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  return <ScrollableTab {...props} />;
+  return (
+    <ScrollableTab
+      {...props}
+      style={{
+        width: 400,
+        height: 50,
+        marginTop: 0,
+      }}
+      tabsContainerStyle={{width: 400}}
+    />
+  );
 };
 
 export default function TabButtons({tabs, initialPage = 0}: TabButtonsProps) {
@@ -29,6 +40,7 @@ export default function TabButtons({tabs, initialPage = 0}: TabButtonsProps) {
     <Tabs
       renderTabBar={renderScrollableTab}
       initialPage={initialPage}
+      style={{alignItems: 'center'}}
       scrollWithoutAnimation={true}
       tabBarUnderlineStyle={{
         backgroundColor: getColor(theme, 'primaryOrange'),
@@ -38,11 +50,13 @@ export default function TabButtons({tabs, initialPage = 0}: TabButtonsProps) {
         <Tab
           key={tab.id}
           heading={tab.heading}
-          tabStyle={{backgroundColor: getColor(theme, 'primaryBackground')}}
-          textStyle={{color: getColor(theme, 'primaryOrange')}}
-          activeTabStyle={{
+          tabStyle={{
+            width: 150,
             backgroundColor: getColor(theme, 'primaryBackground'),
-            borderColor: 'red',
+          }}
+          activeTabStyle={{
+            width: 150,
+            backgroundColor: getColor(theme, 'primaryBackground'),
           }}
           activeTextStyle={{color: getColor(theme, 'primaryOrange')}}
           children={tab.children}

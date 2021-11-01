@@ -23,7 +23,7 @@ import {Lang} from '../../interfaces/Interfaces';
 import translations from '../../context/translations';
 import {StatusContext} from '../../context/StatusContext';
 import {createUserData} from '../../utils/firebase';
-import {getDeviceToken, onTopicsUpdate} from '../../utils/utils';
+import {getDeviceId, onTopicsUpdate} from '../../utils/utils';
 
 export default function RegisterForm() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,7 +49,7 @@ export default function RegisterForm() {
       setTimeout(async () => {
         navigation.navigate('HomeScreen');
         onTopicsUpdate(
-          user ? user.uid : await getDeviceToken(),
+          user ? user.uid : await getDeviceId(),
           translations.LANG as Lang,
           setLoadingContent,
           (success) => {},
@@ -133,6 +133,9 @@ export default function RegisterForm() {
         />
       ) : (
         <BackIcon
+          left="3%"
+          top="3%"
+          color="#fff"
           onPress={() => {
             navigation.goBack();
           }}
@@ -142,7 +145,13 @@ export default function RegisterForm() {
       <View style={styles.authContainer}>
         <Form>
           <View>
-            <Text style={styles.header}>Register</Text>
+            <Text
+              style={[
+                styles.header,
+                {color: getColor(theme, 'primaryOrange')},
+              ]}>
+              Register
+            </Text>
           </View>
           <Item>
             <Input
