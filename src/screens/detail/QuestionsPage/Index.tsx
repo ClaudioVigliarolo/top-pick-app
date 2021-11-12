@@ -1,244 +1,28 @@
 import * as React from 'react';
-import {View, ScrollView, Text, TouchableOpacity, Alert} from 'react-native';
-import {copilot} from 'react-native-copilot';
-import {ThemeContext} from '../../../context/ThemeContext';
-import {
-  HelpScreen,
-  Lang,
-  Question,
-  Topic,
-} from '../../../interfaces/Interfaces';
-import {LocalizationContext} from '../../../context/LocalizationContext';
-import {getColor} from '../../../constants/theme/Themes';
-import ListItem from '../../../components/lists/ListItemCheckbox';
-import {
-  getQuestionsByTopic,
-  getRelatedTopics,
-  getTopicById,
-} from '../../../utils/sql';
-import styles from '../../../styles/styles';
-import {getFontSize} from '../../../constants/theme/Fonts';
-import {isFirstHelp, setFirstHelp} from '../../../utils/storage';
-import {HelpContext} from '../../../context/HelpContext';
-import {ListItemHelp, ButtonQuestionsHelp, SearchBarHelp} from './Help';
-import {COPILOT_OPTIONS} from '../../../constants/app/App';
-import {getTopicLevelColor, getTopicLevelLabel} from '../../../utils/utils';
+import {TabButton} from '../../../interfaces/Interfaces';
+import Tabs from '../../../components/buttons/Tabs';
+import QuestionsPage from './QuestionsPage';
+import AnswersPage from './AnswersPage';
 
-interface QuestionsPageProps {
-  copilotEvents: any;
-  start: any;
+export default function LibraryPage({
+  route,
+  navigation,
+}: {
   route: any;
   navigation: any;
-}
-
-function QuestionsPage({
-  copilotEvents,
-  navigation,
-  route,
-  start,
-}: QuestionsPageProps) {
-  const [questions, setQuestions] = React.useState<Question[]>([]);
-  const [topic, setTopic] = React.useState<Topic>({
-    id: 0,
-    title: '',
-  });
-  const [related, setRelated] = React.useState<Topic[]>([]);
-  const [filter, setFilter] = React.useState('');
-  const {theme, fontsize} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
+}) {
   const {id, title}: {id: number; title: string} = route.params;
-  const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
-  const [isCurrentPageHelp, setCurrentPageHelp] = React.useState<boolean>(
-    false,
-  );
-  let counter = questions.filter((q) => q.selected).length;
-
-  React.useEffect(() => {
-    (async () => {
-      setTopic({
-        id,
-        title,
-      });
-      //get topic info
-      const topic = await getTopicById(id);
-      if (topic) {
-        setTopic(topic);
-        const questions: Question[] = await getQuestionsByTopic(topic.id);
-        questions.forEach(function (element: Question) {
-          element['selected'] = false;
-        });
-        setQuestions(questions);
-        //get topic by id???˘
-        const related: Topic[] = await getRelatedTopics(
-          topic.ref_id as number,
-          translations.LANG as Lang,
-        );
-        setRelated(related);
-      }
-    })();
-  }, []);
-
-  React.useEffect(() => {
-    (async () => {
-      if (
-        help === HelpScreen.QUESTIONS_SCREEN ||
-        (await isFirstHelp(HelpScreen.QUESTIONS_SCREEN))
-      ) {
-        setCurrentPageHelp(true);
-      }
-    })();
-  }, [help]);
-
-  React.useEffect(() => {
-    copilotEvents.on('stop', () => {
-      setHelp(HelpScreen.NO_SCREEN);
-      setCurrentPageHelp(false);
-      setFirstHelp(HelpScreen.QUESTIONS_SCREEN);
-    });
-
-    copilotEvents.on('stepChange', (step: any) => setCurrentStep(step.order));
-
-    if (isCurrentPageHelp) {
-      //setting a function to handle the step change event
-      //To start the step by step Walk through
-      start();
-    }
-  }, [isCurrentPageHelp]);
-
-  const onSubmit = (): void => {
-    const newQuestions: Question[] = [];
-    questions.forEach(function (element: Question) {
-      element['selected'] && newQuestions.push(element);
-    });
-    navigation.navigate('Order', {
-      questions: newQuestions,
-      topic,
-    });
-  };
-
-  const onSelect = (index: number): void => {
-    const newQuestions = [...questions];
-    newQuestions[index]['selected'] = !newQuestions[index]['selected'];
-    setQuestions(newQuestions.slice());
-  };
-
-  return (
-    <React.Fragment>
-      <SearchBarHelp filter={filter} setFilter={setFilter} topic={topic} />
-      <ScrollView
-        style={[
-          styles.DefaultContainer,
-          {backgroundColor: getColor(theme, 'primaryBackground')},
-        ]}>
-        <View
-          style={{
-            backgroundColor: getColor(theme, 'primaryBackground'),
-            flexDirection: 'column',
-          }}>
-          <View style={{flexDirection: 'row'}}>
-            <Text
-              style={[
-                styles.QuestionsPagetitle,
-                {
-                  color: getColor(theme, 'lightGray'),
-                  fontSize: getFontSize(fontsize, 'fontSmall'),
-                },
-              ]}>
-              {translations.SOURCE_TOPICS + '  '}
-            </Text>
-            <Text
-              style={[
-                styles.QuestionsPagesource,
-                {
-                  color: getColor(theme, 'lightGray'),
-                  fontSize: getFontSize(fontsize, 'fontSmall'),
-                },
-              ]}>
-              {topic.source}
-            </Text>
-          </View>
-          <View style={[styles.QuestionsPagerelatedContainer]}>
-            <Text
-              style={[
-                styles.QuestionsPagetitle,
-                {
-                  color: getColor(theme, 'lightGray'),
-                  fontSize: getFontSize(fontsize, 'fontSmall'),
-                },
-              ]}>
-              {translations.RELATED_TOPICS + ' '}
-            </Text>
-            {related.map((related: Topic) => (
-              <TouchableOpacity
-                key={related.id}
-                onPress={() => {
-                  navigation.push('Questions', {
-                    screen: 'QuestionsScreen',
-                    params: {
-                      id: related.id,
-                      title: related.title,
-                    },
-                  });
-                }}>
-                <Text
-                  style={[
-                    styles.QuestionsPagerelatedText,
-                    {
-                      color: getColor(theme, 'primaryOrange'),
-                      fontSize: getFontSize(fontsize, 'fontSmall'),
-                    },
-                  ]}>
-                  {related.title}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View style={{flexDirection: 'row'}}>
-            <Text
-              style={[
-                styles.QuestionsPagetitle,
-                {
-                  color: getColor(theme, 'lightGray'),
-                  fontSize: getFontSize(fontsize, 'fontSmall'),
-                },
-              ]}>
-              {translations.LEVEL_TOPICS + ' '}
-            </Text>
-            <Text
-              style={[
-                styles.QuestionsPagesource,
-                {
-                  color: getTopicLevelColor(topic.level),
-                  fontSize: getFontSize(fontsize, 'fontSmall'),
-                },
-              ]}>
-              {getTopicLevelLabel(topic.level)}
-            </Text>
-          </View>
-        </View>
-
-        {isCurrentPageHelp && <ListItemHelp />}
-        {questions.map((item: Question, i: number) => {
-          if (item.title.toLowerCase().includes(filter.toLowerCase())) {
-            return (
-              <ListItem
-                key={item.id}
-                id={item.id}
-                text={item.title}
-                onSelect={() => onSelect(i)}
-                selected={item.selected ? true : false}
-              />
-            );
-          }
-        })}
-      </ScrollView>
-      <ButtonQuestionsHelp
-        counter={counter}
-        isHelp={isCurrentPageHelp}
-        onSubmit={onSubmit}
-      />
-    </React.Fragment>
-  );
+  const tabs: TabButton[] = [
+    {
+      heading: 'Questions',
+      children: <QuestionsPage id={id} title={title} />,
+      id: 0,
+    },
+    {
+      heading: 'Answers',
+      children: <AnswersPage />,
+      id: 1,
+    },
+  ];
+  return <Tabs tabs={tabs} initialPage={1} />;
 }
-export default copilot(COPILOT_OPTIONS)(QuestionsPage as any);

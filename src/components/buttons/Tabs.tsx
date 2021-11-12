@@ -28,6 +28,7 @@ const renderScrollableTab = (props: any) => {
         width: 400,
         height: 50,
         marginTop: 0,
+        backgroundColor: '#FF851B',
       }}
       tabsContainerStyle={{width: 400}}
     />
@@ -52,13 +53,13 @@ export default function TabButtons({tabs, initialPage = 0}: TabButtonsProps) {
           heading={tab.heading}
           tabStyle={{
             width: 150,
-            backgroundColor: getColor(theme, 'primaryBackground'),
+            backgroundColor: getColor(theme, 'primaryOrange'),
           }}
           activeTabStyle={{
             width: 150,
-            backgroundColor: getColor(theme, 'primaryBackground'),
+            backgroundColor: getColor(theme, 'lighterOrange'),
           }}
-          activeTextStyle={{color: getColor(theme, 'primaryOrange')}}
+          activeTextStyle={{color: getColor(theme, 'white')}}
           children={tab.children}
         />
       ))}

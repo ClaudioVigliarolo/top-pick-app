@@ -4,7 +4,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import styles from '../../styles/styles';
-import {getFontSize} from '../../constants/theme/Fonts';
 
 interface EditOverlayProps {
   isVisible: boolean;
@@ -39,15 +38,7 @@ const EditOverlay = ({
             size={35}
             style={styles.EditOverlayCloseIcon}
           />
-          <Text
-            style={[
-              styles.EditOverlayheader,
-              {
-                fontSize: getFontSize(fontsize, 'fontMed'),
-              },
-            ]}>
-            Editing Question
-          </Text>
+          <Text style={[styles.EditOverlayheader]}>Editing Question</Text>
 
           <View
             style={[

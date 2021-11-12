@@ -8,12 +8,12 @@ import translations from '../../context/translations';
 import {addReport} from '../../utils/api';
 import {Lang, Report} from '../../interfaces/Interfaces';
 import styles from '../../styles/styles';
-import {getFontSize} from '../../constants/theme/Fonts';
 import ListItemCheckboxModal from '../modals/ListItemCheckboxModal';
 import Clipboard from '@react-native-community/clipboard';
 import {AuthContext} from '../../context/AuthContext';
 import {StatusContext} from '../../context/StatusContext';
 import {getDeviceId} from '../../utils/utils';
+import {staticFontSizes} from '../../constants/theme/Fonts';
 
 interface ListItemCheckBoxProps {
   text: string;
@@ -21,6 +21,7 @@ interface ListItemCheckBoxProps {
   onSelect: (newVal: boolean) => void;
   modal?: boolean;
   id: number;
+  fontSize?: number;
 }
 
 const ListItemCheckBox = ({
@@ -28,9 +29,10 @@ const ListItemCheckBox = ({
   selected,
   onSelect,
   id,
+  fontSize = staticFontSizes.fontSmall,
   modal = true,
 }: ListItemCheckBoxProps) => {
-  const {theme, fontsize} = React.useContext(ThemeContext);
+  const {theme} = React.useContext(ThemeContext);
   const {user} = React.useContext(AuthContext);
   const {setRequiredAuthFunctionality} = React.useContext(StatusContext);
   const [isModalVisible, setModalVisible] = React.useState(false);
@@ -62,7 +64,7 @@ const ListItemCheckBox = ({
           <Text
             style={{
               color: getColor(theme, 'primaryText'),
-              fontSize: getFontSize(fontsize, 'fontSmall'),
+              fontSize,
             }}>
             {text.replace(/\s+/g, ' ').trim()}
           </Text>

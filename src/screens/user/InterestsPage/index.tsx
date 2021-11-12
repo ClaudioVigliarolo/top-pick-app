@@ -14,26 +14,13 @@ import {
   UserInterests,
 } from '../../../interfaces/Interfaces';
 import MultipleChoiceForm from '../../../components/forms/MultipleChoiceForm';
-import {formGoal, formInterests, formLevels, getForm} from './data';
-import BackIcon from '../../../components/icons/BackIcon';
+import {getForm} from './data';
 import StartForm from './StartForm';
 import EndForm from './EndForm';
 import {setUserInterests} from '../../../utils/firebase';
 import {AuthContext} from '../../../context/AuthContext';
 import {getStorageInterests, loadInterests} from '../../../utils/storage';
 import {useNavigation} from '@react-navigation/native';
-
-const loadSelectedGoals = (): UserGoal[] => {
-  return [];
-};
-
-const loadSelecteCategories = (): number[] => {
-  return [];
-};
-
-const loadSelectedLevel = (): TopicLevel => {
-  return -1;
-};
 
 const UserForm = () => {
   const [pagesHistory, setPagesHistory] = React.useState<

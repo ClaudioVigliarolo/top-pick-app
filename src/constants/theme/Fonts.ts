@@ -30,15 +30,15 @@ export const getFontSize = <K extends keyof FontSizes>(
 ): number => {
   switch (type) {
     case FontDimension.BIGGER:
-      return staticFontSizes[key] * 1.4;
+      return staticFontSizes[key] * 1.3;
     case FontDimension.BIG:
-      return staticFontSizes[key] * 1.2;
+      return staticFontSizes[key] * 1.1;
     case FontDimension.MEDIUM:
       return staticFontSizes[key];
     case FontDimension.SMALL:
-      return staticFontSizes[key] * 0.8;
+      return staticFontSizes[key] * 0.9;
     case FontDimension.SMALLER:
-      return staticFontSizes[key] * 0.6;
+      return staticFontSizes[key] * 0.8;
     default:
       return staticFontSizes[key];
   }

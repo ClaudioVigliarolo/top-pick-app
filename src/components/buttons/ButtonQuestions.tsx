@@ -4,7 +4,6 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import CustomButton from './CustomButton';
 import styles from '../../styles/styles';
-import {getFontSize} from '../../constants/theme/Fonts';
 interface ButtonQuestionsProps {
   onPress: () => void;
   text: string;
@@ -88,10 +87,8 @@ export default class ButtonQuestions extends React.Component<
             <NativeText
               style={[
                 styles.ButtonQuestionsText,
-
                 {
                   color: getColor(this.context.theme, 'primaryOrange'),
-                  fontSize: getFontSize(this.context.theme, 'fontMed'),
                 },
               ]}>
               {this.props.secondaryText}

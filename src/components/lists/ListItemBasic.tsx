@@ -4,7 +4,7 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import Icon from 'react-native-vector-icons/AntDesign';
 import styles from '../../styles/styles';
-import {getFontSize} from '../../constants/theme/Fonts';
+import {staticFontSizes} from '../../constants/theme/Fonts';
 import {ICON_SMALL} from '../../constants/theme/Dimensions';
 
 interface CustomListItemProps {
@@ -34,7 +34,7 @@ const CustomListItem = ({
           styles.ListItemBasicPrimaryText,
           {
             color: getColor(theme, 'primaryText'),
-            fontSize: getFontSize(fontsize, 'fontSmall'),
+            fontSize: staticFontSizes.fontSmall,
           },
         ]}>
         {text.replace(/\s+/g, ' ').trim()}
@@ -44,7 +44,7 @@ const CustomListItem = ({
           styles.ListItemBasicSecondaryText,
           {
             color: getColor(theme, 'lightGray'),
-            fontSize: getFontSize(fontsize, 'fontSmall'),
+            fontSize: staticFontSizes.fontSmall,
           },
         ]}>
         {secondaryText}

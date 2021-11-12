@@ -5,7 +5,7 @@ import {Topic} from '../../interfaces/Interfaces';
 import {Text, Button} from 'native-base';
 import {getColor} from '../../constants/theme/Themes';
 import styles from '../../styles/styles';
-import {getFontSize, staticFontSizes} from '../../constants/theme/Fonts';
+import {staticFontSizes} from '../../constants/theme/Fonts';
 
 interface ButtonsSectionProps {
   header: string;
@@ -21,7 +21,6 @@ const ButtonsSection = (props: ButtonsSectionProps) => {
         style={[
           styles.ButtonsSearchHeader,
           {
-            fontSize: getFontSize(fontsize, 'fontMed'),
             color: getColor(theme, 'primaryText'),
           },
         ]}>

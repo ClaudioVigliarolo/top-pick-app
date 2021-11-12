@@ -3,7 +3,7 @@ import {View, ScrollView} from 'react-native';
 import {LocalizationContext} from '../../context/LocalizationContext';
 import ListeItemCheck from '../../components/lists/ListeItemCheck';
 import styles from '../../styles/styles';
-import {FontDimension} from '../../constants/theme/Fonts';
+import {FontDimension, getFontSize} from '../../constants/theme/Fonts';
 import {FontsizeOption} from '../../interfaces/Interfaces';
 import {getStorageFontsize, setStorageFontsize} from '../../utils/storage';
 import {ThemeContext} from '../../context/ThemeContext';
@@ -45,6 +45,7 @@ export default function SelectThemePage() {
             selected={theme.value == fontsize}
             text={theme.title}
             onPress={() => onChangeCardtheme(index)}
+            fontSize={getFontSize(fontsize, 'fontSmallMed')}
           />
         </View>
       ))}

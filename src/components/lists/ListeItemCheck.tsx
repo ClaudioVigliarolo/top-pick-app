@@ -5,27 +5,32 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import IconCheck from 'react-native-vector-icons/Feather';
 import styles from '../../styles/styles';
-import {getFontSize} from '../../constants/theme/Fonts';
 
 interface ListItemCheckProps {
   text: string;
   onPress(): void;
   selected: boolean;
+  fontSize: number;
 }
 
-const ListItemCheck = (props: ListItemCheckProps) => {
-  const {theme, fontsize} = React.useContext(ThemeContext);
+const ListItemCheck = ({
+  selected,
+  fontSize,
+  onPress,
+  text,
+}: ListItemCheckProps) => {
+  const {theme} = React.useContext(ThemeContext);
 
   return (
-    <TouchableWithoutFeedback onPress={props.onPress}>
+    <TouchableWithoutFeedback onPress={onPress}>
       <ListItem style={styles.ListItemcontainer}>
         <View style={{maxWidth: '82%'}}>
           <Text
             style={{
               color: getColor(theme, 'primaryText'),
-              fontSize: getFontSize(fontsize, 'fontSmall'),
+              fontSize,
             }}>
-            {props.text.replace(/\s+/g, ' ').trim()}
+            {text.replace(/\s+/g, ' ').trim()}
           </Text>
         </View>
         <Right
@@ -36,7 +41,7 @@ const ListItemCheck = (props: ListItemCheckProps) => {
           <IconCheck
             name="check"
             size={30}
-            style={{display: props.selected ? 'flex' : 'none'}}
+            style={{display: selected ? 'flex' : 'none'}}
             color={getColor(theme, 'primaryOrange')}
           />
         </Right>

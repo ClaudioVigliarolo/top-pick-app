@@ -23,6 +23,7 @@ export default StyleSheet.create({
 
   ButtonQuestionsText: {
     textAlign: 'center',
+    fontSize: staticFontSizes.fontMed,
   },
 
   LibraryItemHeaderContainer: {},
@@ -30,7 +31,7 @@ export default StyleSheet.create({
   LibraryItemSubHeader: {
     fontWeight: 'bold',
     marginBottom: '5%',
-    textAlign: 'left',
+    textAlign: 'center',
     color: '#fff',
     fontSize: staticFontSizes.fontSmallMed,
   },
@@ -42,18 +43,17 @@ export default StyleSheet.create({
     fontSize: staticFontSizes.fontBigMed,
   },
   LibraryItemIconContainer: {},
-
   LibraryItemContainer: {
-    width: '80%',
+    width: '100%',
     height: 100,
     flex: 1,
+    padding: 10,
     borderRadius: 10,
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'orange',
-    marginTop: 30,
-    elevation: 5,
+    elevation: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.8,
@@ -74,6 +74,7 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
+    fontSize: staticFontSizes.fontMed,
   },
   ButtonsSearchButtonContainer: {
     flex: 1,
@@ -367,6 +368,7 @@ export default StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     marginBottom: 20,
+    fontSize: staticFontSizes.fontMed,
   },
 
   QuestionsPagerelatedText: {
@@ -375,6 +377,7 @@ export default StyleSheet.create({
     paddingTop: 5,
     textTransform: 'uppercase',
     textDecorationLine: 'underline',
+    fontSize: staticFontSizes.fontSmall,
   },
   QuestionsPagetitle: {
     textAlign: 'left',
@@ -382,12 +385,14 @@ export default StyleSheet.create({
     paddingTop: 5,
     textTransform: 'uppercase',
     fontStyle: 'italic',
+    fontSize: staticFontSizes.fontSmall,
   },
   QuestionsPagesource: {
     textAlign: 'left',
     paddingLeft: '3%',
     paddingTop: 5,
     textTransform: 'uppercase',
+    fontSize: staticFontSizes.fontSmall,
   },
   QuestionsPagerelatedContainer: {
     flexWrap: 'wrap',
@@ -470,9 +475,11 @@ export default StyleSheet.create({
     marginTop: '2%',
     textTransform: 'uppercase',
     color: '#fff',
+    fontSize: staticFontSizes.fontMed,
   },
 
   Sliderquestion: {
+    fontSize: staticFontSizes.fontBig,
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
