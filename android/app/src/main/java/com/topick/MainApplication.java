@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import io.xogus.reactnative.versioncheck.RNVersionCheckPackage;
 import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
 import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
@@ -14,7 +15,7 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
 import java.util.List;
-import com.wix.reactnativenotifications.RNNotificationsPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage; // <--- Import Package
 
 public class MainApplication extends Application implements ReactApplication {
 

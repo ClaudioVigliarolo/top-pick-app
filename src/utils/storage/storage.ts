@@ -49,7 +49,7 @@ export const isFirstLaunch = async (): Promise<boolean> => {
 
 export const setFirstLaunch = async () => {
   try {
-    AsyncStorage.setItem(keys.HAS_LAUNCHED, 'true');
+    await AsyncStorage.setItem(keys.HAS_LAUNCHED, 'true');
   } catch (error) {
     console.log(error);
   }
@@ -57,9 +57,31 @@ export const setFirstLaunch = async () => {
 
 export const setFirstUpdate = async () => {
   try {
-    AsyncStorage.setItem(keys.FIRST_UPDATED, 'true');
+    await AsyncStorage.setItem(keys.FIRST_UPDATED, 'true');
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const setStorageNotification = async (notificationId: number) => {
+  try {
+    await AsyncStorage.setItem(keys.NOTIFICATIONS, notificationId.toString());
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getStorageNotification = async (): Promise<number | null> => {
+  try {
+    const id = await AsyncStorage.getItem(keys.NOTIFICATIONS);
+    if (id === null) {
+      return null;
+    } else {
+      return parseInt(id);
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 

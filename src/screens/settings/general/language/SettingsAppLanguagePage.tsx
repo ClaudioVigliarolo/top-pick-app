@@ -1,9 +1,9 @@
 import React from 'react';
 import {View, ScrollView} from 'react-native';
-import {LocalizationContext} from '../../../context/LocalizationContext';
-import ListeItemCheck from '../../../components/lists/ListeItemCheck';
-import {appLanguages} from '../../../context/translations';
-import styles from '../../../styles/styles';
+import {LocalizationContext} from '../../../../context/LocalizationContext';
+import ListeItemCheck from '../../../../components/lists/ListeItemCheck';
+import {appLanguages} from '../../../../context/translations';
+import styles from '../../../../styles/styles';
 
 export default function SelectAppLanguagePage() {
   const {appLanguage, setAppLanguage} = React.useContext(LocalizationContext);

@@ -2,6 +2,7 @@ export default {
   CARDS_THEME: '@cards_theme',
   FONTSIZE: '@fontsize',
   APP_LANGUAGE: '@app_lang',
+  NOTIFICATIONS: '@notifications',
   CONTENT_LANGUAGE: '@content_lang',
   RECENT_SEARCH_KEY: '@recent_search',
   THEME_KEY: '@theme',

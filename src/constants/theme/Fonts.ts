@@ -23,7 +23,6 @@ export enum FontDimension {
   SMALL = 'small',
   SMALLER = 'smaller',
 }
-
 export const getFontSize = <K extends keyof FontSizes>(
   type: string,
   key: K,

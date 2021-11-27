@@ -1,15 +1,18 @@
 import React from 'react';
 import {View, ScrollView} from 'react-native';
-import {LocalizationContext} from '../../../context/LocalizationContext';
-import ListeItemCheck from '../../../components/lists/ListeItemCheck';
-import {StatusContext} from '../../../context/StatusContext';
-import translations, {contentLanguages} from '../../../context/translations';
-import {isUsedLanguage, setUsedLanguage} from '../../../utils/storage/storage';
-import StatusModal from '../../../components/modals/StatusModal';
-import {Lang} from '../../../interfaces/Interfaces';
-import styles from '../../../styles/styles';
-import {AuthContext} from '../../../context/AuthContext';
-import {getDeviceId, onTopicsUpdate} from '../../../utils/utils/utils';
+import {LocalizationContext} from '../../../../context/LocalizationContext';
+import ListeItemCheck from '../../../../components/lists/ListeItemCheck';
+import {StatusContext} from '../../../../context/StatusContext';
+import translations, {contentLanguages} from '../../../../context/translations';
+import {
+  isUsedLanguage,
+  setUsedLanguage,
+} from '../../../../utils/storage/storage';
+import StatusModal from '../../../../components/modals/StatusModal';
+import {Lang} from '../../../../interfaces/Interfaces';
+import styles from '../../../../styles/styles';
+import {AuthContext} from '../../../../context/AuthContext';
+import {getDeviceId, onTopicsUpdate} from '../../../../utils/utils/utils';
 
 export default function SettingsContentLanguagePage() {
   const {setContentLanguage, contentLanguage} = React.useContext(

@@ -13,6 +13,8 @@ import {
 } from './src/utils/storage/storage';
 import {AuthProvider} from './src/context/AuthContext';
 import StartSlider from './src/components/sliders/StartSlider';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import PushNotification from 'react-native-push-notification';
 
 const App = () => {
   const [isFirstLaunch, setFirstLaunch] = React.useState<boolean>(false);
@@ -22,6 +24,14 @@ const App = () => {
       setFirstLaunch(await hasAppLaunched());
       await RNBootSplash.hide({fade: true});
     })();
+
+    PushNotification.createChannel(
+      {
+        channelId: 'default', // (required)
+        channelName: 'default', // (required)
+      },
+      (created) => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+    );
   }, []);
 
   return (

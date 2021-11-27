@@ -109,7 +109,7 @@ export default function SettingsPage({navigation}: {navigation: any}) {
         {
           title: 'Notifications',
           type: SettingType.BASIC,
-          onPress: () => {},
+          onPress: () => navigation.navigate('Notifications'),
           id: 3,
         },
       ],

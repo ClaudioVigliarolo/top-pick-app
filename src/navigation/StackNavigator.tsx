@@ -16,10 +16,10 @@ import {getColor} from '../constants/theme/Themes';
 import {ICON_MED} from '../constants/theme/Dimensions';
 import SettingsPage from '../screens/settings/Index';
 import {StatusContext} from '../context/StatusContext';
-import SettingsAppLanguagePage from '../screens/settings/language/SettingsAppLanguagePage';
-import SettingsContentLanguagePage from '../screens/settings/language/SettingsContentLanguagePage';
-import SelectFontsize from '../screens/settings/theme/SettingsFontsizePage';
-import ThemePage from '../screens/settings/theme/SettingsCardthemePage';
+import SettingsAppLanguagePage from '../screens/settings/general/language/SettingsAppLanguagePage';
+import SettingsContentLanguagePage from '../screens/settings/general/language/SettingsContentLanguagePage';
+import SelectFontsize from '../screens/settings/appearance/SettingsFontsizePage';
+import ThemePage from '../screens/settings/appearance/SettingsCardthemePage';
 import translations from '../context/translations';
 import {staticFontSizes} from '../constants/theme/Fonts';
 import AllTopicsPage from '../screens/library/Topics/AllTopicsPage';
@@ -36,6 +36,7 @@ import NewLibraryPage from '../screens/library/Library/NewLibraryPage';
 import NewTopicsPage from '../screens/library/Topics/NewTopicsPage';
 import TopicsPage from '../screens/library/Topics/TopicsPage';
 import AnswersPage from '../screens/detail/QuestionsPage/ArticlesPage';
+import SettingsNotifications from '../screens/settings/general/notifications/SettingsNotifications';
 
 const Stack = createStackNavigator();
 
@@ -397,6 +398,27 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
         component={SettingsContentLanguagePage}
         options={{
           title: translations.CONTENT_LANGUAGE,
+          headerTintColor: getColor(theme, 'headerPrimary'),
+
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+          headerLeft: () => (
+            <BackStructure destination="Settings" navigation={navigation} />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name="Notifications"
+        component={SettingsNotifications}
+        options={{
+          title: 'Notifications',
           headerTintColor: getColor(theme, 'headerPrimary'),
 
           headerStyle: {

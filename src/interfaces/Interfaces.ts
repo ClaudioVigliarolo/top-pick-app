@@ -108,6 +108,12 @@ export interface FontsizeOption {
   value: FontDimension;
 }
 
+export enum NotificationTime {
+  DAILY,
+  WEEKLY,
+  NEVER,
+}
+
 export interface TabButton {
   children: React.ReactNode;
   heading: string;
