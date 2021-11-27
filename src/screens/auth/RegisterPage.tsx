@@ -15,25 +15,25 @@ import SkipIcon from '../../components/icons/SkipIcon';
 import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import BackIcon from '../../components/icons/BackIcon';
-import {isFirstLaunch as hasAppLaunched} from '../../utils/storage';
+import {isFirstLaunch as hasAppLaunched} from '../../utils/storage/storage';
 import {AuthContext} from '../../context/AuthContext';
 import {REDIRECT_HOME} from '../../constants/app/App';
-import {createClientDb} from '../../utils/api';
-import {Lang} from '../../interfaces/Interfaces';
-import translations from '../../context/translations';
+import {createClientDb} from '../../utils/cloud/api';
 import {StatusContext} from '../../context/StatusContext';
-import {createUserData} from '../../utils/firebase';
-import {getDeviceId, onTopicsUpdate} from '../../utils/utils';
+import {createUserData} from '../../utils/cloud/firebase';
+import {getDeviceId, onTopicsUpdate} from '../../utils/utils/utils';
+import {LocalizationContext} from '../../context/LocalizationContext';
 
-export default function RegisterForm() {
+export default function RegisterPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [isFirstLaunch, setFirstLaunch] = React.useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const {theme} = React.useContext(ThemeContext);
-  const {user, DBAuthKey, setDBAuthKey} = React.useContext(AuthContext);
+  const {user, setDBAuthKey} = React.useContext(AuthContext);
   const {setLoadingContent} = React.useContext(StatusContext);
+  const {contentLanguage} = React.useContext(LocalizationContext);
 
   const navigation = useNavigation();
 
@@ -50,7 +50,7 @@ export default function RegisterForm() {
         navigation.navigate('HomeScreen');
         onTopicsUpdate(
           user ? user.uid : await getDeviceId(),
-          translations.LANG as Lang,
+          contentLanguage,
           setLoadingContent,
           (success) => {},
         );
@@ -60,7 +60,6 @@ export default function RegisterForm() {
 
   const signUp = async () => {
     setLoading(true);
-    console.log('start');
     setError('');
     if (!email || !password) {
       setLoading(false);
@@ -86,7 +85,6 @@ export default function RegisterForm() {
         setError('That email address is invalid!');
       }
 
-      console.log(error);
       setError('Failed to create account');
     }
 

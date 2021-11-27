@@ -41,7 +41,7 @@ const NewTopicsModal = ({open, n}: {open: boolean; n: number}) => {
             zIndex: 100,
             width: 130,
             borderRadius: 3,
-            backgroundColor: getColor(theme, 'lighterOrange'),
+            backgroundColor: getColor(theme, 'lightOrange'),
             elevation: 5,
             shadowColor: '#000',
             shadowOffset: {width: 0, height: 1},

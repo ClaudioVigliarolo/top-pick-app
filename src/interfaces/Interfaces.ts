@@ -1,3 +1,4 @@
+import React from 'react';
 import {CardTemplates} from '../constants/theme/Cardtheme';
 import {FontDimension} from '../constants/theme/Fonts';
 import {Theme} from '../constants/theme/Themes';
@@ -12,6 +13,8 @@ export interface Topic {
   type?: TopicType;
   level?: TopicLevel;
   user_modified?: number;
+  description?: string;
+  image?: string;
 }
 
 export interface Category {
@@ -50,6 +53,16 @@ export interface Question {
   n?: number;
   user_modified?: number;
   lang?: string;
+  description?: string;
+  link?: string;
+}
+
+export interface NavTab {
+  id: number;
+  title: string;
+  onNav: () => void;
+  selected: boolean;
+  screen: React.ReactNode;
 }
 
 export interface Language {
@@ -99,6 +112,7 @@ export interface TabButton {
   children: React.ReactNode;
   heading: string;
   id: number;
+  visible?: boolean;
 }
 
 export interface TopicSection {
@@ -149,7 +163,8 @@ export interface User {
 export interface UserSettings {
   cardTheme: keyof CardTemplates;
   fontSize: FontDimension;
-  language: Lang;
+  appLanguage: Lang;
+  contentLanguage: Lang;
   darkMode: Theme;
   isAutoUpdate: boolean;
 }

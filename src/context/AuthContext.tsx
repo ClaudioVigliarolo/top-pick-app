@@ -1,11 +1,7 @@
 import React from 'react';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {WEB_CLIENT_ID} from '../config/config';
-import {UserData, UserInterests, UserSettings} from '../interfaces/Interfaces';
-import {loadInterests, loadSettings} from '../utils/storage';
-
 export const AuthContext = React.createContext({
   user: null as FirebaseAuthTypes.User | null,
   setUser: (user: FirebaseAuthTypes.User | null) => {},
@@ -23,28 +19,13 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 
   React.useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged as any);
-    return subscriber; // unsubscribe on unmount
+    return subscriber;
   }, []);
 
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User) => {
-    setUser(user);
-
     if (user) {
-      //transaction
-      const userDocument = (
-        await firestore().collection('Users').doc(user.uid).get()
-      ).data();
-
-      if (userDocument) {
-        //set db key to sign requests
-        setDBAuthKey(userDocument.DBAuthKey);
-        //load settings
-        await loadSettings(userDocument.settings as UserSettings);
-        if (userDocument.interests)
-          await loadInterests(userDocument.interests as UserInterests);
-      }
+      setUser(user);
     }
-    console.log('LOGGG', user);
   };
 
   return (

@@ -1,7 +1,0 @@
-{
-    "versions": [
-      { "version": 2,
-        "statements": [ "ALTER TABLE questions ADD COLUMN n NUMERIC NOT NULL DEFAULT 0;" ]
-      }
-     ]
-  }

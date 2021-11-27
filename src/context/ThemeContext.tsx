@@ -5,7 +5,7 @@ import {
   getStorageCardtheme,
   getStorageFontsize,
   getStorageTheme,
-} from '../utils/storage';
+} from '../utils/storage/storage';
 import {Theme} from '../constants/theme/Themes';
 /*
     this context is used to notify the app about his state 
@@ -48,7 +48,6 @@ export const ThemeProvider = ({children}: {children: React.ReactNode}) => {
     setCardtheme(newTheme);
   };
 
-  console.log('RUOCO', cardTheme);
   return (
     <ThemeContext.Provider
       value={{

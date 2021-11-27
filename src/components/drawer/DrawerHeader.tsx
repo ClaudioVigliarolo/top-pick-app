@@ -11,7 +11,7 @@ import {getColor} from '../../constants/theme/Themes';
 import styles from '../../styles/styles';
 import {Left} from 'native-base';
 import {AuthContext} from '../../context/AuthContext';
-import {syncToServer} from '../../utils/api';
+import {syncToServer} from '../../utils/cloud/api';
 import {StatusContext} from '../../context/StatusContext';
 
 const CustomDrawer = ({navigation}: {navigation: any}) => {

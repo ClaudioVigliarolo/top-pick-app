@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Form, Item, Input} from 'native-base';
 import {View} from 'native-base';
 import {Alert, Text, TouchableOpacity} from 'react-native';
@@ -7,33 +7,35 @@ import {getColor} from '../../constants/theme/Themes';
 import {ThemeContext} from '../../context/ThemeContext';
 import styles from '../../styles/styles';
 import {useNavigation} from '@react-navigation/native';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import auth, {firebase, FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {
   GoogleSignin,
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
 import firestore from '@react-native-firebase/firestore';
 import BackIcon from '../../components/icons/BackIcon';
-import {isFirstLaunch as hasAppLaunched} from '../../utils/storage';
+import {isFirstLaunch as hasAppLaunched} from '../../utils/storage/storage';
 import SkipIcon from '../../components/icons/SkipIcon';
 import {AuthContext} from '../../context/AuthContext';
 import {REDIRECT_HOME} from '../../constants/app/App';
-import translations from '../../context/translations';
 import {Lang, SettingType, UserSettings} from '../../interfaces/Interfaces';
 import {StatusContext} from '../../context/StatusContext';
-import {createUserData} from '../../utils/firebase';
-import {createClientDb} from '../../utils/api';
-import {getDeviceId, onTopicsUpdate} from '../../utils/utils';
-import Settings from '../../components/tabs/Tab';
+import {createUserData} from '../../utils/cloud/firebase';
+import {createClientDb} from '../../utils/cloud/api';
+import DialogInput from 'react-native-dialog-input';
 export default function LoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
+  const [
+    ismodalPasswordReset,
+    setIsModalPasswordReset,
+  ] = React.useState<boolean>(false);
   const [isFirstLaunch, setFirstLaunch] = React.useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const {theme} = React.useContext(ThemeContext);
   const {user, setDBAuthKey} = React.useContext(AuthContext);
-  const {setLoadingContent} = React.useContext(StatusContext);
+  const {onContentUpdate} = React.useContext(StatusContext);
   const {setTheme, setCardtheme, setFontsize} = React.useContext(ThemeContext);
 
   const navigation = useNavigation();
@@ -49,18 +51,12 @@ export default function LoginForm() {
     if (user) {
       setTimeout(async () => {
         navigation.navigate('HomeScreen');
-        onTopicsUpdate(
-          user ? user.uid : await getDeviceId(),
-          translations.LANG as Lang,
-          setLoadingContent,
-          (success) => {},
-        );
+        onContentUpdate();
       }, REDIRECT_HOME);
     }
   }, [user]);
 
-  const loadSettings = async (user: FirebaseAuthTypes.User) => {
-    console.log('GIA PRESENTE LLLOADING');
+  const checkLanguageDownload = async (user: FirebaseAuthTypes.User) => {
     const userDocument = (
       await firestore().collection('Users').doc(user.uid).get()
     ).data();
@@ -77,8 +73,6 @@ export default function LoginForm() {
   };
   const signIn = async () => {
     setLoading(true);
-    console.log('start');
-    setError('');
     if (!email || !password) {
       setLoading(false);
       setError('please all fields');
@@ -86,9 +80,7 @@ export default function LoginForm() {
     }
     try {
       const res = await auth().signInWithEmailAndPassword(email, password);
-      console.log('User signed in!');
-      console.log('KLLL SETTINGS');
-      loadSettings(res.user);
+      checkLanguageDownload(res.user);
     } catch (error) {
       setError('Invalid Credentials');
     }
@@ -103,7 +95,6 @@ export default function LoginForm() {
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       // Sign-in the user with the credential
       const res = await auth().signInWithCredential(googleCredential);
-      console.log('MIE INFOOOOOOOOOOOOO', res.additionalUserInfo);
       if (res.additionalUserInfo?.isNewUser) {
         //create user data
         Alert.alert('is nw');
@@ -112,13 +103,21 @@ export default function LoginForm() {
           await createClientDb(res.user.uid, userData.DBAuthKey);
           setDBAuthKey(userData.DBAuthKey);
         }
-      } else {
-        loadSettings(res.user);
       }
     } catch (error) {
       setError('Failed to sign in with Google');
     }
     setLoading(false);
+  };
+
+  const handlePasswordReset = async (newMail: string) => {
+    try {
+      console.log('nnnn', newMail);
+      await firebase.auth().sendPasswordResetEmail(newMail);
+    } catch (error) {
+      console.log(error);
+    }
+    setIsModalPasswordReset(false);
   };
 
   return (
@@ -215,6 +214,30 @@ export default function LoginForm() {
               </Text>
             </TouchableOpacity>
           </View>
+          <View style={styles.marginSmall}>
+            <TouchableOpacity
+              onPress={() => {
+                setIsModalPasswordReset(true);
+              }}>
+              <Text
+                style={[
+                  styles.changeAuthText,
+                  {
+                    color: getColor(theme, 'darkOrange'),
+                  },
+                ]}>
+                Forgot Password
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <DialogInput
+            isDialogVisible={ismodalPasswordReset}
+            title={'Reset Password'}
+            message={'You can reset your password at this email'}
+            hintInput={'example@gmail.com'}
+            submitInput={handlePasswordReset}
+            closeDialog={() => setIsModalPasswordReset(false)}
+          />
         </Form>
       </View>
     </View>

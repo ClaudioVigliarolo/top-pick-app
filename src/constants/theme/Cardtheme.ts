@@ -13,7 +13,6 @@ export const getCardTemplate = <K extends keyof CardTemplates>(
   theme: Theme,
   key: K,
 ): string => {
-  console.log('MY KKKKKK', theme, key);
   switch (theme) {
     case Theme.LIGHT:
       return cardTemplatesLight[key];

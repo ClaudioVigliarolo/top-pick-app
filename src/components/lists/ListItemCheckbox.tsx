@@ -5,15 +5,16 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import CheckBox from '@react-native-community/checkbox';
 import translations from '../../context/translations';
-import {addReport} from '../../utils/api';
+import {addReport} from '../../utils/cloud/api';
 import {Lang, Report} from '../../interfaces/Interfaces';
 import styles from '../../styles/styles';
 import ListItemCheckboxModal from '../modals/ListItemCheckboxModal';
 import Clipboard from '@react-native-community/clipboard';
 import {AuthContext} from '../../context/AuthContext';
 import {StatusContext} from '../../context/StatusContext';
-import {getDeviceId} from '../../utils/utils';
+import {getDeviceId} from '../../utils/utils/utils';
 import {staticFontSizes} from '../../constants/theme/Fonts';
+import {LocalizationContext} from '../../context/LocalizationContext';
 
 interface ListItemCheckBoxProps {
   text: string;
@@ -35,6 +36,7 @@ const ListItemCheckBox = ({
   const {theme} = React.useContext(ThemeContext);
   const {user} = React.useContext(AuthContext);
   const {setRequiredAuthFunctionality} = React.useContext(StatusContext);
+  const {contentLanguage} = React.useContext(LocalizationContext);
   const [isModalVisible, setModalVisible] = React.useState(false);
 
   const closeModal = () => {
@@ -54,7 +56,7 @@ const ListItemCheckBox = ({
       reason,
       client_id: user ? user.uid : await getDeviceId(),
     };
-    addReport(newReport, translations.LANG as Lang);
+    addReport(newReport, contentLanguage);
   };
 
   return (

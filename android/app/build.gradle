@@ -133,9 +133,9 @@ android {
         applicationId "com.topick"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 19
+        versionCode 20
         multiDexEnabled true
-        versionName "15.3"
+        versionName "15.4"
     }
     splits {
         abi {
@@ -195,6 +195,10 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
     implementation 'com.google.firebase:firebase-analytics'
+
+    implementation project(':react-native-notifications')
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+
     //noinspection GradleDynamicVersion
     implementation 'com.android.support:multidex:1.0.3'  //with support libraries
     implementation "com.facebook.react:react-native:+"  // From node_modules

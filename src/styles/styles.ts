@@ -387,6 +387,12 @@ export default StyleSheet.create({
     fontStyle: 'italic',
     fontSize: staticFontSizes.fontSmall,
   },
+  QuestionsPageDescription: {
+    textAlign: 'left',
+    paddingLeft: '3%',
+    paddingTop: 5,
+    fontSize: staticFontSizes.fontSmall,
+  },
   QuestionsPagesource: {
     textAlign: 'left',
     paddingLeft: '3%',

@@ -14,6 +14,7 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
 import java.util.List;
+import com.wix.reactnativenotifications.RNNotificationsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

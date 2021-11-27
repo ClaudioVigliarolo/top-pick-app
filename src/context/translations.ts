@@ -4,7 +4,7 @@ import {Lang, Language} from '../interfaces/Interfaces';
 // (tip: move them in separate JSON files and import them)
 export const DEFAULT_LANGUAGE = Lang.english;
 
-export const defaultLanguages: Language[] = [
+export const appLanguages: Language[] = [
   {
     label: 'English',
     value: Lang.english,
@@ -16,6 +16,17 @@ export const defaultLanguages: Language[] = [
   {
     label: 'Français',
     value: Lang.french,
+  },
+  {
+    label: 'Español',
+    value: Lang.spanish,
+  },
+];
+
+export const contentLanguages: Language[] = [
+  {
+    label: 'English',
+    value: Lang.english,
   },
   {
     label: 'Español',
@@ -59,7 +70,8 @@ const translations = {
     START: 'Iniziamo!',
     STEP_1_TITLE: 'Step 1: Scegli',
     STEP_1_DESCRIPTION: 'Premi su una carta per selezionare il topic',
-    LANGUAGE: 'Seleziona lingua',
+    APP_LANGUAGE: 'Lingua app',
+    CONTENT_LANGUAGE: 'Lingua contenuti',
     CARD_THEME: 'Tema carte',
     STEP_2_TITLE: 'Step 2: Seleziona',
     STEP_2_DESCRIPTION:
@@ -167,7 +179,8 @@ const translations = {
     CATEGORIES: 'Categories',
     FAVOURITES: 'Favourites',
     SETTINGS: 'Settings',
-    LANGUAGE: 'Select Language',
+    APP_LANGUAGE: 'App Language',
+    CONTENT_LANGUAGE: 'Content Language',
     SEARCH: 'Search',
     QUESTIONS: 'Questions',
     LIBRARY: 'Library',
@@ -291,7 +304,8 @@ const translations = {
     CATEGORIES: 'Catégories',
     FAVOURITES: 'Favoris',
     SETTINGS: 'Paramètres',
-    LANGUAGE: 'Sélectionner la langue',
+    APP_LANGUAGE: "langue de l'appli",
+    CONTENT_LANGUAGE: 'langue du contenu',
     SEARCH: 'Chercher',
     DIALOGS: 'dialogues',
     QUESTIONS: 'Questions',
@@ -415,7 +429,8 @@ const translations = {
     CATEGORIES: 'Categorías',
     FAVOURITES: 'Favoritos',
     SETTINGS: 'Ajustes',
-    LANGUAGE: 'Seleccione el idioma',
+    APP_LANGUAGE: 'idioma de la aplicación',
+    CONTENT_LANGUAGE: 'idioma del contenido',
     SEARCH: 'Buscar',
     QUESTIONS: 'Preguntas',
     SIGN_IN: 'iniciar sesión',

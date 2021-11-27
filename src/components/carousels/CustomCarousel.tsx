@@ -4,7 +4,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ThemeContext} from '../../context/ThemeContext';
 import {Topic} from '../../interfaces/Interfaces';
 import Carousel from 'react-native-snap-carousel'; // Version can be specified in package.json
-import {scrollInterpolator, animatedStyles} from '../../utils/animations';
+import {scrollInterpolator, animatedStyles} from '../../utils/utils/animations';
 import {useIsFocused} from '@react-navigation/native';
 import {getCardTemplate} from '../../constants/theme/Cardtheme';
 import styles from '../../styles/styles';

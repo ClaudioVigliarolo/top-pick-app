@@ -21,10 +21,7 @@ export const createPDF = async (topic: string, htmlContent: string) => {
       directory: 'Top Pick',
     };
     let file: Pdf = await RNHTMLtoPDF.convert(options);
-    if (file.filePath)
-      FileViewer.open(file.filePath).catch((error) => {
-        console.log('error opening');
-      });
+    if (file.filePath) FileViewer.open(file.filePath).catch((error) => {});
   }
 };
 

@@ -15,11 +15,19 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import {copilot} from 'react-native-copilot';
 import EditOverlay from '../../../components/overlays/EditOverlay';
-import {addQuestion, toggleLike, updateQuestion} from '../../../utils/sql';
+import {
+  addQuestion,
+  toggleLike,
+  updateQuestion,
+} from '../../../utils/storage/sql';
 import {HelpContext} from '../../../context/HelpContext';
 import {AddBarHelp, BottomButtonHelp, ListItemHelp} from './Help';
 import {ActionButtonLabels, createPDF, getHtmlTemplate} from './utils';
-import {hashCode, isFirstHelp, setFirstHelp} from '../../../utils/storage';
+import {
+  hashCode,
+  isFirstHelp,
+  setFirstHelp,
+} from '../../../utils/storage/storage';
 import {
   COPILOT_OPTIONS,
   USER_QUESTION_PRIORITY_N,
@@ -27,6 +35,7 @@ import {
 import ActionButtons from '../../../components/buttons/ActionButtons';
 import {StatusContext} from '../../../context/StatusContext';
 import {AuthContext} from '../../../context/AuthContext';
+import translations from '../../../context/translations';
 interface OrderPageProps {
   copilotEvents: any;
   start: any;
@@ -41,7 +50,7 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
   const [isMenuOptionShown, showMenuOption] = React.useState<boolean>(false);
   const [isEditing, setEditing] = React.useState<boolean>(false);
   const {theme} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
+  const {contentLanguage} = React.useContext(LocalizationContext);
   const {setHelp, help, setCurrentStep} = React.useContext(HelpContext);
   const {user} = React.useContext(AuthContext);
 
@@ -173,7 +182,7 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
         topic.id,
         questionText,
         USER_QUESTION_PRIORITY_N,
-        translations.LANG as Lang,
+        contentLanguage,
       )
     ) {
       setSyncUserContent(false);
@@ -193,7 +202,7 @@ function OrderPage({copilotEvents, navigation, route, start}: OrderPageProps) {
       case translations.EXPORT_TO_PDF:
         createPDF(
           topic.title,
-          getHtmlTemplate(questions, topic.title, translations.LANG as Lang),
+          getHtmlTemplate(questions, topic.title, contentLanguage),
         );
         break;
 

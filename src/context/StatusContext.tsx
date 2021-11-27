@@ -2,26 +2,32 @@ import React from 'react';
 import {Linking, Platform} from 'react-native';
 import VersionCheck from 'react-native-version-check';
 import StatusModal from '../components/modals/StatusModal';
-import {Lang} from '../interfaces/Interfaces';
+import firestore from '@react-native-firebase/firestore';
+
 import {
   checkClientSync,
   checkUpdates,
   syncToServer,
   updateClient,
   updateTopics,
-} from '../utils/api';
+} from '../utils/cloud/api';
 import {
   getStorageAutomaticUpdate,
   isFirstUpdate,
+  loadInterests,
+  loadSettings,
   setFirstUpdate,
   setStorageIsUpdated,
   setUsedLanguage,
-} from '../utils/storage';
+} from '../utils/storage/storage';
 import {AuthContext} from './AuthContext';
 import {LocalizationContext} from './LocalizationContext';
 import * as RootNavigation from '../navigation/RootNavigation';
-import {getDeviceId, getDifferentLang, isConnected} from '../utils/utils';
+import {getDeviceId, isConnected} from '../utils/utils/utils';
 import {APP_ID_ANDROID, APP_ID_IOS} from '../constants/app/App';
+import translations from './translations';
+import {ThemeContext} from './ThemeContext';
+import {UserInterests, UserSettings} from '../interfaces/Interfaces';
 
 /*
     this context is used to notify the app about his state 
@@ -42,7 +48,9 @@ export const StatusContext = React.createContext({
   setSyncUserContentError: (value: boolean) => {},
   setSyncUserContent: (value: boolean) => {},
   setRequiredAuthFunctionality: (value: boolean) => {},
+  onContentUpdate: () => {},
   onCheckContentUpdates: () => {},
+  forceRefresh: 0,
 });
 
 export const StatusProvider = ({children}: {children: React.ReactNode}) => {
@@ -76,12 +84,19 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     setRequiredAuthFunctionality,
   ] = React.useState<boolean>(false);
 
-  const {translations, setAppLanguage} = React.useContext(LocalizationContext);
-  const {user, DBAuthKey} = React.useContext(AuthContext);
+  const [forceRefresh, setForceRefresh] = React.useState<number>(0);
+
+  const {
+    setContentLanguage,
+    contentLanguage,
+    setAppLanguage,
+  } = React.useContext(LocalizationContext);
+  const {user, DBAuthKey, setDBAuthKey} = React.useContext(AuthContext);
+  const {setCardtheme, setFontsize, setTheme} = React.useContext(ThemeContext);
 
   React.useEffect(() => {
     (async () => {
-      if (await isFirstUpdate()) handleFirstUpdate();
+      if (await isFirstUpdate()) onContentUpdate();
       //check app is updated
       if (!(await onCheckAppUpdates())) {
         //check content
@@ -93,9 +108,24 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
   React.useEffect(() => {
     (async () => {
       //check user data
-      if (DBAuthKey) await onSyncUserData();
+      if (user) {
+        await onSyncUserData();
+        const userDocument = (
+          await firestore().collection('Users').doc(user.uid).get()
+        ).data();
+        if (userDocument) {
+          //set db key to sign requests
+          setDBAuthKey(userDocument.DBAuthKey);
+          //load settings
+          await loadSettings(userDocument.settings as UserSettings);
+          loadCurrentSettings(userDocument.settings as UserSettings);
+          if (userDocument.interests) {
+            await loadInterests(userDocument.interests as UserInterests);
+          }
+        }
+      }
     })();
-  }, [DBAuthKey]);
+  }, [user]);
 
   const fetchUserSync = async () => {
     if (DBAuthKey) {
@@ -108,6 +138,14 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
       }
       setSyncUserContentLoading(false);
     }
+  };
+
+  const loadCurrentSettings = (settings: UserSettings) => {
+    setTheme(settings.darkMode);
+    setCardtheme(settings.cardTheme);
+    setFontsize(settings.fontSize);
+    setAppLanguage(settings.appLanguage);
+    setContentLanguage(settings.contentLanguage);
   };
 
   const goSignIn = () => {
@@ -123,7 +161,6 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     if (DBAuthKey) {
       setSyncUserContentLoading(true);
       const syncedResponse = await checkClientSync(DBAuthKey);
-      console.log('synced respo', syncedResponse);
       if (syncedResponse) {
         if (syncedResponse.already_synced) {
           setSyncUserContent(true);
@@ -133,7 +170,6 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
           setSyncUserContent(false);
         } else {
           //load content from server
-          console.log('NEEEDS DOWNLOAD');
           await fetchUserSync();
         }
       }
@@ -154,7 +190,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
 
   const onCheckContentUpdates = async () => {
     if (await isConnected()) {
-      const isUpdated = await checkUpdates(translations.LANG as Lang);
+      const isUpdated = await checkUpdates(contentLanguage);
       setUpdatedContent(isUpdated);
       setStorageIsUpdated(isUpdated);
 
@@ -162,7 +198,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
         setLoadingContent(true);
         const hasUpdated = await updateTopics(
           user ? user.uid : await getDeviceId(),
-          translations.LANG as Lang,
+          contentLanguage,
         );
         setLoadingContent(false);
         setUpdatedContent(hasUpdated);
@@ -174,31 +210,27 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
     setCheckUpdates(false);
   };
 
-  const handleFirstUpdate = async () => {
+  const onContentUpdate = async () => {
+    console.log('UPDATE CONTENT WITH ', contentLanguage);
     setLoadingContent(true);
-    await setUsedLanguage(translations.LANG as Lang);
+    await setUsedLanguage(contentLanguage);
     const hasFirstUpdated = await updateTopics(
       user ? user.uid : await getDeviceId(),
-      translations.LANG as Lang,
+      contentLanguage,
     );
-    setLoadingContent(false);
     setUpdatedContent(hasFirstUpdated);
-
+    setLoadingContent(false);
     if (hasFirstUpdated) {
-      const currLang = translations.LANG as Lang;
-      setAppLanguage(
-        getDifferentLang(currLang, translations.getAvailableLanguages()),
-      );
-      //trick for reloading loaded component's questions
-      setTimeout(() => {
-        setAppLanguage(currLang);
-      }, 250);
+      const currLang = contentLanguage;
+      setContentLanguage(currLang);
+      setForceRefresh((forceRefresh) => forceRefresh + 1);
       setRequiredContentUpdate(false);
       setFirstUpdate();
     } else {
       setRequiredContentUpdate(true);
     }
   };
+
   const onSetLoadingContent = (newVal: boolean) => {
     setLoadingContent(newVal);
   };
@@ -250,6 +282,8 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
         isSyncUserContentError,
         isSyncUserContent,
         isRequiredAuthFunctionality,
+        onContentUpdate,
+        forceRefresh,
         setLoadingContent: onSetLoadingContent,
         setUpdatedContent: onSetUpdatedContent,
         setSyncUserContentLoading: onsetSyncUserContentLoading,
@@ -301,7 +335,7 @@ export const StatusProvider = ({children}: {children: React.ReactNode}) => {
         confirmText={translations.DOWNLOAD}
         onConfirmPressed={() => {
           setRequiredContentUpdate(false);
-          handleFirstUpdate();
+          onContentUpdate();
         }}
         message={translations.UPDATE_CONTENT_REQUIRED_MESSAGE}
       />

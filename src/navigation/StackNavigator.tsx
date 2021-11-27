@@ -4,22 +4,22 @@ import {createStackNavigator} from '@react-navigation/stack';
 import IconBack from 'react-native-vector-icons/MaterialIcons';
 import IconMenu from 'react-native-vector-icons/MaterialIcons';
 import IconOptions from 'react-native-vector-icons/MaterialCommunityIcons';
-import HomePage from '../screens/HomePage/HomePage/HomePage';
+import HomePage from '../screens/home/HomePage/HomePage';
 import LevelsPage from '../screens/library/Levels/Index';
 import {ThemeContext} from '../context/ThemeContext';
 import QuestionsPage from '../screens/detail/QuestionsPage/Index';
 import OrderPage from '../screens/detail/OrderPage/Index';
-import {LocalizationContext} from '../context/LocalizationContext';
 import FavouritesPage from '../screens/user/FavouritesPage/Index';
-import SearchPage from '../screens/HomePage/SearchPage/SearchPage';
+import SearchPage from '../screens/home/SearchPage/SearchPage';
 import PresentationPage from '../screens/detail/PresentationPage/PresentationPage';
 import {getColor} from '../constants/theme/Themes';
 import {ICON_MED} from '../constants/theme/Dimensions';
-import SettingsPage from '../screens/settings/SettingsPage';
+import SettingsPage from '../screens/settings/Index';
 import {StatusContext} from '../context/StatusContext';
-import SelectLanguagePage from '../screens/settings/SettingsLanguagePage';
-import SelectFontsize from '../screens/settings/SettingsFontsizePage';
-import ThemePage from '../screens/settings/SettingsCardthemePage';
+import SettingsAppLanguagePage from '../screens/settings/language/SettingsAppLanguagePage';
+import SettingsContentLanguagePage from '../screens/settings/language/SettingsContentLanguagePage';
+import SelectFontsize from '../screens/settings/theme/SettingsFontsizePage';
+import ThemePage from '../screens/settings/theme/SettingsCardthemePage';
 import translations from '../context/translations';
 import {staticFontSizes} from '../constants/theme/Fonts';
 import AllTopicsPage from '../screens/library/Topics/AllTopicsPage';
@@ -29,12 +29,13 @@ import StatusBar from '../components/bars/StatusBar';
 import {HelpScreen} from '../interfaces/Interfaces';
 import LoginPage from '../screens/auth/LoginPage';
 import RegisterPage from '../screens/auth/RegisterPage';
-import SettingsResetPage from '../screens/settings/SettingsResetPage';
+import SettingsResetPage from '../screens/settings/advanced/SettingsResetPage';
 import InterestsPage from '../screens/user/InterestsPage/index';
 import DetailsPage from '../screens/user/DetailsPage/index';
 import NewLibraryPage from '../screens/library/Library/NewLibraryPage';
 import NewTopicsPage from '../screens/library/Topics/NewTopicsPage';
 import TopicsPage from '../screens/library/Topics/TopicsPage';
+import AnswersPage from '../screens/detail/QuestionsPage/ArticlesPage';
 
 const Stack = createStackNavigator();
 
@@ -48,7 +49,7 @@ const NavigationDrawerStructure = (props: any) => {
   };
   return (
     <View style={{flexDirection: 'row'}}>
-      <TouchableOpacity onPress={() => toggleDrawer()}>
+      <TouchableOpacity activeOpacity={0.8} onPress={() => toggleDrawer()}>
         <IconMenu
           name="menu"
           color={getColor(theme, 'headerPrimary')}
@@ -70,11 +71,32 @@ interface BackStructureProps {
 }
 
 const BackStructure = (props: BackStructureProps) => {
+  const [disabled, setDisabled] = React.useState<boolean>(false);
   const {theme} = React.useContext(ThemeContext);
+  React.useEffect(() => {
+    let isMounted = true;
+    if (disabled) {
+      setTimeout(() => {
+        if (isMounted) setDisabled(false);
+      }, 500);
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [disabled]);
+
+  //debounce effect for nav (causing no screen to nav error)
+  const onDebounce = () => {
+    setDisabled(true);
+  };
+
   return (
     <View style={{flexDirection: 'row'}}>
       <TouchableOpacity
+        activeOpacity={0.8}
+        disabled={disabled}
         onPress={() => {
+          onDebounce();
           props.destination
             ? props.navigation.navigate(props.destination)
             : props.navigation.goBack();
@@ -122,7 +144,6 @@ const OptionsStructure = ({screen}: {screen: HelpScreen}) => {
 
 const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
 
   return (
     <Stack.Navigator initialRouteName="LibraryScreen">
@@ -282,7 +303,6 @@ const LibraryStack = ({route, navigation}: {route: any; navigation: any}) => {
 
 const FavouritesStack = ({navigation}: {navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
 
   return (
     <Stack.Navigator
@@ -321,7 +341,6 @@ const FavouritesStack = ({navigation}: {navigation: any}) => {
 
 const SettingsStack = ({navigation}: {navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
 
   return (
     <Stack.Navigator
@@ -353,10 +372,31 @@ const SettingsStack = ({navigation}: {navigation: any}) => {
       />
 
       <Stack.Screen
-        name="Language"
-        component={SelectLanguagePage}
+        name="AppLanguage"
+        component={SettingsAppLanguagePage}
         options={{
-          title: translations.LANGUAGE,
+          title: translations.APP_LANGUAGE,
+          headerTintColor: getColor(theme, 'headerPrimary'),
+
+          headerStyle: {
+            backgroundColor: getColor(theme, 'primaryHeaderBackground'),
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontFamily: 'arial',
+            textTransform: 'capitalize',
+          },
+          headerLeft: () => (
+            <BackStructure destination="Settings" navigation={navigation} />
+          ),
+        }}
+      />
+
+      <Stack.Screen
+        name="ContentLanguage"
+        component={SettingsContentLanguagePage}
+        options={{
+          title: translations.CONTENT_LANGUAGE,
           headerTintColor: getColor(theme, 'headerPrimary'),
 
           headerStyle: {
@@ -545,7 +585,6 @@ const HomeStack = ({navigation}: {navigation: any}) => {
 };
 
 const SearchStack = () => {
-  const {translations} = React.useContext(LocalizationContext);
   return (
     <Stack.Navigator initialRouteName="Search">
       <Stack.Screen
@@ -569,7 +608,6 @@ const SearchStack = () => {
 };
 
 const AuthStack = () => {
-  const {translations} = React.useContext(LocalizationContext);
   return (
     <Stack.Navigator initialRouteName="LoginScreen">
       <Stack.Screen
@@ -594,7 +632,6 @@ const AuthStack = () => {
 
 const QuestionsStack = ({navigation}: {navigation: any}) => {
   const {theme} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
 
   return (
     <Stack.Navigator initialRouteName="QuestionsScreen">

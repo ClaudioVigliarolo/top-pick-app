@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {LocalizationContext} from '../../../context/LocalizationContext';
 import InterestsForm from '../../../components/forms/InterestsForm';
-import {getCategories} from '../../../utils/sql';
+import {getCategories} from '../../../utils/storage/sql';
 import {
   Category,
   FormBasic,
@@ -17,9 +17,9 @@ import MultipleChoiceForm from '../../../components/forms/MultipleChoiceForm';
 import {getForm} from './data';
 import StartForm from './StartForm';
 import EndForm from './EndForm';
-import {setUserInterests} from '../../../utils/firebase';
+import {setUserInterests} from '../../../utils/cloud/firebase';
 import {AuthContext} from '../../../context/AuthContext';
-import {getStorageInterests, loadInterests} from '../../../utils/storage';
+import {getStorageInterests} from '../../../utils/storage/storage';
 import {useNavigation} from '@react-navigation/native';
 
 const UserForm = () => {
@@ -32,7 +32,7 @@ const UserForm = () => {
   const [categories, setCategories] = React.useState<Category[]>([]);
   const [selectedGoals, setSelectedGoals] = React.useState<UserGoal[]>([]);
   const [selectedLevel, setSelectedLevel] = React.useState<TopicLevel>();
-  const {translations} = React.useContext(LocalizationContext);
+  const {contentLanguage} = React.useContext(LocalizationContext);
   const {user} = React.useContext(AuthContext);
   const navigation = useNavigation();
 
@@ -41,7 +41,6 @@ const UserForm = () => {
       /**load goal */
 
       const interests = await getStorageInterests();
-      console.log('Mmmmmmmmmm', interests);
 
       if (interests) {
         //load goals
@@ -49,7 +48,7 @@ const UserForm = () => {
 
         //load categories
 
-        const categories = await getCategories(translations.LANG as Lang);
+        const categories = await getCategories(contentLanguage);
         categories.forEach(function (c: Category) {
           if (interests.categories_ref_id.includes(c.ref_id)) {
             c.selected = true;
@@ -58,7 +57,6 @@ const UserForm = () => {
           }
         });
 
-        console.log('ddioopo', categories);
         setCategories(categories);
         //load level
         setSelectedLevel(interests.level);
@@ -67,7 +65,6 @@ const UserForm = () => {
   }, []);
 
   const onSubmitInterests = (categories: Category[]) => {
-    console.log('cccc', categories);
     setCategories(categories);
     const currentPages = [...pagesHistory];
     setEnd(true);
@@ -158,7 +155,6 @@ const UserForm = () => {
       levels.forEach((l) => {
         if (l.id === selectedLevel) l.selected = true;
       });
-      console.log('ciucc', levels);
       return (
         <MultipleChoiceForm
           goBack={goBackForm}

@@ -2,8 +2,8 @@ import {Footer} from 'native-base';
 import React from 'react';
 import {Text, TouchableWithoutFeedback, Platform, Linking} from 'react-native';
 import {getColor} from '../../constants/theme/Themes';
-import {LocalizationContext} from '../../context/LocalizationContext';
 import {ThemeContext} from '../../context/ThemeContext';
+import translations from '../../context/translations';
 import styles from '../../styles/styles';
 
 const openStore = async () => {
@@ -18,12 +18,11 @@ const openStore = async () => {
 
 export default function DrawerFooter() {
   const {theme} = React.useContext(ThemeContext);
-  const {translations} = React.useContext(LocalizationContext);
   return (
     <Footer
       style={[
         styles.CustomDrawerFooterContainer,
-        {backgroundColor: getColor(theme, 'lighterOrange')},
+        {backgroundColor: getColor(theme, 'lightOrange')},
       ]}>
       <TouchableWithoutFeedback
         onPress={() => {

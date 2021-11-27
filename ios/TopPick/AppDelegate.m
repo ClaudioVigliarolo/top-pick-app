@@ -6,7 +6,8 @@
 #import <Firebase.h>
 
 #import "RNBootSplash.h" // <- add the header import
-
+#import "RNNotifications.h"
+"
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -33,6 +34,21 @@ static void InitializeFlipper(UIApplication *application) {
   [FIRApp configure];
   // Add me --- /\
   // ...
+  
+  - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+      [RNNotifications startMonitorNotifications]; // -> Add this line
+
+      return YES;
+  }
+  
+  - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    [RNNotifications didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+  }
+  
+  
+  - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+    [RNNotifications didFailToRegisterForRemoteNotificationsWithError:error];
+  }
 
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);

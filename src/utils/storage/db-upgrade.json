@@ -1,0 +1,7 @@
+{
+    "versions": [
+      { "version": 3,
+        "statements": [ "ALTER TABLE topics ADD COLUMN description VARCHAR", "ALTER TABLE topics ADD COLUMN image VARCHAR", "ALTER TABLE questions ADD COLUMN description VARCHAR", "ALTER TABLE questions ADD COLUMN link VARCHAR" ]
+      }
+     ]
+  }

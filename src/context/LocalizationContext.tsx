@@ -2,14 +2,19 @@ import React, {createContext, useState} from 'react';
 import translations, {DEFAULT_LANGUAGE} from './translations';
 import * as RNLocalize from 'react-native-localize';
 import {Lang} from '../interfaces/Interfaces';
-import {getStorageLanguage, setStorageLanguage} from '../utils/storage';
+import {
+  getStorageAppLanguage,
+  getStorageContentLanguage,
+  setStorageAppLanguage,
+  setStorageContentLanguage,
+} from '../utils/storage/storage';
 import {AuthContext} from './AuthContext';
-import {updateFirebaseSettings} from '../utils/firebase';
+import {updateFirebaseSettings} from '../utils/cloud/firebase';
 export const LocalizationContext = createContext({
-  translations,
   setAppLanguage: (newLang: Lang) => {},
+  setContentLanguage: (newLang: Lang) => {},
   appLanguage: DEFAULT_LANGUAGE,
-  configureDeviceDefaultLanguage: async () => {},
+  contentLanguage: DEFAULT_LANGUAGE,
 });
 
 export const LocalizationProvider = ({
@@ -18,25 +23,40 @@ export const LocalizationProvider = ({
   children: React.ReactNode;
 }) => {
   const [appLanguage, setAppLanguage] = useState(DEFAULT_LANGUAGE);
+  const [contentLanguage, setContentLanguage] = useState(DEFAULT_LANGUAGE);
   const {user} = React.useContext(AuthContext);
 
   React.useEffect(() => {
     (async () => {
-      configureDeviceDefaultLanguage();
+      await configureAppLanguage();
+      await configureContentLanguage();
     })();
-  });
+  }, []);
 
   const onSetAppLanguage = async (language: Lang) => {
     translations.setLanguage(language);
     setAppLanguage(language);
-    await setStorageLanguage(language);
+    await setStorageAppLanguage(language);
     if (user) {
       await updateFirebaseSettings(user);
     }
   };
 
-  const configureDeviceDefaultLanguage = async () => {
-    const currentLanguage = await getStorageLanguage();
+  const onSetContentLanguage = async (language: Lang) => {
+    setContentLanguage(language);
+    await setStorageContentLanguage(language);
+    if (user) {
+      await updateFirebaseSettings(user);
+    }
+  };
+
+  const configureContentLanguage = async () => {
+    const contentLanguage = await getStorageContentLanguage();
+    setContentLanguage(contentLanguage);
+  };
+
+  const configureAppLanguage = async () => {
+    const currentLanguage = await getStorageAppLanguage();
     if (!currentLanguage) {
       let localeCode = DEFAULT_LANGUAGE;
       const supportedLocaleCodes = translations.getAvailableLanguages();
@@ -58,10 +78,10 @@ export const LocalizationProvider = ({
   return (
     <LocalizationContext.Provider
       value={{
-        translations,
         setAppLanguage: onSetAppLanguage,
         appLanguage,
-        configureDeviceDefaultLanguage,
+        setContentLanguage: onSetContentLanguage,
+        contentLanguage,
       }}>
       {children}
     </LocalizationContext.Provider>

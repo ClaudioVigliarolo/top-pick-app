@@ -39,7 +39,6 @@ class Item extends React.PureComponent<any, any> {
         );
 
       default:
-        console.log('WHYYY', this.props);
         return null;
     }
   }

@@ -15,9 +15,7 @@ export default function index() {
   const {theme} = React.useContext(ThemeContext);
   const {user} = React.useContext(AuthContext);
   const navigation = useNavigation();
-  {
-    console.log('orrendo', user);
-  }
+
   React.useEffect(() => {
     (async () => {
       if (user) {
@@ -40,6 +38,7 @@ export default function index() {
     }
     setLoading(false);
   };
+
   return (
     <Container style={{backgroundColor: getColor(theme, 'primaryBackground')}}>
       <Content>
@@ -66,8 +65,8 @@ export default function index() {
         </Form>
         <View style={{alignSelf: 'center', marginTop: '10%'}}>
           <Button
-            color={getColor(theme, 'lighterOrange')}
-            title="Submit the form"
+            color={getColor(theme, 'lightOrange')}
+            title="Submit Changes"
             loading={loading}
             onPress={onSubmit}
           />

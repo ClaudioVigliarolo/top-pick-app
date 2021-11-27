@@ -10,11 +10,11 @@ import Animated from 'react-native-reanimated';
 import {getColor, Theme} from '../../constants/theme/Themes';
 import translations from '../../context/translations';
 import styles from '../../styles/styles';
-import {setStorageTheme} from '../../utils/storage';
+import {setStorageTheme} from '../../utils/storage/storage';
 import {AuthContext} from '../../context/AuthContext';
 import DrawerHeader from './DrawerHeader';
 import DrawerFooter from './DrawerFooter';
-import {updateFirebaseSettings} from '../../utils/firebase';
+import {updateFirebaseSettings} from '../../utils/cloud/firebase';
 
 const CustomDrawer = ({progress, ...props}: {progress: number; props: any}) => {
   const {theme, setTheme} = React.useContext(ThemeContext);

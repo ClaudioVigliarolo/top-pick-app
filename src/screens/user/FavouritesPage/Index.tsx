@@ -11,15 +11,16 @@ import DraggableFlatList, {
 } from 'react-native-draggable-flatlist';
 import {ThemeContext} from '../../../context/ThemeContext';
 import {LocalizationContext} from '../../../context/LocalizationContext';
-import {getFavourites, toggleLike} from '../../../utils/sql';
+import {getFavourites, toggleLike} from '../../../utils/storage/sql';
 import styles from '../../../styles/styles';
 import {getFontSize} from '../../../constants/theme/Fonts';
 import {HelpContext} from '../../../context/HelpContext';
 import {ListItemHelp} from './Help';
-import {isFirstHelp, setFirstHelp} from '../../../utils/storage';
+import {isFirstHelp, setFirstHelp} from '../../../utils/storage/storage';
 import {COPILOT_OPTIONS, LAZY_LOAD_TIMEOUT} from '../../../constants/app/App';
 import {StatusContext} from '../../../context/StatusContext';
 import {AuthContext} from '../../../context/AuthContext';
+import translations from '../../../context/translations';
 
 interface FavouritesPageProps {
   copilotEvents: any;
@@ -35,7 +36,6 @@ function FavouritesPage({
   const [loading, setLoading] = React.useState<boolean>(true);
   const [questions, setQuestions] = React.useState<Question[]>([]);
   const isFocused = useIsFocused();
-  const {translations} = React.useContext(LocalizationContext);
   const {setSyncUserContent, setRequiredAuthFunctionality} = React.useContext(
     StatusContext,
   );

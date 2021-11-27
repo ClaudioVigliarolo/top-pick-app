@@ -13,6 +13,8 @@ interface Colors {
   primaryText: string;
   drawerGrey: string;
   darkerOrange: string;
+  darkOrange: string;
+  lightOrange: string;
   lighterOrange: string;
   sectionHeader: string;
   lighterGray: string;
@@ -26,6 +28,7 @@ interface Colors {
   barExternalColor: string;
   ButtonQuestionsBackground: string;
   lineColor: string;
+  questionsTabBackground: string;
 }
 
 const light: Colors = {
@@ -38,7 +41,9 @@ const light: Colors = {
   primaryText: 'black',
   drawerGrey: '#787878',
   darkerOrange: '#f4511e',
-  lighterOrange: 'orange',
+  darkOrange: '#f45e1e',
+  lightOrange: 'orange',
+  lighterOrange: '#fcbe03',
   sectionHeader: 'orange',
   lighterGray: '#e0e0e0',
   lightGray: '#c4c4c4',
@@ -51,6 +56,7 @@ const light: Colors = {
   barExternalColor: '#FF851B',
   ButtonQuestionsBackground: '#eee',
   lineColor: 'rgba(196, 196, 196,0.4)',
+  questionsTabBackground: '#FF851B',
 };
 
 const dark: Colors = {
@@ -64,7 +70,9 @@ const dark: Colors = {
   sectionHeader: 'orange',
   primaryText: '#eee',
   darkerOrange: '#f4511e',
-  lighterOrange: 'orange',
+  lightOrange: 'orange',
+  lighterOrange: 'lighterOrange',
+  darkOrange: '#f45e1e',
   lighterGray: '#e0e0e0',
   lightGray: '#c4c4c4',
   checkOrange: '#ffc757',
@@ -76,6 +84,7 @@ const dark: Colors = {
   barTextColor: '#eee',
   ButtonQuestionsBackground: '#141414',
   lineColor: 'rgba(196, 196, 196,0.4)',
+  questionsTabBackground: 'black',
 };
 
 export const getColor = <K extends keyof Colors>(

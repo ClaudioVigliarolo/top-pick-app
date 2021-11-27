@@ -1,30 +1,31 @@
 import {Spinner} from 'native-base';
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import {StatusContext} from '../../context/StatusContext';
 import {ThemeContext} from '../../context/ThemeContext';
 import IconUpdate from 'react-native-vector-icons/Ionicons';
 import IconChecked from 'react-native-vector-icons/Ionicons';
 import {getColor} from '../../constants/theme/Themes';
-import {Lang} from '../../interfaces/Interfaces';
 import translations from '../../context/translations';
-import {getLastUpdate} from '../../utils/storage';
+import {getLastUpdate} from '../../utils/storage/storage';
 import TopicsAddedModal from '../modals/TopicsAddedModal';
 import StatusModal from '../modals/StatusModal';
-import {getNewTopicsCounter} from '../../utils/sql';
+import {getNewTopicsCounter} from '../../utils/storage/sql';
 import {
   NEW_TOPICS_MODAL_TIMEOUT,
   RECENT_LOADED_N,
 } from '../../constants/app/App';
 import {AuthContext} from '../../context/AuthContext';
-import {getDeviceId, onTopicsUpdate} from '../../utils/utils';
+import {getDeviceId, onTopicsUpdate} from '../../utils/utils/utils';
 import {ICON_MED, ICON_MED_SMALL} from '../../constants/theme/Dimensions';
+import {LocalizationContext} from '../../context/LocalizationContext';
 export default function StatusBar() {
   const {theme} = React.useContext(ThemeContext);
   const [isUpdatedAlert, setUpdatedAlert] = React.useState<boolean>(false);
   const [isFirstRender, setFirstRender] = React.useState<boolean>(true);
   const [lastUpdate, setLastUpdate] = React.useState<string>('');
   const [newTopicsCounter, setNewTopicsCounter] = React.useState<number>(0);
+  const {contentLanguage} = React.useContext(LocalizationContext);
   const {
     isCheckingContentUpdates,
     setUpdatedContent,
@@ -36,7 +37,7 @@ export default function StatusBar() {
 
   React.useEffect(() => {
     (async () => {
-      setLastUpdate(await getLastUpdate(translations.LANG as Lang));
+      setLastUpdate(await getLastUpdate(contentLanguage));
     })();
   }, []);
 
@@ -47,7 +48,7 @@ export default function StatusBar() {
       } else {
         if (isContentUpdated) {
           const newTopicsCounter = await getNewTopicsCounter(
-            translations.LANG as Lang,
+            contentLanguage,
             lastUpdate,
           );
           if (newTopicsCounter) {
@@ -93,7 +94,7 @@ export default function StatusBar() {
           onPress={async () =>
             await onTopicsUpdate(
               user ? user.uid : await getDeviceId(),
-              translations.LANG as Lang,
+              contentLanguage,
               setLoadingContent,
               setUpdatedContent,
             )

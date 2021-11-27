@@ -12,9 +12,6 @@ import {
   FormBasic,
   FormCategories,
   FormName,
-  FormType,
-  Level,
-  Option,
   TopicLevel,
   UserGoal,
 } from '../../../interfaces/Interfaces';

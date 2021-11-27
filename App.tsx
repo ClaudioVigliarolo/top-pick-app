@@ -10,7 +10,7 @@ import {HelpProvider} from './src/context/HelpContext';
 import {
   isFirstLaunch as hasAppLaunched,
   setFirstLaunch as setAppFirstLaunch,
-} from './src/utils/storage';
+} from './src/utils/storage/storage';
 import {AuthProvider} from './src/context/AuthContext';
 import StartSlider from './src/components/sliders/StartSlider';
 

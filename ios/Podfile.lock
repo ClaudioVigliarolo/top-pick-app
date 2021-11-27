@@ -692,6 +692,8 @@ PODS:
     - React
   - react-native-netinfo (6.0.0):
     - React-Core
+  - react-native-notifications (4.1.2):
+    - React-Core
   - react-native-restart (0.0.22):
     - React-Core
   - react-native-safe-area-context (3.1.9):
@@ -843,6 +845,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-html-to-pdf (from `../node_modules/react-native-html-to-pdf`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-notifications (from `../node_modules/react-native-notifications`)
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
@@ -944,6 +947,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-html-to-pdf"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-notifications:
+    :path: "../node_modules/react-native-notifications"
   react-native-restart:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
@@ -1056,6 +1061,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-html-to-pdf: 599f5b80d5fa2874e22e636336bc700681aaf0ac
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
+  react-native-notifications: 97c14bf84c64bd6a6eb7bdcdb916036d93d33428
   react-native-restart: 733a51ad137f15b0f8dc34c4082e55af7da00979
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
   react-native-sqlite-storage: 418ef4afc5e6df6ce3574c4617e5f0b65cffde55

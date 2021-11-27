@@ -1,6 +1,6 @@
 import React from 'react';
 import {View} from 'react-native';
-import ResetAlert from 'react-native-awesome-alerts';
+import Alert from 'react-native-awesome-alerts';
 import {getColor} from '../../constants/theme/Themes';
 import {ThemeContext} from '../../context/ThemeContext';
 
@@ -36,7 +36,7 @@ export default function CustomAlert({
   return (
     <View>
       {show && (
-        <ResetAlert
+        <Alert
           show={show}
           showProgress={showProgress}
           title={title}

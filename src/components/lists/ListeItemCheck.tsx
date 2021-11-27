@@ -5,17 +5,18 @@ import {ThemeContext} from '../../context/ThemeContext';
 import {getColor} from '../../constants/theme/Themes';
 import IconCheck from 'react-native-vector-icons/Feather';
 import styles from '../../styles/styles';
+import {staticFontSizes} from '../../constants/theme/Fonts';
 
 interface ListItemCheckProps {
   text: string;
   onPress(): void;
   selected: boolean;
-  fontSize: number;
+  fontSize?: number;
 }
 
 const ListItemCheck = ({
   selected,
-  fontSize,
+  fontSize = staticFontSizes.fontSmall,
   onPress,
   text,
 }: ListItemCheckProps) => {
